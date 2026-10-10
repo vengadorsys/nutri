@@ -1,0 +1,815 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nutri Exprés</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: una columna tipo "historia clínica" con pestañas fijas abajo; cada enfermedad es una cadena Enfermedad → Deficiencia → Tratamiento que se revela paso a paso. */
+:root{
+  --bg:#f3f6f4; --surface:#ffffff; --sunk:#e7ece9; --fg:#18231e; --muted:#5b6a63; --line:#d3dcd7;
+  --accent:#0f6e5a; --accent-fg:#ffffff;
+  --b1:#2563a8; --b1-soft:#e2ecf8;   /* esófago y estómago */
+  --b2:#2f7d3a; --b2-soft:#e3f2e5;   /* intestino */
+  --b3:#a8640a; --b3-soft:#fbefdc;   /* hígado, biliar, páncreas */
+  --good:#1d7a45; --good-soft:#dff3e7; --bad:#b4322b; --bad-soft:#fbe4e2; --warn:#9a6a00; --warn-soft:#fbf0d3;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1513; --surface:#17201c; --sunk:#202b26; --fg:#e6eee9; --muted:#9aaba3; --line:#2c3a34;
+  --accent:#4fc3a1; --accent-fg:#06221a;
+  --b1:#7fb2ec; --b1-soft:#18263a; --b2:#7fcb8a; --b2-soft:#172b1b; --b3:#e9ae5a; --b3-soft:#33240f;
+  --good:#6fd39a; --good-soft:#143022; --bad:#f08a82; --bad-soft:#3a1816; --warn:#e8c25a; --warn-soft:#332910;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1513; --surface:#17201c; --sunk:#202b26; --fg:#e6eee9; --muted:#9aaba3; --line:#2c3a34;
+  --accent:#4fc3a1; --accent-fg:#06221a;
+  --b1:#7fb2ec; --b1-soft:#18263a; --b2:#7fcb8a; --b2-soft:#172b1b; --b3:#e9ae5a; --b3-soft:#33240f;
+  --good:#6fd39a; --good-soft:#143022; --bad:#f08a82; --bad-soft:#3a1816; --warn:#e8c25a; --warn-soft:#332910;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.5;margin:0}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:16px 110px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(1.7rem,5vw,2.3rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.35rem;font-weight:700}
+h3{font-size:1.1rem;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)}
+.eyebrow{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.stack{display:flex;flex-direction:column;gap:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:700;font-size:.92rem}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn.sm{padding:5px 11px;font-size:.82rem}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:.85rem;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+
+/* header */
+header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding-block:6px 14px}
+.chain-title{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);margin-top:6px}
+.chain-title b{color:var(--fg)}
+.theme-t{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 10px;font-size:.8rem;white-space:nowrap}
+
+/* tabs */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--surface);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+nav.tabs .in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+nav.tabs button{border:0;background:none;border-radius:10px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.72rem;font-weight:700;color:var(--muted)}
+nav.tabs button svg{width:22px;height:22px}
+nav.tabs button[aria-selected="true"]{color:var(--accent);background:var(--sunk)}
+.badge{font-family:var(--f-mono);font-size:.65rem;background:var(--bad);color:#fff;border-radius:999px;padding:0 6px;margin-left:2px}
+
+/* panels */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.meter{height:8px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s}
+.blocks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.blocks{grid-template-columns:1fr}}
+.bk{border-radius:var(--r);padding:12px;border:1px solid var(--line);background:var(--surface);text-align:left;display:flex;flex-direction:column;gap:6px}
+.bk .tag{font-family:var(--f-mono);font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.bk[data-b="1"] .tag{color:var(--b1)} .bk[data-b="1"] .meter i{background:var(--b1)}
+.bk[data-b="2"] .tag{color:var(--b2)} .bk[data-b="2"] .meter i{background:var(--b2)}
+.bk[data-b="3"] .tag{color:var(--b3)} .bk[data-b="3"] .meter i{background:var(--b3)}
+
+/* route */
+.route{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.route li{display:grid;grid-template-columns:70px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.route li:first-child{border-top:0}
+.route li.now{background:var(--sunk);border-radius:8px;padding-inline:8px;margin-inline:-8px}
+.route .t{font-family:var(--f-mono);font-size:.85rem;font-variant-numeric:tabular-nums}
+.timer{font-family:var(--f-mono);font-size:2rem;font-weight:700;font-variant-numeric:tabular-nums}
+
+/* rules */
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.rules{grid-template-columns:1fr}}
+.rule{border:1px solid var(--line);border-radius:var(--r);padding:12px;background:var(--surface)}
+.rule h3{display:flex;gap:8px;align-items:baseline}
+.rule h3 .k{font-family:var(--f-mono);font-size:.8rem;color:var(--accent)}
+.rule ul{margin:8px 0 0;padding-left:18px}
+.hidewrap .cover{filter:blur(6px);user-select:none;cursor:pointer;transition:filter .2s}
+.hidewrap .cover.on{filter:none}
+
+/* chain card */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.card .hd{padding:14px 16px 10px;display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.card .hd .bt{font-family:var(--f-mono);font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.card[data-b="1"] .hd .bt{color:var(--b1)} .card[data-b="2"] .hd .bt{color:var(--b2)} .card[data-b="3"] .hd .bt{color:var(--b3)}
+.card .what{padding:0 16px 12px;color:var(--muted);font-size:.93rem}
+.step{border-top:1px solid var(--line);padding:12px 16px}
+.step .lab{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.07em;font-weight:700}
+.step.def .lab{color:var(--bad)} .step.tx .lab{color:var(--good)}
+.step ul{margin:8px 0 0;padding-left:18px}
+.step li{margin:3px 0}
+.reveal{width:100%;text-align:left;border:1px dashed var(--line);background:var(--sunk);border-radius:10px;padding:12px;margin-top:8px;color:var(--muted);font-weight:700}
+.reveal:hover{border-color:var(--accent);color:var(--fg)}
+.hook{margin:0 16px 14px;padding:10px 12px;border-radius:10px;background:var(--warn-soft);color:var(--fg);font-size:.92rem}
+.hook b{color:var(--warn)}
+.dag{color:var(--muted);font-size:.8em;font-family:var(--f-mono)}
+.status{font-family:var(--f-mono);font-size:.7rem;padding:2px 8px;border-radius:99px;white-space:nowrap;border:1px solid var(--line);color:var(--muted)}
+.status.ok{background:var(--good-soft);color:var(--good);border-color:transparent}
+.status.mid{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.status.no{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+.rate{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:var(--sunk)}
+.rate button{border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:9px 4px;font-weight:700;font-size:.88rem}
+.rate .r0{color:var(--bad)} .rate .r1{color:var(--warn)} .rate .r2{color:var(--good)}
+
+/* flashcard */
+.fc{background:var(--surface);border:1px solid var(--line);border-radius:16px;min-height:300px;display:flex;flex-direction:column}
+.fc .front{padding:22px 18px;flex:1;display:flex;flex-direction:column;gap:10px}
+.fc .q{font-family:var(--f-display);font-size:1.35rem;font-weight:700;line-height:1.25;text-wrap:balance}
+.fc .a{border-top:1px solid var(--line);padding:16px 18px}
+.fc .a ul{margin:4px 0 0;padding-left:18px}
+.grade{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:12px;border-top:1px solid var(--line);background:var(--sunk);border-radius:0 0 16px 16px}
+.grade button{border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:8px 2px;font-weight:700;font-size:.85rem;display:flex;flex-direction:column;align-items:center}
+.grade button small{font-family:var(--f-mono);font-weight:500;font-size:.68rem;color:var(--muted)}
+.grade .g0{color:var(--bad)} .grade .g1{color:var(--warn)} .grade .g2{color:var(--good)} .grade .g3{color:var(--accent)}
+.boxes{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;align-items:end;height:60px}
+.boxes div{background:var(--accent);border-radius:4px 4px 0 0;opacity:.85;min-height:3px}
+.boxlab{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;font-family:var(--f-mono);font-size:.65rem;color:var(--muted);text-align:center}
+
+/* quiz */
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:12px 14px;font-weight:700;display:flex;gap:10px;align-items:flex-start}
+.opt .l{font-family:var(--f-mono);color:var(--muted);flex:none}
+.opt.right{background:var(--good-soft);border-color:var(--good)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.explain{border-radius:10px;padding:12px;background:var(--sunk);font-size:.93rem}
+.scorebar{display:flex;justify-content:space-between;align-items:center;font-family:var(--f-mono);font-size:.85rem}
+.streak{color:var(--warn);font-weight:700}
+
+/* cifras */
+.tblw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);border-top:0;background:var(--sunk)}
+td.v{font-family:var(--f-mono);font-weight:700;font-variant-numeric:tabular-nums}
+.covered td.v span{background:var(--fg);color:transparent;border-radius:4px;cursor:pointer;user-select:none}
+.covered td.v span.on{background:none;color:inherit}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:999px;font-weight:700;font-size:.9rem;z-index:9;transition:opacity .3s}
+.empty{text-align:center;padding:30px 16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@keyframes pop{from{transform:scale(.97);opacity:.6}to{transform:none;opacity:1}}
+.pop{animation:pop .18s ease-out}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">Nutrición · repaso exprés de 1 hora</div>
+      <h1>Nutri Exprés</h1>
+      <div class="chain-title"><b>Enfermedad</b> → <span style="color:var(--bad)">deficiencia</span> → <span style="color:var(--good)">tratamiento nutricional</span></div>
+    </div>
+    <button class="theme-t" id="themeBtn" type="button" aria-label="Cambiar tema">◐ Tema</button>
+  </header>
+  <main id="app"></main>
+</div>
+
+<nav class="tabs" aria-label="Secciones">
+  <div class="in" role="tablist">
+    <button role="tab" data-tab="ruta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Ruta</button>
+    <button role="tab" data-tab="estudiar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h6z"/></svg>Estudiar</button>
+    <button role="tab" data-tab="repasar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="14" height="12" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v10"/></svg><span>Repasar<span class="badge" id="dueBadge" hidden></span></span></button>
+    <button role="tab" data-tab="quiz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Quiz</button>
+    <button role="tab" data-tab="cifras"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>Cifras</button>
+  </div>
+</nav>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* =================== CONTENIDO (de la guía) =================== */
+const BLOCKS = {
+  1:{name:"Esófago y estómago", short:"Esófago/estómago"},
+  2:{name:"Intestino", short:"Intestino"},
+  3:{name:"Hígado, vías biliares y páncreas", short:"Hígado/páncreas"}
+};
+// † = complemento general no incluido en las láminas de clase
+const D = [
+ {id:"disfagia",b:1,n:"Disfagia esofágica",
+  q:"El bolo no pasa bien al estómago (\"se atora\" tras el esternón). Causas: estructurales (estenosis péptica), inflamatorias (ERGE), motilidad (acalasia), neoplásicas.",
+  d:["Desnutrición y pérdida de peso","Deshidratación","Riesgo de atragantamiento y aspiración (neumonía)"],
+  t:["Alimentos blandos, húmedos, fáciles de deglutir","Porciones pequeñas, comidas frecuentes, masticar muy bien","Evitar temporalmente secos y duros; buena hidratación","Médico: tratar la causa (dilatación, Heller en acalasia)"],
+  k:"Se ATORA → blando, húmedo, poquito y seguido.",
+  p:["Riesgo de aspiración y neumonía por atragantamiento","Alimentos blandos y húmedos porque el bolo \"se atora\" tras el esternón"]},
+ {id:"erge",b:1,n:"ERGE / esofagitis / hernia hiatal",
+  q:"Relajación transitoria del EEI: sube ácido, pepsina y bilis. Pirosis, regurgitación, dolor torácico. La dieta NO corrige la hernia, solo reduce síntomas.",
+  d:["Grasa, comidas abundantes y obesidad ↑ presión abdominal y reflujo","Pérdida de peso solo si hay disfagia o complicación"],
+  t:["Porciones moderadas; cena ligera 2–3 h antes de acostarse","Limitar según tolerancia: grasa, café, chocolate, menta, alcohol, cítricos, picante, carbonatadas","Cocción: hervido, vapor, plancha","Bajar 5–10 % del peso si hay sobrepeso","Elevar cabecera 15–20 cm; no fumar","Médico: IBP (omeprazol) = tratamiento principal"],
+  k:"\"Grasa, Café, Chocolate, Menta\" relajan la puerta (EEI). Cabecera 15–20 cm, cena 2–3 h antes.",
+  p:["Elevar la cabecera 15–20 cm","Bajar 5–10 % del peso; la dieta no corrige la hernia, solo síntomas","Evitar menta y chocolate porque relajan el esfínter esofágico inferior"]},
+ {id:"barrett",b:1,n:"Esófago de Barrett",
+  q:"Epitelio escamoso distal → columnar con metaplasia intestinal por ERGE crónica. Precursor de adenocarcinoma. Alarma: disfagia progresiva, pérdida de peso, anemia, hematemesis.",
+  d:["Anemia y pérdida de peso = SIGNOS DE ALARMA (no una dieta)"],
+  t:["5–6 comidas pequeñas, comer lento","No acostarse 2–3 h tras comer","Hervido/vapor/plancha, agua natural","Peso saludable; evitar tabaco y alcohol","Médico: IBP + vigilancia endoscópica"],
+  k:"Barrett = ERGE que \"cambió de piel\" (metaplasia). Misma dieta de ERGE + vigilancia.",
+  p:["Metaplasia intestinal por ERGE crónica; anemia y pérdida de peso son alarma","IBP + vigilancia endoscópica por riesgo de adenocarcinoma"]},
+ {id:"acalasia",b:1,n:"Acalasia",
+  q:"El EEI no relaja y no hay peristalsis (pérdida de neuronas inhibitorias de óxido nítrico). Esofagograma en \"pico de pájaro\". Tx: dilatación neumática, miotomía de Heller.",
+  d:["Riesgo de desnutrición y pérdida de masa muscular","Disfagia, regurgitación, vaciamiento esofágico lento"],
+  t:["Objetivo: recuperar/mantener peso y músculo","Dieta blanda, húmeda o semisólida; masticar hasta casi papilla","5–6 comidas pequeñas; líquidos durante el día (ayudan a pasar el bolo)","Tibia; fibra moderada (sin fibrosa); grasa moderada; proteína adecuada"],
+  k:"Pico de pájaro: la puerta no abre → los LÍQUIDOS empujan el bolo. La dieta no la cura.",
+  p:["Masticar hasta casi papilla y tomar líquidos para que pase el bolo; esofagograma en \"pico de pájaro\"","Miotomía de Heller o dilatación neumática; dieta tibia y semisólida"]},
+ {id:"espasmo",b:1,n:"Espasmo esofágico distal",
+  q:"Contracciones prematuras por falla de inhibición neuronal (óxido nítrico). Dolor torácico que simula cardíaco + disfagia.",
+  d:["Si baja de peso: falta de densidad calórica y proteica"],
+  t:["5–6 comidas blandas y húmedas; masticar lento; líquidos en sorbos","Evitar secos, duros y muy fibrosos","Limitar café, alcohol, picante, carbonatadas","Quedarse erguido tras comer","Si pierde peso: ↑ densidad calórica y proteica","Médico: IBP, bloqueadores de calcio, nitratos"],
+  k:"Dolor que parece infarto + disfagia → bloqueadores de Ca y nitratos; dieta como disfagia.",
+  p:["Dolor torácico que simula infarto; médico: bloqueadores de calcio y nitratos","Líquidos en sorbos y quedarse erguido; si pierde peso, ↑ densidad calórica y proteica"]},
+ {id:"gastroparesia",b:1,n:"Gastroparesia",
+  q:"Retraso del vaciamiento gástrico sin obstrucción (vago/células de Cajal). Causa más frecuente: idiopática (también diabética, posquirúrgica). Náusea >90 %, saciedad precoz. Dx: gammagrafía (retención >10 % a las 4 h).",
+  d:["Saciedad precoz → ingesta insuficiente y desnutrición","Bezoares con fibra insoluble"],
+  t:["5–6 comidas pequeñas","Blanda, puré o LÍQUIDA (los líquidos vacían más rápido)","Restringir fibra INSOLUBLE (crudos, cáscaras)","BAJA en grasa (retrasa el vaciamiento)","Erguido 2 h tras comer","Graves: nutrición enteral por sonda YEYUNAL","Médico: procinéticos a dosis mínima y <12 semanas"],
+  k:"Estómago LENTO: nada de lo que frena (grasa, fibra insoluble → bezoar). Líquidos sí. Si falla → sonda yeyunal.",
+  p:["Restringir fibra insoluble para evitar bezoares","Retención >10 % a las 4 h en gammagrafía; sonda yeyunal en casos graves","Baja en grasa y preferir líquidos porque vacían más rápido"]},
+ {id:"gastritis",b:1,n:"Gastritis",
+  q:"Inflamación de la mucosa. Aguda: AINE (↓ prostaglandinas → ↓ moco y bicarbonato), estrés. Crónica: H. pylori (30–40 %) o autoinmune (anti-célula parietal).",
+  d:["Autoinmune/atrófica: ↓ factor intrínseco → déficit de B12 → anemia MACROCÍTICA","También puede haber déficit de hierro","↑ riesgo de cáncer gástrico"],
+  t:["6 pequeñas ingestas al día","Evitar/restringir: cítricos, especias, café, alcohol, chocolate, tomate; grasa; temperaturas extremas","La \"dieta blanda universal\" es controvertida: PERSONALIZAR","Médico: retirar AINE, IBP/anti-H2; erradicar H. pylori (cuádruple con bismuto); vigilar B12 y hierro"],
+  k:"Autoinmune → sin factor intrínseco → sin B12 → glóbulos GRANDES (macrocítica).",
+  p:["Anticuerpos anti-célula parietal → ↓ factor intrínseco → anemia macrocítica","Retirar AINE porque ↓ prostaglandinas, moco y bicarbonato"]},
+ {id:"ulcera",b:1,n:"Úlcera péptica",
+  q:"Lesión que llega a la muscular de la mucosa por H. pylori o AINE. Gástrica: dolor EMPEORA al comer. Duodenal: MEJORA al comer y vuelve horas después/de noche.",
+  d:["Hemorragia → anemia (hierro)","Dolor y saciedad temprana → pérdida de peso"],
+  t:["Proteína blanca (pollo, pavo, pescado, huevo tibio)","Carbohidratos complejos (arroz, avena, papa, tortilla, pan tostado)","Verduras cocidas; frutas NO ácidas (plátano, manzana cocida, papaya, melón, pera)","Lácteos descremados; poca grasa; agua 1.5–2 L","Médico: cuádruple 14 días: IBP + bismuto + tetraciclina + metronidazol"],
+  k:"Gástrica: Gana dolor al comer. Duodenal: Disminuye al comer. Sangra → hierro.",
+  p:["Dolor que mejora al comer y reaparece de noche; frutas no ácidas como papaya y melón","Cuádruple 14 días: IBP + bismuto + tetraciclina + metronidazol"]},
+
+ {id:"diarrea",b:2,n:"Diarrea",
+  q:"≥3 evacuaciones/día o heces >200 g/día. Aguda <14 días; persistente 14–29; crónica ≥30. Osmótica, secretora, inflamatoria o por motilidad.",
+  d:["Deshidratación y pérdida de electrolitos (sed, mucosas secas, oliguria, taquicardia, hipotensión ortostática)"],
+  t:["Plan A: SRO a libre demanda tras cada evacuación (<1 año 75 ml; >1 año 150 ml)","Plan B: SRO 50–100 ml/kg en 4 h (8 tomas cada 30 min)","Plan C: salina 0.9 % o Ringer lactato 100 ml/kg en 3 h (50 → 25 → 25 ml/kg/h)"],
+  k:"A = A libre demanda · B = Bebe 50–100 ml/kg en 4 h · C = Cánula IV 100 ml/kg en 3 h.",
+  p:["SRO 50–100 ml/kg en 4 h, 8 tomas cada 30 min","Ringer lactato 100 ml/kg en 3 h"]},
+ {id:"estrenimiento",b:2,n:"Estreñimiento",
+  q:"Evacuaciones infrecuentes, difíciles o incompletas. Primario/funcional o secundario (fármacos, metabólico, neurológico, obstructivo). Roma IV; Bristol 1–2.",
+  d:["Complicaciones locales: fisuras, hemorroides, impactación fecal"],
+  t:["† Aumentar fibra y agua de forma GRADUAL","† Actividad física","† Revisar fármacos causantes"],
+  k:"Bristol 1–2 = bolitas duras. Fibra + agua + movimiento, poco a poco.",
+  p:["Bristol 1–2; fisuras, hemorroides e impactación fecal"]},
+ {id:"crohn",b:2,n:"Enfermedad de Crohn",
+  q:"EII transmural y segmentaria (\"lesiones salteadas\") de boca a ano, sobre todo íleon terminal. Dolor en fosa ilíaca derecha, granulomas no caseificantes.",
+  d:["Anemia, albúmina baja, osteopenia/osteoporosis","† Íleon afectado/resecado: déficit de B12 y sales biliares → mala absorción de grasa y vitaminas A, D, E, K"],
+  t:["† Hipercalórica e hiperproteica en actividad","† Suplementar hierro, B12, vitamina D y calcio según déficit","† Enteral/parenteral si falla la vía oral"],
+  k:"Crohn = íleon terminal = donde se absorben B12 y sales biliares → B12 + ADEK.",
+  p:["Lesiones salteadas en íleon terminal → déficit de B12 y sales biliares","Granulomas no caseificantes; osteopenia y albúmina baja"]},
+ {id:"cuci",b:2,n:"CUCI (colitis ulcerosa)",
+  q:"Inflamación CONTINUA desde el recto; solo mucosa y submucosa. Diarrea con sangre, urgencia, tenesmo. Complicación: megacolon tóxico.",
+  d:["Anemia por pérdida crónica de sangre (hierro)","Pérdida de peso y albúmina baja en brotes moderados-graves"],
+  t:["† Hierro (oral o IV según gravedad)","† Líquidos y electrolitos en brotes","† Aporte proteico adecuado","Médico: 5-ASA/mesalazina, corticoides, biológicos"],
+  k:"CUCI = sangre continua desde el recto → HIERRO.",
+  p:["Diarrea sanguinolenta continua desde el recto → hierro","Riesgo de megacolon tóxico; mesalazina"]},
+ {id:"sii",b:2,n:"Síndrome de intestino irritable (SII)",
+  q:"Dolor abdominal + cambio del hábito (diarrea, estreñimiento o mixto) ≥3 días/mes por 3 meses; síntomas ≥6 meses. SIN alarma (sangrado, pérdida de peso, anemia, >50 años).",
+  d:["FODMAP (lactosa, fructanos, polioles, exceso de fructosa, GOS) fermentan rápido y atraen agua → gas, distensión, dolor"],
+  t:["Retirar alimentos altos en FODMAP, café, alcohol e irritantes","Aumentar líquidos y fibra","FODMAP en 3 fases: eliminación (2–6 sem) → reintroducción (6–8 sem) → personalización","Médico: antiespasmódicos, loperamida/psyllium; antidepresivos si no responde"],
+  k:"FODMAP = Fermentables. 3 fases: Quitar → Probar → Personalizar.",
+  p:["Dieta FODMAP: eliminación 2–6 semanas, reintroducción 6–8 semanas","Dolor + cambio del hábito ≥3 días/mes por 3 meses, sin signos de alarma"]},
+ {id:"celiaca",b:2,n:"Enfermedad celíaca",
+  q:"Autoinmune por gluten (trigo, centeno, cebada) en HLA-DQ2/DQ8: atrofia de vellosidades y malabsorción. Dx: anti-transglutaminasa IgA + antiendomisio.",
+  d:["Malabsorción de grasas, hierro, folato, calcio, vitamina D"],
+  t:["Dieta LIBRE DE GLUTEN de por vida","Corregir déficits (hierro, folato, calcio, vit D, B12)","Revisar etiquetas \"libre de gluten\""],
+  k:"TriCeCe: Trigo, Centeno, Cebada → fuera, de por vida.",
+  p:["Anti-transglutaminasa IgA; trigo, centeno y cebada fuera de por vida","HLA-DQ2/DQ8 y atrofia de vellosidades"]},
+ {id:"corto",b:2,n:"Síndrome de intestino corto",
+  q:"Falta o resección de intestino delgado (isquemia mesentérica, Crohn, trauma, tumor). Diarrea, esteatorrea, edema, deshidratación, pérdida de peso.",
+  d:["Absorción insuficiente de líquidos, electrolitos y nutrientes","Anemia; déficit de hierro, ácido fólico y B12"],
+  t:["Aporte suficiente de carbohidratos, proteínas y grasas","Suplementar hierro, ácido fólico y B12","Si no absorbe lo suficiente: nutrición parenteral total (NPT)","Vigilar hidratación y electrolitos"],
+  k:"Le falta tubo → si no alcanza a absorber: NPT. Hierro + folato + B12.",
+  p:["Resección intestinal; nutrición parenteral total si no absorbe lo suficiente"]},
+ {id:"malabs",b:2,n:"Síndrome de malabsorción",
+  q:"Mala absorción de grasa (esteatorrea) y otros nutrientes. Dx: grasa fecal 72 h (>7 g/día con dieta de 100 g de grasa), labs, serología celíaca, aliento con H₂.",
+  d:["Edema → proteínas/albúmina","Tetania, parestesias → calcio y magnesio","Dolor óseo, fracturas → vitamina D y calcio","Equimosis, sangrado → vitamina K","Ceguera nocturna → vitamina A","Glositis, estomatitis → † vitaminas B, hierro"],
+  t:["Tratar la causa (sin gluten si celiaca; antibióticos si SIBO)","B12 (a menudo parenteral si es defecto de absorción)","Ácido fólico, calcio, vit D; vit K si coagulopatía","A, D, E, K: formulaciones especiales o vía parenteral si la esteatorrea es severa"],
+  k:"Cada SIGNO = un nutriente faltante. Grasa fecal >7 g/día con 100 g de grasa.",
+  p:["Grasa fecal de 72 h >7 g/día con dieta de 100 g de grasa","Ceguera nocturna, tetania y equimosis: cada signo señala un nutriente"]},
+ {id:"sibo",b:2,n:"SIBO",
+  q:"Sobrecrecimiento bacteriano en intestino delgado. Distensión, gases, dolor, diarrea o estreñimiento. Causas: ↓ motilidad, cirugías, ↓ ácido (IBP), inmunodeficiencia. Dx: aliento con glucosa o lactulosa (H₂ y metano).",
+  d:["Déficit de vitamina B12 (las bacterias la consumen)","Malabsorción de grasas si es severo"],
+  t:["Corregir la causa; rifaximina 550 mg 7–14 días","Corregir B12; procinéticos (itoprida)","Dieta FODMAP en 3 fases"],
+  k:"Bacterias se COMEN la B12. Rifaximina + B12 + FODMAP.",
+  p:["Rifaximina 550 mg por 7–14 días","Prueba de aliento con lactulosa (H₂ y metano); uso de IBP como causa"]},
+ {id:"lactosa",b:2,n:"Intolerancia a la lactosa",
+  q:"Falta de lactasa: la lactosa llega intacta al colon (65–70 % de la población). Síntomas 30 min–2 h después. Primaria (hipolactasia del adulto, la más frecuente) o secundaria (daño de mucosa, suele mejorar).",
+  d:["Evitar lácteos sin sustituir puede dejar poco calcio †"],
+  t:["Según TOLERANCIA individual","Leche sin lactosa, bebidas vegetales, yogur natural, quesos curados/semicurados (muy poca lactosa; mantequilla casi nada)","Limitar leche, evaporada/en polvo, batidos, postres lácteos, helados","Suplementos de lactasa junto con los alimentos"],
+  k:"Queso curado y yogur sí; leche y helado no. Ojo con el CALCIO.",
+  p:["Quesos curados casi sin lactosa; lactasa junto con los alimentos","Síntomas 30 min–2 h después de lácteos"]},
+
+ {id:"ascitis",b:3,n:"Ascitis",
+  q:"Líquido libre en peritoneo. Causa más frecuente: cirrosis con hipertensión portal (6 C: cirrosis, cardíaca, carcinomatosis, Budd-Chiari, constrictiva, tuberculosis).",
+  d:["Riesgo de sarcopenia/desnutrición: menos ingesta por saciedad y náusea"],
+  t:["Sodio <2 g/día (≈5 g de sal); evitar embutidos, enlatados, sopas instantáneas, ultraprocesados — NO eliminar la sal por completo","Proteína 1.2–1.5 g/kg/día, NO restringir","Energía 30–35 kcal/kg/día","5–6 comidas pequeñas + colación nocturna","Líquidos NO se restringen de rutina (solo hiponatremia significativa)"],
+  k:"Ascitis: \"2 de sodio, 0 restricción de agua\". Na <2 g, líquidos libres.",
+  p:["Sodio <2 g/día (≈5 g de sal) sin restringir líquidos de rutina","Las 6 C; no eliminar la sal por completo"]},
+ {id:"cirrosis",b:3,n:"Cirrosis hepática",
+  q:"Fibrosis progresiva y nódulos de regeneración. Causas: alcohol y MASLD/MASH. Compensada vs descompensada (ascitis, encefalopatía…).",
+  d:["Alto riesgo de desnutrición y sarcopenia: ↓ ingesta, ↑ requerimientos, metabolismo alterado","Posibles déficits de zinc, magnesio, vitaminas B y D"],
+  t:["30–35 kcal/kg/día; proteína 1.2–1.5 g/kg/día","NO restringir proteína, ni con encefalopatía (preferir vegetal y láctea)","3 comidas + 2–3 colaciones, colación NOCTURNA (evitar ayuno)","Sodio <2 g/día solo con ascitis/edema","Abstinencia total de alcohol; suplementos según déficit"],
+  k:"El cirrótico en ayuno se come su músculo → colación nocturna y proteína ALTA (1.2–1.5).",
+  p:["No restringir proteína aun con encefalopatía; colación nocturna","Déficit de zinc y magnesio; 30–35 kcal/kg y 1.2–1.5 g/kg de proteína"]},
+ {id:"masld",b:3,n:"Hígado graso (MASLD)",
+  q:"Triglicéridos en hepatocitos + factor cardiometabólico (obesidad, DM2, HTA, dislipidemia). Casi siempre asintomático; transaminasas normales no lo descartan.",
+  d:["Exceso calórico, azúcares añadidos, bebidas azucaradas, ultraprocesados, grasa saturada"],
+  t:["Déficit calórico + pérdida de peso: ≥5 % esteatosis; 7–10 % inflamación; ≥10 % fibrosis","Dieta mediterránea/hipocalórica; ejercicio; sin alcohol","Verduras, frutas enteras, leguminosas, integrales, pescado, pollo, frutos secos, aceite de oliva"],
+  k:"5 – 7/10 – 10: Esteatosis – Inflamación – Fibrosis (E-I-F, de lo leve a lo grave).",
+  p:["Perder ≥5 % mejora esteatosis; 7–10 % inflamación; ≥10 % fibrosis","Dieta mediterránea en paciente con DM2, obesidad y transaminasas elevadas"]},
+ {id:"hepatitis",b:3,n:"Hepatitis",
+  q:"Inflamación hepática (virus A–E, tóxica, fármacos, autoinmune). A y E fecal-oral, agudas; B, C, D sangre, crónicas (C cronifica 75–85 %). Ictericia, coluria, acolia, anorexia.",
+  d:["Anorexia y náusea → desnutrición","↓ síntesis hepática (albúmina, coagulación)"],
+  t:["Objetivo: regeneración celular y evitar desnutrición","30–35 kcal/kg/día; 5–6 comidas pequeñas","Proteína 1.0–1.2 g/kg/día","Carbohidratos complejos; evitar azúcares refinados","Grasas moderadas de buena calidad; SIN frituras","Sin alcohol; antivirales en crónicas"],
+  k:"Hepatitis = proteína 1.0–1.2 (menos que cirrosis 1.2–1.5).",
+  p:["Proteína 1.0–1.2 g/kg/día y sin frituras para la regeneración celular","Virus C cronifica 75–85 %"]},
+ {id:"colelitiasis",b:3,n:"Colelitiasis",
+  q:"Cálculos en la vesícula (colesterol, bilirrubina). Dolor en hipocondrio derecho tras comidas grasas. Alarma: fiebre, ictericia, coluria, acolia. Tx: colecistectomía laparoscópica si hay síntomas.",
+  d:["Riesgo: obesidad, pérdida RÁPIDA de peso, ayuno prolongado, grasa poco saludable, azúcares refinados"],
+  t:["Evitar pérdida rápida de peso y ayunos largos","Aumentar fibra; reducir azúcares y refinados","Preferir grasas saludables; evitar comidas abundantes"],
+  k:"La bilis quieta forma piedras: NO ayunos ni dietas relámpago.",
+  p:["Evitar pérdida rápida de peso y ayunos largos","Dolor en hipocondrio derecho tras comida grasa; colecistectomía laparoscópica"]},
+ {id:"colestasis",b:3,n:"Colestasis",
+  q:"↓ o interrupción del flujo biliar (intra o extrahepática: cálculos, tumores, hígado, fármacos). Ictericia, coluria, acolia, PRURITO.",
+  d:["Mala absorción de grasa, esteatorrea","Déficit de vitaminas A, D, E, K","Alteraciones óseas en casos avanzados"],
+  t:["Energía y proteína adecuadas","Ajustar la grasa según tolerancia","Vigilar y suplementar A, D, E, K","Tratar la causa (cálculo, endoscopia/cirugía)"],
+  k:"Sin bilis no hay micelas → sin grasa → sin ADEK.",
+  p:["Prurito, ictericia y acolia; suplementar A, D, E, K"]},
+ {id:"colecistitis",b:3,n:"Colecistitis y litiasis biliar",
+  q:"Inflamación vesicular por cálculo en el cístico: dolor intenso, fiebre, signo de Murphy. Coledocolitiasis: ictericia, colangitis o pancreatitis biliar. Tx: hidratación, analgesia, antibióticos, colecistectomía; CPRE si hay cálculo en colédoco.",
+  d:["Obstrucción prolongada → mala absorción de liposolubles"],
+  t:["Fase aguda: vía oral según estado clínico y progresar si se tolera","Evitar comidas muy grasas si causan síntomas","Energía y proteína adecuadas","Con obstrucción/colestasis: vigilar A, D, E, K"],
+  k:"Murphy + fiebre. Aguda: progresar la vía oral según tolerancia.",
+  p:["Signo de Murphy y fiebre; progresar la vía oral según tolerancia","CPRE si hay cálculo en el colédoco"]},
+ {id:"fq",b:3,n:"Fibrosis quística",
+  q:"Autosómica recesiva, gen CFTR (cromosoma 7): ↓ cloro → moco espeso que obstruye. Pulmón + insuficiencia pancreática exocrina. Dx: tamiz (TIR), sudor Cl ≥60 mmol/L, genética.",
+  d:["Malabsorción de grasas y proteínas + alto gasto respiratorio = desnutrición","† Déficit de A, D, E, K"],
+  t:["Hipercalórica: 110–200 % de lo de una persona sana de su edad y sexo","Grasa 35–40 %, proteína 15–20 %, carbohidratos 40–45 %","† Enzimas pancreáticas con las comidas + vitaminas liposolubles","Médico: moduladores CFTR (Trikafta), dornasa alfa, antibióticos inhalados"],
+  k:"FQ come DOBLE: 110–200 % y mucha grasa (35–40 %).",
+  p:["110–200 % de los requerimientos; grasa 35–40 %","Cloro en sudor ≥60 mmol/L; gen CFTR"]},
+ {id:"pancreas",b:3,n:"Neoplasia de páncreas",
+  q:"Sobre todo adenocarcinoma ductal. Riesgo: >60 años, obesidad, DM2, pancreatitis crónica. CA 19-9. Tx: Whipple (cabeza), pancreatectomía distal, quimioterapia.",
+  d:["↓ ingesta (náusea, vómito, dolor, anorexia) + malabsorción (A, D, E, K)","↑ inflamación (IL-1, IL-6, TNF-α): proteólisis y lipólisis → pérdida de músculo y grasa"],
+  t:["Porciones pequeñas (5–6 al día)","Énfasis en proteína, grasa y carbohidratos complejos","† Enzimas pancreáticas si hay insuficiencia"],
+  k:"Cáncer + citocinas (IL-1, IL-6, TNF-α) = caquexia. Pequeño, frecuente, denso.",
+  p:["IL-1, IL-6 y TNF-α causan proteólisis y lipólisis; CA 19-9","Operación de Whipple; 5–6 porciones pequeñas"]}
+];
+
+const RULES = [
+ {k:"1",t:"Obstrucción o motilidad",s:"Esófago, estómago",i:["Comidas pequeñas y frecuentes (5–6)","Textura blanda/húmeda; masticar bien","No acostarse después de comer","Si baja de peso: ↑ densidad calórica y proteica"]},
+ {k:"2",t:"Reflujo / ácido",s:"ERGE, gastritis, úlcera",i:["Evitar lo que irrita o relaja el EEI: grasa, café, chocolate, menta, alcohol, cítricos, picante, carbonatadas","Bajar de peso si hay sobrepeso","Cenar 2–3 h antes de dormir","No hay lista universal: se individualiza"]},
+ {k:"3",t:"Malabsorción",s:"Intestino, colestasis, páncreas",i:["Se pierden grasa y A, D, E, K","También B12, folato, hierro, calcio, zinc","Corregir la causa y suplementar lo que falta"]},
+ {k:"4",t:"Hígado",s:"Cirrosis, ascitis, hepatitis",i:["NO restringir proteína (1.2–1.5 g/kg en cirrosis)","Evitar ayuno largo: colación nocturna","Sodio <2 g/día solo con ascitis/edema"]}
+];
+
+const CIFRAS = [
+ ["Cirrosis / ascitis","Energía","30–35 kcal/kg/día"],
+ ["Cirrosis / ascitis","Proteína","1.2–1.5 g/kg/día"],
+ ["Hepatitis","Proteína","1.0–1.2 g/kg/día"],
+ ["Ascitis","Sodio","<2 g/día (≈5 g de sal)"],
+ ["Hígado graso","Peso perdido → esteatosis","≥5 %"],
+ ["Hígado graso","Peso perdido → inflamación","7–10 %"],
+ ["Hígado graso","Peso perdido → fibrosis","≥10 %"],
+ ["Fibrosis quística","Energía","110–200 % de lo normal"],
+ ["Fibrosis quística","Grasa / proteína / CHO","35–40 / 15–20 / 40–45 %"],
+ ["Fibrosis quística","Cloro en sudor","≥60 mmol/L"],
+ ["Diarrea · Plan A","SRO por evacuación","<1 año 75 ml · >1 año 150 ml"],
+ ["Diarrea · Plan B","SRO","50–100 ml/kg en 4 h"],
+ ["Diarrea · Plan C","Salina 0.9 % / Ringer","100 ml/kg en 3 h"],
+ ["Diarrea","Definición","≥3/día o >200 g/día"],
+ ["Diarrea","Aguda · persistente · crónica","<14 · 14–29 · ≥30 días"],
+ ["ERGE","Cena antes de acostarse","2–3 h"],
+ ["ERGE","Elevar cabecera","15–20 cm"],
+ ["ERGE","Bajar de peso","5–10 %"],
+ ["Gastroparesia","Gammagrafía","retención >10 % a las 4 h"],
+ ["Gastroparesia","Erguido tras comer","2 h"],
+ ["Gastroparesia","Procinéticos","<12 semanas"],
+ ["Úlcera","Agua","1.5–2 L/día"],
+ ["Úlcera · H. pylori","Esquema cuádruple","14 días"],
+ ["Malabsorción","Grasa fecal 72 h",">7 g/día (dieta 100 g grasa)"],
+ ["SII / SIBO","FODMAP eliminación","2–6 semanas"],
+ ["SII / SIBO","FODMAP reintroducción","6–8 semanas"],
+ ["SII","Criterio","≥3 días/mes × 3 meses"],
+ ["SIBO","Rifaximina","550 mg × 7–14 días"],
+ ["Lactosa","Síntomas","30 min–2 h"],
+ ["Lactosa","Población con hipolactasia","65–70 %"],
+ ["Bilis","Reabsorción en íleon","~95 %"],
+ ["Hepatitis C","Cronifica","75–85 %"],
+ ["H. pylori","Población","30–40 %"]
+];
+
+const SIGNOS = [
+ ["Edema","Proteínas / albúmina"],["Tetania, parestesias","Calcio y magnesio"],["Dolor óseo, fracturas","Vitamina D y calcio"],
+ ["Equimosis, sangrado","Vitamina K"],["Ceguera nocturna","Vitamina A"],["Glositis, estomatitis","Vitaminas B y hierro"],
+ ["Anemia macrocítica en gastritis autoinmune","Vitamina B12 (sin factor intrínseco)"]
+];
+
+const VF = [
+ ["La dieta corrige la hernia hiatal y la acalasia.",false,"Solo alivia síntomas; el tratamiento de fondo es médico/quirúrgico."],
+ ["En cirrosis con encefalopatía se restringe la proteína.",false,"Ya no se recomienda: 1.2–1.5 g/kg/día, preferir proteína vegetal y láctea si hace falta."],
+ ["A todo paciente con ascitis se le quita toda la sal y se restringen los líquidos.",false,"Na <2 g/día sin eliminar la sal; líquidos solo con hiponatremia significativa."],
+ ["En gastritis o reflujo se da una \"dieta blanda\" universal.",false,"El material dice que se individualiza."],
+ ["Lo característico de la esteatorrea es el déficit de vitaminas liposolubles A, D, E, K.",true,"No es solo falta de calorías: se pierden grasa y liposolubles."],
+ ["En gastroparesia conviene una dieta baja en grasa y en fibra insoluble.",true,"Ambas retrasan el vaciamiento; la fibra insoluble forma bezoares."],
+ ["Los líquidos vacían el estómago más rápido que los sólidos.",true,"Por eso en gastroparesia se prefiere puré o líquido."],
+ ["En colelitiasis conviene bajar de peso rápido.",false,"La pérdida rápida de peso y el ayuno prolongado favorecen los cálculos."],
+ ["En la cirrosis conviene una colación nocturna.",true,"Evita el ayuno largo que desgasta el músculo (gluconeogénesis)."],
+ ["Los quesos curados tienen muy poca lactosa.",true,"Se toleran mejor; la mantequilla casi no tiene."],
+ ["La dieta sin gluten en celiaca dura hasta que se normalizan los anticuerpos.",false,"Es de por vida."],
+ ["En hepatitis la proteína es 1.0–1.2 g/kg/día.",true,"Algo menos que en cirrosis (1.2–1.5)."],
+ ["El SIBO causa déficit de vitamina B12.",true,"Las bacterias consumen la B12."],
+ ["En la úlcera duodenal el dolor empeora al comer.",false,"Mejora al comer y reaparece horas después o de noche. La gástrica empeora al comer."],
+ ["La fibrosis quística requiere 110–200 % de la energía normal.",true,"Con grasa 35–40 % por malabsorción y alto gasto respiratorio."],
+ ["En diarrea, el Plan C usa SRO por vía oral.",false,"Plan C: salina 0.9 % o Ringer lactato IV 100 ml/kg en 3 h."]
+];
+
+const GUIA_Q = [
+ ["¿Qué medida posterior a la comida se recomienda en ERGE y en Barrett?","No acostarse 2–3 h tras comer: acostado se pierde la gravedad y el ácido sube."],
+ ["En gastroparesia, ¿qué fibra se restringe y por qué?","La fibra insoluble (crudos, cáscaras): retrasa el vaciamiento y forma bezoares."],
+ ["Gastritis atrófica autoinmune con anemia macrocítica: ¿qué deficiencia y por qué?","Vitamina B12: los anticuerpos destruyen las células parietales, baja el factor intrínseco y no se absorbe B12 en el íleon."],
+ ["¿Tratamiento nutricional base de la celiaca y cuánto dura?","Dieta libre de gluten (trigo, centeno, cebada) de por vida + corregir hierro, folato, calcio, vitamina D."],
+ ["Esteatorrea + ceguera nocturna + equimosis: ¿qué vitaminas faltan, en ese orden?","Vitamina A (ceguera nocturna) y vitamina K (equimosis). Liposolubles que se pierden con la grasa."],
+ ["¿Qué plan de TRO usa 50–100 ml/kg en 4 h?","Plan B. (A = libre demanda; C = salina/Ringer 100 ml/kg en 3 h)."],
+ ["Cirrosis con encefalopatía: ¿se restringe la proteína? kcal/kg y g/kg.","No se restringe. 30–35 kcal/kg/día y 1.2–1.5 g/kg/día; preferir proteína vegetal y láctea si hace falta."],
+ ["Ascitis: ¿cuánto sodio al día? ¿Se restringen líquidos de rutina?","Sodio <2 g/día (≈5 g de sal). Líquidos no se restringen de rutina; solo con hiponatremia significativa."],
+ ["Hígado graso: ¿qué % de pérdida de peso mejora esteatosis, inflamación y fibrosis?","≥5 % esteatosis; 7–10 % inflamación; ≥10 % puede mejorar la fibrosis."],
+ ["Niño con tos crónica, infecciones, heces grasosas, poco peso; cloro en sudor 72 mmol/L. ¿Diagnóstico y meta calórica?","Fibrosis quística (Cl ≥60). Hipercalórica 110–200 % de lo normal; grasa 35–40 %, proteína 15–20 %, CHO 40–45 %."]
+];
+
+const ROUTE = [
+ [0,5,"Mapa y regla de oro (4 patrones)","ruta"],
+ [5,20,"Bloque 1: esófago y estómago","estudiar:1"],
+ [20,40,"Bloque 2: intestino (FODMAP, lactosa, celiaca)","estudiar:2"],
+ [40,55,"Bloque 3: hígado, biliar y páncreas (cifras)","estudiar:3"],
+ [55,60,"Quiz rápido + repaso de tarjetas","quiz"]
+];
+
+/* =================== TARJETAS =================== */
+const CARDS = [];
+D.forEach(x=>{
+  CARDS.push({id:x.id+":d",b:x.b,g:"Deficiencia",q:`${x.n}: ¿qué problema o deficiencia nutricional produce?`,a:x.d,hint:x.q,hook:x.k});
+  CARDS.push({id:x.id+":t",b:x.b,g:"Tratamiento",q:`${x.n}: ¿cuál es el tratamiento nutricional?`,a:x.t,hint:x.q,hook:x.k});
+});
+const cifB = c=>/Cirrosis|ascitis|Hígado|Hepatitis|Fibrosis|Bilis/.test(c)?3:/ERGE|Gastro|Úlcera|pylori/.test(c)?1:2;
+CIFRAS.forEach((c,i)=>CARDS.push({id:"cif:"+i,b:cifB(c[0]),g:"Cifra",q:`${c[0]} · ${c[1]}: ¿cuánto?`,a:[c[2]]}));
+SIGNOS.forEach((s,i)=>CARDS.push({id:"sig:"+i,b:2,g:"Signo → nutriente",q:`Signo: ${s[0]}. ¿Qué nutriente falta?`,a:[s[1]]}));
+GUIA_Q.forEach((g,i)=>CARDS.push({id:"gq:"+i,b:0,g:"Pregunta de la guía",q:g[0],a:[g[1]]}));
+
+/* =================== ESTADO =================== */
+const KEY="nutriExpres.v1";
+let S={cards:{},tab:"ruta",block:0,quizBest:0,start:null,theme:null};
+try{const raw=localStorage.getItem(KEY); if(raw) S=Object.assign(S,JSON.parse(raw));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const MIN=60e3, INTERVALS=[0,1*MIN,10*MIN,60*MIN,24*60*MIN,3*24*60*MIN,7*24*60*MIN]; // por caja 0..6
+function cs(id){return S.cards[id]||{box:0,due:0,seen:0,ok:0,ko:0};}
+function grade(id,g){ // g: 0 otra vez, 1 difícil, 2 bien, 3 fácil
+  const c=cs(id); c.seen++;
+  if(g===0){c.box=1;c.ko++;}
+  else if(g===1){c.box=Math.max(1,c.box);}
+  else if(g===2){c.box=Math.min(6,c.box+1);c.ok++;}
+  else {c.box=Math.min(6,c.box+2);c.ok++;}
+  c.due=Date.now()+INTERVALS[c.box];
+  S.cards[id]=c; save(); updateBadge();
+}
+const mastered=id=>cs(id).box>=4;
+function dueCards(block){
+  const now=Date.now();
+  return CARDS.filter(c=>(!block||c.b===block)&&S.cards[c.id]&&S.cards[c.id].due<=now);
+}
+function newCards(block){return CARDS.filter(c=>(!block||c.b===block)&&!S.cards[c.id]);}
+function blockProgress(b){
+  const ids=CARDS.filter(c=>c.b===b).map(c=>c.id);
+  const m=ids.filter(mastered).length, s=ids.filter(i=>S.cards[i]).length;
+  return {m,s,n:ids.length};
+}
+function diseaseStatus(x){
+  const a=cs(x.id+":d"),b=cs(x.id+":t");
+  if(!S.cards[x.id+":d"]&&!S.cards[x.id+":t"]) return ["Nueva",""];
+  const box=Math.min(a.box,b.box);
+  if(box>=4) return ["Dominada","ok"];
+  if(box>=2) return ["En progreso","mid"];
+  return ["Repasar","no"];
+}
+
+/* =================== UTIL =================== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=s=>esc(s).replace(/†/g,'<span class="dag" title="Complemento general, no viene en las láminas">†</span>');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
+const pick=a=>a[Math.random()*a.length|0];
+let toastT;
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,1600);}
+function updateBadge(){const n=dueCards(0).length,b=$("#dueBadge");b.hidden=!n;b.textContent=n;}
+
+/* tema */
+function applyTheme(){ if(S.theme) document.documentElement.setAttribute("data-theme",S.theme); else document.documentElement.removeAttribute("data-theme"); }
+$("#themeBtn").onclick=()=>{
+  const dark=S.theme?S.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+  S.theme=dark?"light":"dark"; applyTheme(); save();
+};
+applyTheme();
+
+/* =================== NAV =================== */
+document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>go(b.dataset.tab));
+function go(tab,block){
+  S.tab=tab; if(block!==undefined) S.block=block; save();
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===tab));
+  ({ruta:renderRuta,estudiar:renderEstudiar,repasar:renderRepasar,quiz:renderQuiz,cifras:renderCifras})[tab]();
+  window.scrollTo({top:0});
+}
+
+/* =================== RUTA =================== */
+let timerI;
+function renderRuta(){
+  const tot=CARDS.length, m=CARDS.filter(c=>mastered(c.id)).length, seen=CARDS.filter(c=>S.cards[c.id]).length;
+  const due=dueCards(0).length;
+  $("#app").innerHTML=`
+  <div class="stack">
+    <section class="panel stack">
+      <div class="row" style="justify-content:space-between">
+        <div><div class="eyebrow">Tu avance</div><h2><span class="num">${m}</span> de <span class="num">${tot}</span> tarjetas dominadas</h2></div>
+        <button class="btn primary" id="goRep">${due?`Repasar ${due} pendientes`:(seen<tot?"Aprender tarjetas nuevas":"Repasar")}</button>
+      </div>
+      <div class="meter"><i style="width:${tot?m/tot*100:0}%"></i></div>
+      <div class="blocks">${[1,2,3].map(b=>{const p=blockProgress(b);return `
+        <button class="bk" data-b="${b}" data-go="${b}" type="button">
+          <span class="tag">Bloque ${b}</span><b>${BLOCKS[b].name}</b>
+          <span class="muted num" style="font-size:.82rem">${p.m}/${p.n} dominadas · ${D.filter(x=>x.b===b).length} enfermedades</span>
+          <span class="meter"><i style="width:${p.m/p.n*100}%"></i></span>
+        </button>`}).join("")}</div>
+    </section>
+
+    <section class="panel stack">
+      <div class="row" style="justify-content:space-between">
+        <div><div class="eyebrow">Ruta de estudio · 60 min</div><div class="timer" id="timer">${S.start?"":"60:00"}</div></div>
+        <div class="row"><button class="btn" id="tStart">${S.start?"Reiniciar":"Iniciar cronómetro"}</button>${S.start?'<button class="btn sm" id="tStop">Detener</button>':""}</div>
+      </div>
+      <ol class="route" id="route">${ROUTE.map((r,i)=>`
+        <li data-i="${i}"><span class="t">${String(r[0]).padStart(2,"0")}–${r[1]}′</span><span>${r[2]}</span><button class="btn sm" data-route="${r[3]}">Ir</button></li>`).join("")}</ol>
+    </section>
+
+    <section class="stack">
+      <div><div class="eyebrow">Regla de oro</div><h2>Casi todo se repite en 4 patrones</h2>
+      <p class="muted" style="margin-top:4px">Toca cada patrón para destaparlo. Primero intenta recordarlo.</p></div>
+      <div class="rules hidewrap">${RULES.map(r=>`
+        <div class="rule"><h3><span class="k">${r.k}</span>${r.t}</h3><div class="muted" style="font-size:.85rem">${r.s}</div>
+        <ul class="cover" tabindex="0" role="button" aria-label="Destapar">${r.i.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`).join("")}</div>
+    </section>
+
+    <section class="panel stack">
+      <div class="eyebrow">Cómo usar esta página</div>
+      <ul style="margin:0;padding-left:18px">
+        <li><b>Estudiar:</b> lee la enfermedad e intenta decir la deficiencia y el tratamiento <i>antes</i> de destaparlos. Luego califícate.</li>
+        <li><b>Repasar:</b> tarjetas con repetición espaciada. Lo que fallas vuelve en 1 min; lo que dominas, en horas o días.</li>
+        <li><b>Quiz:</b> preguntas rápidas de opción múltiple y verdadero/falso con racha.</li>
+        <li><b>Cifras:</b> todos los números en una tabla; actívala en modo "tapar" para autoevaluarte.</li>
+      </ul>
+      <p class="muted" style="font-size:.85rem">Fuente: tu guía exprés (3 PDF de clase). <span class="dag">†</span> = complemento general que no viene en las láminas: confírmalo con tus apuntes. Material de estudio, no indicación para pacientes.</p>
+      <div><button class="btn sm" id="reset">Borrar mi progreso</button> <span id="resetC" hidden><button class="btn sm" id="resetY" style="color:var(--bad)">Sí, borrar</button></span></div>
+    </section>
+  </div>`;
+  $("#goRep").onclick=()=>go("repasar",0);
+  document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go("estudiar",+b.dataset.go));
+  document.querySelectorAll("[data-route]").forEach(b=>b.onclick=()=>{const [t,bl]=b.dataset.route.split(":"); if(t==="ruta"){document.querySelector(".rules").scrollIntoView({behavior:"smooth"});} else go(t,bl?+bl:undefined);});
+  document.querySelectorAll(".cover").forEach(c=>{const f=()=>c.classList.toggle("on");c.onclick=f;c.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();f();}};});
+  $("#tStart").onclick=()=>{S.start=Date.now();save();renderRuta();};
+  if($("#tStop")) $("#tStop").onclick=()=>{S.start=null;save();renderRuta();};
+  $("#reset").onclick=()=>{$("#resetC").hidden=false;};
+  $("#resetY").onclick=()=>{S.cards={};S.quizBest=0;save();updateBadge();toast("Progreso borrado");renderRuta();};
+  clearInterval(timerI);
+  if(S.start){const tick=()=>{const el=$("#timer"); if(!el){clearInterval(timerI);return;}
+    const e=(Date.now()-S.start)/1000, left=Math.max(0,3600-e);
+    el.textContent=`${String(Math.floor(left/60)).padStart(2,"0")}:${String(Math.floor(left%60)).padStart(2,"0")}`;
+    const min=e/60; document.querySelectorAll("#route li").forEach((li,i)=>li.classList.toggle("now",min>=ROUTE[i][0]&&min<ROUTE[i][1]));
+  }; tick(); timerI=setInterval(tick,1000);}
+}
+
+/* =================== ESTUDIAR =================== */
+let studyMode="reto"; // reto = oculto; leer = todo visible
+function renderEstudiar(){
+  const b=S.block||1;
+  const list=D.filter(x=>x.b===b);
+  $("#app").innerHTML=`
+  <div class="stack">
+    <div class="row" role="group" aria-label="Bloque">${[1,2,3].map(i=>`<button class="chip" aria-pressed="${i===b}" data-b="${i}">${i} · ${BLOCKS[i].short}</button>`).join("")}</div>
+    <div class="row" style="justify-content:space-between">
+      <div><div class="eyebrow">Bloque ${b}</div><h2>${BLOCKS[b].name}</h2></div>
+      <div class="row" role="group" aria-label="Modo">
+        <button class="chip" aria-pressed="${studyMode==="reto"}" data-m="reto">Modo reto</button>
+        <button class="chip" aria-pressed="${studyMode==="leer"}" data-m="leer">Ver todo</button>
+      </div>
+    </div>
+    ${b===3?`<details class="panel"><summary style="cursor:pointer;font-weight:700">Bases mínimas para entender las deficiencias</summary><ul style="margin:10px 0 0;padding-left:18px">
+      <li><b>Hígado:</b> en ayuno (8–12 h) libera glucosa y usa aminoácidos para gluconeogénesis → el ayuno largo desgasta el músculo del cirrótico.</li>
+      <li><b>Bilis:</b> emulsiona grasa y forma micelas → absorbe grasa y A, D, E, K. ~95 % se reabsorbe en íleon. Sin bilis → esteatorrea y déficit de liposolubles.</li>
+      <li><b>Páncreas:</b> amilasa, tripsina/quimotripsina, lipasa y bicarbonato. Secretina → bicarbonato; CCK → enzimas. Sin enzimas → malabsorción de grasa y proteína.</li></ul></details>`:""}
+    ${list.map(x=>chainCard(x)).join("")}
+  </div>`;
+  document.querySelectorAll(".chip[data-b]").forEach(c=>c.onclick=()=>go("estudiar",+c.dataset.b));
+  document.querySelectorAll("[data-m]").forEach(c=>c.onclick=()=>{studyMode=c.dataset.m;renderEstudiar();});
+  bindChain();
+}
+function chainCard(x){
+  const st=diseaseStatus(x), open=studyMode==="leer";
+  const ul=a=>`<ul>${a.map(i=>`<li>${fmt(i)}</li>`).join("")}</ul>`;
+  return `<article class="card" data-b="${x.b}" data-id="${x.id}">
+    <div class="hd"><div><div class="bt">Enfermedad</div><h3>${esc(x.n)}</h3></div><span class="status ${st[1]}">${st[0]}</span></div>
+    <p class="what">${fmt(x.q)}</p>
+    <div class="step def"><div class="lab">↓ Deficiencia / problema nutricional</div>
+      ${open?ul(x.d):`<button class="reveal" data-r="d">Piénsalo y toca para ver la deficiencia</button><div hidden data-c="d">${ul(x.d)}</div>`}</div>
+    <div class="step tx"><div class="lab">↓ Tratamiento nutricional</div>
+      ${open?ul(x.t):`<button class="reveal" data-r="t">Piénsalo y toca para ver el tratamiento</button><div hidden data-c="t">${ul(x.t)}</div>`}</div>
+    <div class="hook" ${open?"":"hidden"} data-c="k"><b>Gancho de memoria:</b> ${esc(x.k)}</div>
+    <div class="rate" ${open?"":"hidden"} data-c="rate">
+      <button class="r0" data-g="0">No lo sabía</button><button class="r1" data-g="1">Dudé</button><button class="r2" data-g="2">Lo sabía</button>
+    </div>
+  </article>`;
+}
+function bindChain(){
+  document.querySelectorAll(".card").forEach(card=>{
+    const id=card.dataset.id;
+    card.querySelectorAll("[data-r]").forEach(btn=>btn.onclick=()=>{
+      const k=btn.dataset.r; btn.remove(); const c=card.querySelector(`[data-c="${k}"]`); c.hidden=false; c.classList.add("pop");
+      if(!card.querySelector("[data-r]")){card.querySelector('[data-c="k"]').hidden=false;card.querySelector('[data-c="rate"]').hidden=false;}
+    });
+    card.querySelectorAll("[data-g]").forEach(btn=>btn.onclick=()=>{
+      const g=+btn.dataset.g; grade(id+":d",g); grade(id+":t",g);
+      toast(g===2?"Bien. Volverá más tarde":g===1?"Volverá pronto":"Volverá en 1 minuto en Repasar");
+      const st=diseaseStatus(D.find(x=>x.id===id)); const s=card.querySelector(".status"); s.className="status "+st[1]; s.textContent=st[0];
+      const next=card.nextElementSibling; if(next) next.scrollIntoView({behavior:"smooth",block:"start"});
+    });
+  });
+}
+
+/* =================== REPASAR (repetición espaciada) =================== */
+let rep={block:0,queue:[],cur:null,shown:false,done:0};
+function buildQueue(){
+  const due=shuffle(dueCards(rep.block));
+  const fresh=newCards(rep.block).slice(0,Math.max(0,10-due.length));
+  rep.queue=[...due,...fresh]; rep.done=0;
+}
+function renderRepasar(){
+  if(!rep.queue.length) buildQueue();
+  rep.cur=rep.queue[0]||null; rep.shown=false;
+  const counts=[0,0,0,0,0,0,0]; CARDS.forEach(c=>{if(S.cards[c.id]) counts[S.cards[c.id].box]++;});
+  const unseen=CARDS.filter(c=>!S.cards[c.id]).length; const mx=Math.max(1,unseen,...counts.slice(1));
+  const bars=[unseen,counts[1],counts[2],counts[3],counts[4]+0,counts[5]+counts[6]];
+  const head=`
+    <div class="row" role="group" aria-label="Filtro">${[0,1,2,3].map(i=>`<button class="chip" aria-pressed="${rep.block===i}" data-rb="${i}">${i?i+" · "+BLOCKS[i].short:"Todo"}</button>`).join("")}</div>`;
+  if(!rep.cur){
+    const nx=CARDS.filter(c=>S.cards[c.id]).map(c=>S.cards[c.id].due).filter(d=>d>Date.now()).sort((a,b)=>a-b)[0];
+    $("#app").innerHTML=`<div class="stack">${head}<div class="panel empty stack">
+      <h2>Sin tarjetas pendientes</h2>
+      <p class="muted">${nx?`La próxima vuelve en ${Math.max(1,Math.round((nx-Date.now())/60000))} min. `:""}Lo dominado regresa en horas o días para fijarlo.</p>
+      <div class="row" style="justify-content:center"><button class="btn primary" id="cram">Repaso extra (todo el filtro)</button><button class="btn" id="toQuiz">Ir al quiz</button></div></div>${boxView(bars,mx)}</div>`;
+    bindRepHead();
+    $("#cram").onclick=()=>{rep.queue=shuffle(CARDS.filter(c=>!rep.block||c.b===rep.block)).slice(0,15);renderRepasar();};
+    $("#toQuiz").onclick=()=>go("quiz");
+    return;
+  }
+  const c=rep.cur, g=c.b?BLOCKS[c.b].short:"Guía";
+  $("#app").innerHTML=`<div class="stack">${head}
+    <div class="scorebar"><span>${rep.done} hechas · ${rep.queue.length} en cola</span><span class="muted">${S.cards[c.id]?"caja "+cs(c.id).box:"nueva"}</span></div>
+    <div class="fc pop">
+      <div class="front">
+        <div class="eyebrow">${esc(g)} · ${esc(c.g)}</div>
+        <div class="q">${esc(c.q)}</div>
+        ${c.hint?`<details><summary class="muted" style="cursor:pointer">Pista: qué es</summary><p class="muted" style="margin-top:6px">${fmt(c.hint)}</p></details>`:""}
+        <p class="muted" style="font-size:.88rem">Dilo en voz alta o escríbelo mentalmente antes de voltear.</p>
+      </div>
+      <div class="a" id="ans" hidden><ul>${c.a.map(i=>`<li>${fmt(i)}</li>`).join("")}</ul>${c.hook?`<p style="margin-top:10px" class="hook" ><b>Gancho:</b> ${esc(c.hook)}</p>`:""}</div>
+      <div style="padding:12px" id="flipW"><button class="btn primary" style="width:100%" id="flip">Mostrar respuesta <span class="muted" style="color:inherit;opacity:.7;font-weight:400">(espacio)</span></button></div>
+      <div class="grade" id="grade" hidden>
+        <button class="g0" data-gr="0">Otra vez<small>1 min</small></button>
+        <button class="g1" data-gr="1">Difícil<small>~${lbl(Math.max(1,cs(c.id).box))}</small></button>
+        <button class="g2" data-gr="2">Bien<small>${lbl(Math.min(6,cs(c.id).box+1))}</small></button>
+        <button class="g3" data-gr="3">Fácil<small>${lbl(Math.min(6,cs(c.id).box+2))}</small></button>
+      </div>
+    </div>
+    ${boxView(bars,mx)}
+  </div>`;
+  bindRepHead();
+  $("#flip").onclick=flip;
+  document.querySelectorAll("[data-gr]").forEach(b=>b.onclick=()=>doGrade(+b.dataset.gr));
+}
+function lbl(box){const m=INTERVALS[box]/MIN; return m<60?m+" min":m<1440?(m/60)+" h":(m/1440)+" d";}
+function boxView(bars,mx){
+  return `<section class="panel stack"><div class="eyebrow">Cajas de memoria (Leitner)</div>
+    <div class="boxes">${bars.map(v=>`<div style="height:${Math.max(3,v/mx*100)}%" title="${v}"></div>`).join("")}</div>
+    <div class="boxlab"><span>nuevas ${bars[0]}</span><span>1 · ${bars[1]}</span><span>2 · ${bars[2]}</span><span>3 · ${bars[3]}</span><span>4 · ${bars[4]}</span><span>5+ · ${bars[5]}</span></div>
+    <p class="muted" style="font-size:.85rem">Cada acierto sube la tarjeta de caja y alarga el tiempo antes de verla de nuevo. Caja 4 o más = dominada.</p></section>`;
+}
+function bindRepHead(){document.querySelectorAll("[data-rb]").forEach(b=>b.onclick=()=>{rep.block=+b.dataset.rb;rep.queue=[];renderRepasar();});}
+function flip(){ if(!rep.cur||rep.shown) return; rep.shown=true; $("#ans").hidden=false; $("#ans").classList.add("pop"); $("#flipW").hidden=true; $("#grade").hidden=false; }
+function doGrade(g){
+  const c=rep.queue.shift(); grade(c.id,g); rep.done++;
+  if(g===0) rep.queue.splice(Math.min(3,rep.queue.length),0,c);
+  else if(g===1) rep.queue.splice(Math.min(6,rep.queue.length),0,c);
+  renderRepasar();
+}
+document.addEventListener("keydown",e=>{
+  if(S.tab!=="repasar"||e.target.closest("input,textarea,select")) return;
+  if(e.key===" "&&!rep.shown&&rep.cur){e.preventDefault();flip();}
+  else if(rep.shown&&["1","2","3","4"].includes(e.key)) doGrade(+e.key-1);
+});
+
+/* =================== QUIZ =================== */
+let qz=null;
+function makeQuestion(){
+  const kind=pick(["dz","dz","dz","sig","vf","vf","cif"]);
+  if(kind==="dz"){
+    const x=pick(D), clue=pick(x.p);
+    const pool=shuffle(D.filter(y=>y.id!==x.id)); const same=pool.filter(y=>y.b===x.b), other=pool.filter(y=>y.b!==x.b);
+    const opts=shuffle([x,...[...same,...other].slice(0,3)]);
+    return {type:"mc",q:"¿A qué enfermedad corresponde?",clue,opts:opts.map(o=>o.n),ans:opts.indexOf(x),exp:`<b>${esc(x.n)}</b> · ${esc(x.k)}`,card:x.id+":t"};
+  }
+  if(kind==="sig"){
+    const i=Math.random()*SIGNOS.length|0, s=SIGNOS[i];
+    const opts=shuffle([s[1],...shuffle(SIGNOS.filter((_,j)=>j!==i)).slice(0,3).map(o=>o[1])]);
+    return {type:"mc",q:"¿Qué nutriente falta?",clue:"Signo: "+s[0],opts,ans:opts.indexOf(s[1]),exp:`${esc(s[0])} → <b>${esc(s[1])}</b>`,card:"sig:"+i};
+  }
+  if(kind==="cif"){
+    const i=Math.random()*CIFRAS.length|0, c=CIFRAS[i];
+    const others=shuffle(CIFRAS.filter((_,j)=>j!==i&&CIFRAS[j][2]!==c[2])).slice(0,3).map(o=>o[2]);
+    const opts=shuffle([c[2],...others]);
+    return {type:"mc",q:"¿Cuál es la cifra?",clue:`${c[0]} · ${c[1]}`,opts,ans:opts.indexOf(c[2]),exp:`${esc(c[0])} · ${esc(c[1])}: <b>${esc(c[2])}</b>`,card:"cif:"+i};
+  }
+  const v=pick(VF);
+  return {type:"mc",q:"¿Verdadero o falso?",clue:v[0],opts:["Verdadero","Falso"],ans:v[1]?0:1,exp:`<b>${v[1]?"Verdadero":"Falso"}.</b> ${esc(v[2])}`};
+}
+function renderQuiz(){
+  if(!qz) qz={n:0,ok:0,streak:0,total:10,cur:makeQuestion(),answered:false,miss:[]};
+  if(qz.n>=qz.total){
+    const pct=Math.round(qz.ok/qz.total*100); if(qz.ok>S.quizBest){S.quizBest=qz.ok;save();}
+    $("#app").innerHTML=`<div class="stack"><div class="panel empty stack">
+      <div class="eyebrow">Ronda terminada</div><h2><span class="num">${qz.ok}/${qz.total}</span> · ${pct} %</h2>
+      <p class="muted">${pct>=90?"Excelente. Pasa a Cifras en modo tapar.":pct>=70?"Bien. Repasa las que fallaste abajo.":"Vuelve a Estudiar en modo reto con las que fallaste."} Mejor ronda: ${S.quizBest}/10.</p>
+      <div class="row" style="justify-content:center"><button class="btn primary" id="again">Otra ronda</button><button class="btn" id="toRep">Repasar tarjetas</button></div></div>
+      ${qz.miss.length?`<section class="panel stack"><div class="eyebrow">Para repasar</div>${qz.miss.map(m=>`<div class="explain">${esc(m.clue)}<br>${m.exp}</div>`).join("")}</section>`:""}</div>`;
+    $("#again").onclick=()=>{qz=null;renderQuiz();};
+    $("#toRep").onclick=()=>go("repasar");
+    return;
+  }
+  const q=qz.cur;
+  $("#app").innerHTML=`<div class="stack">
+    <div class="scorebar"><span>Pregunta ${qz.n+1}/${qz.total}</span><span>✓ ${qz.ok}</span><span class="streak">${qz.streak>=2?"Racha "+qz.streak:""}</span></div>
+    <div class="meter"><i style="width:${qz.n/qz.total*100}%"></i></div>
+    <section class="panel stack pop">
+      <div class="eyebrow">${esc(q.q)}</div>
+      <div class="fc-q" style="font-family:var(--f-display);font-size:1.25rem;font-weight:700;line-height:1.3">${esc(q.clue)}</div>
+      <div class="opts">${q.opts.map((o,i)=>`<button class="opt" data-o="${i}"><span class="l">${"ABCD"[i]}</span><span>${esc(o)}</span></button>`).join("")}</div>
+      <div id="exp" hidden></div>
+    </section></div>`;
+  document.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>answer(+b.dataset.o));
+}
+function answer(i){
+  if(qz.answered) return; qz.answered=true;
+  const q=qz.cur, ok=i===q.ans;
+  document.querySelectorAll("[data-o]").forEach((b,j)=>{b.disabled=true; if(j===q.ans) b.classList.add("right"); else if(j===i) b.classList.add("wrong");});
+  if(ok){qz.ok++;qz.streak++;} else {qz.streak=0;qz.miss.push(q);}
+  if(q.card&&!ok) grade(q.card,0);
+  const e=$("#exp"); e.hidden=false;
+  e.innerHTML=`<div class="explain">${ok?"<b style='color:var(--good)'>Correcto.</b> ":"<b style='color:var(--bad)'>Incorrecto.</b> "}${q.exp}</div>
+    <div style="margin-top:10px"><button class="btn primary" id="next" style="width:100%">Siguiente →</button></div>`;
+  $("#next").onclick=()=>{qz.n++;qz.cur=makeQuestion();qz.answered=false;renderQuiz();};
+  $("#next").focus();
+}
+
+/* =================== CIFRAS =================== */
+let covered=false;
+function renderCifras(){
+  $("#app").innerHTML=`<div class="stack">
+    <div class="row" style="justify-content:space-between">
+      <div><div class="eyebrow">Todo lo numérico en un solo lugar</div><h2>Cifras clave</h2></div>
+      <button class="chip" aria-pressed="${covered}" id="cov">Modo tapar</button>
+    </div>
+    <p class="muted">${covered?"Di la cifra en voz alta y toca la barra para comprobar.":"Activa el modo tapar para autoevaluarte."}</p>
+    <div class="tblw ${covered?"covered":""}"><table>
+      <thead><tr><th>Tema</th><th>Qué</th><th>Valor</th></tr></thead>
+      <tbody>${CIFRAS.map(c=>`<tr><td>${esc(c[0])}</td><td>${esc(c[1])}</td><td class="v"><span tabindex="${covered?0:-1}">${esc(c[2])}</span></td></tr>`).join("")}</tbody>
+    </table></div>
+    <div><div class="eyebrow" style="margin-bottom:8px">Malabsorción: cada signo = un nutriente</div>
+    <div class="tblw ${covered?"covered":""}"><table><thead><tr><th>Signo</th><th>Falta</th></tr></thead>
+      <tbody>${SIGNOS.map(s=>`<tr><td>${esc(s[0])}</td><td class="v"><span tabindex="${covered?0:-1}">${esc(s[1])}</span></td></tr>`).join("")}</tbody></table></div></div>
+    <section class="panel stack"><div class="eyebrow">Errores frecuentes en examen</div>
+      <ul style="margin:0;padding-left:18px">
+        <li>Creer que la dieta cura la hernia hiatal o la acalasia: solo alivia síntomas.</li>
+        <li>Restringir proteína en cirrosis o encefalopatía.</li>
+        <li>Quitar toda la sal o restringir líquidos a todo paciente con ascitis.</li>
+        <li>Dar "dieta blanda" universal en gastritis o reflujo: se individualiza.</li>
+        <li>Ver la esteatorrea como falta de calorías: lo típico es el déficit de A, D, E, K.</li>
+      </ul></section>
+  </div>`;
+  $("#cov").onclick=()=>{covered=!covered;renderCifras();};
+  document.querySelectorAll(".covered td.v span").forEach(s=>{const f=()=>s.classList.toggle("on");s.onclick=f;s.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();f();}};});
+}
+
+/* =================== INICIO =================== */
+updateBadge();
+setInterval(updateBadge,30000);
+go(S.tab||"ruta");
+</script>
