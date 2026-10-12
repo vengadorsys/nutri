@@ -149,8 +149,8 @@ textarea:focus{border-color:var(--accent);outline:none}
 
 /* ---- modal pista ---- */
 .overlay{position:fixed;inset:0;background:rgba(30,10,20,.45);display:grid;place-items:center;padding:16px;z-index:20}
-.modal{background:var(--surface);border-radius:20px;max-width:420px;width:100%;padding:22px;display:grid;gap:12px;box-shadow:var(--shadow);border:2px solid var(--hint)}
-.modal h3{color:var(--hint);display:flex;gap:8px;align-items:center}
+.modal{background:var(--surface);border-radius:20px;max-width:440px;width:100%;padding:22px;display:grid;gap:14px;box-shadow:var(--shadow);border:2px solid var(--accent)}
+.modal h3{display:flex;gap:8px;align-items:center}
 @media (prefers-reduced-motion:no-preference){.modal{animation:pop .25s ease}}
 @keyframes pop{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
 
@@ -176,6 +176,32 @@ textarea:focus{border-color:var(--accent);outline:none}
 @keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.1)}30%{transform:scale(.97)}45%{transform:scale(1.07)}}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 
+
+/* ---- estudiar ---- */
+.btn.sm{padding:6px 13px;font-size:.88rem}
+.btn.study{border-color:var(--accent);color:var(--accent)}
+.toc ol{margin:8px 0 0;padding-left:20px;display:grid;gap:4px}
+.toc a{color:var(--fg);text-decoration-color:var(--accent);text-underline-offset:3px}
+.toc a:hover{color:var(--accent)}
+.lesson{display:flex;flex-direction:column;gap:12px;scroll-margin-top:calc(env(safe-area-inset-top,0px) + 72px)}
+.lesson:focus{outline:none}
+.lesson.flash{box-shadow:0 0 0 3px var(--accent)}
+@media (prefers-reduced-motion:no-preference){.lesson.flash{animation:flash 1.6s ease forwards}}
+@keyframes flash{0%,60%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 0 transparent}}
+.prose{display:flex;flex-direction:column;gap:10px;max-width:68ch}
+.prose ul,.prose ol{margin:0;padding-left:20px;display:grid;gap:6px}
+.prose h4{font-family:var(--f-display);font-size:1.08rem;margin:6px 0 0;color:var(--accent)}
+.prose .formula{font-family:var(--f-mono);background:var(--sunk);border-radius:10px;padding:10px 12px;overflow-x:auto}
+.incorto{background:var(--accent-soft);border-radius:12px;padding:10px 14px;display:grid;gap:2px}
+.note{background:var(--hint-soft);color:var(--fg);border-radius:12px;padding:8px 12px}
+/* ---- barra de regreso ---- */
+.backbar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);box-shadow:var(--shadow);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.backbar .in{max-width:728px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+body.has-back .wrap{padding-bottom:120px}
+.mbody{display:grid;gap:10px}
+.mbtns{display:flex;flex-direction:column;gap:8px}
+.modal.hintm{border-color:var(--hint)}
+.modal.hintm h3{color:var(--hint)}
 .small{font-size:.85rem}
 footer{text-align:center;color:var(--muted);font-size:.85rem}
 </style>
@@ -184,12 +210,12 @@ footer{text-align:center;color:var(--muted);font-size:.85rem}
   <header class="top">
     <div class="eyebrow">Bioquímica · purificación, detección y enzimas</div>
     <h1>Hola, <em>mi amor</em>. Vamos a estudiar juntos.</h1>
-    <p class="muted">Repasa los temas de tus diapositivas, haz un examen de opción múltiple o abierto, pide pistas cuando las necesites y al final checa cómo te fue.</p>
+    <p class="muted">Estudia cada tema con calma, haz exámenes de opción múltiple o abiertos, pide pistas cuando las necesites y, si una pregunta se te complica, salta a su explicación completa sin perder tu avance.</p>
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Secciones">
-    <button role="tab" id="tab-repaso" data-tab="repaso" aria-selected="false">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 5h11a3 3 0 0 1 3 3v11H7a3 3 0 0 1-3-3z"/><path d="M8 9h6M8 13h6"/></svg>Repaso</button>
+    <button role="tab" id="tab-estudiar" data-tab="estudiar" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 5h11a3 3 0 0 1 3 3v11H7a3 3 0 0 1-3-3z"/><path d="M8 9h6M8 13h6"/></svg>Estudiar</button>
     <button role="tab" id="tab-examen" data-tab="examen" aria-selected="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 3h6v4H9z"/><path d="M6 5h12v16H6z"/><path d="m9 13 2 2 4-4"/></svg>Examen</button>
     <button role="tab" id="tab-amor" data-tab="amor" aria-selected="false">
@@ -201,12 +227,12 @@ footer{text-align:center;color:var(--muted);font-size:.85rem}
   <footer>Hecho con mucho amor para la mejor estudiante.</footer>
 </div>
 
-<div class="overlay" id="hintBox" hidden>
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="hintTitle">
-    <h3 id="hintTitle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>Pista</h3>
-    <p id="hintText"></p>
-    <button class="btn primary" id="hintClose">Entendido</button>
-  </div>
+<div class="overlay" id="modal" hidden>
+  <div class="modal" id="modalBox" role="dialog" aria-modal="true" aria-labelledby="modalTitle"></div>
+</div>
+
+<div class="backbar" id="backBar" hidden>
+  <div class="in"><span id="backText" class="small"></span><button class="btn primary sm" id="backBtn">Volver a mi examen</button></div>
 </div>
 
 <script>
@@ -221,121 +247,600 @@ const TOPICS = {
 /* Opción múltiple: la primera opción de "o" es la correcta (se barajan al mostrar). */
 const MCQ = [
 /* --- Purificación --- */
-{t:"pur",q:"La cromatografía líquida de alta eficiencia (HPLC) separa las proteínas principalmente por…",o:["Polaridad","Punto isoeléctrico","Coeficiente de sedimentación","Antigenicidad"],h:"Piensa en por qué existen la fase normal y la fase reversa.",e:"La HPLC separa por polaridad: la interacción depende de qué tan polar es la fase estacionaria frente a la móvil."},
-{t:"pur",q:"¿De qué tamaño son aproximadamente las partículas de la fase estacionaria en HPLC?",o:["~3 µm","~3 mm","~30 µm","~3 nm"],h:"Son muy finas: más sitios de interacción y mejor resolución.",e:"Partículas de ~3 µm dan más sitios de interacción y por eso mayor poder de resolución."},
-{t:"pur",q:"En HPLC de fase reversa…",o:["La fase estacionaria es no polar y la móvil es polar","La fase estacionaria es polar y la móvil no polar","Ambas fases son polares","La separación es por tamaño"],h:"“Reversa” es lo contrario de la fase normal, que tiene la estacionaria polar.",e:"Fase reversa: estacionaria no polar y móvil polar, así se retienen las moléculas no polares."},
-{t:"pur",q:"En HPLC de fase normal, ¿qué tipo de molécula queda retenida?",o:["Molécula polar","Molécula no polar","Molécula de mayor masa","Molécula con carga neta cero"],h:"Lo semejante atrae a lo semejante: la estacionaria es polar.",e:"Fase normal = estacionaria polar + móvil no polar, por lo que se retiene la molécula polar."},
-{t:"pur",q:"¿A qué longitud de onda se detectan las proteínas en el perfil de elución de HPLC?",o:["220 nm","260 nm","595 nm","450 nm"],h:"Es la absorbancia del enlace peptídico.",e:"A 220 nm absorbe el enlace peptídico; en ~10 min se obtienen picos agudos que representan proteínas."},
-{t:"pur",q:"¿Qué presión aproximada se aplica a la columna de HPLC?",o:["45 MPa","4.5 kPa","450 MPa","Ninguna, fluye por gravedad"],h:"Es muy alta y la columna mide solo 2-5 mm de diámetro.",e:"Se aplican ~45 MPa en una columna de 2-5 mm para lograr buen flujo, alta resolución y separación rápida."},
-{t:"pur",q:"En una HPLC por filtración en gel con tiroglobulina, catalasa, albúmina, ovoalbúmina y ribonucleasa, ¿cuál sale primero?",o:["Tiroglobulina (669 kDa)","Ribonucleasa (13.4 kDa)","Ovoalbúmina (43 kDa)","Albúmina sérica bovina (67 kDa)"],h:"En filtración en gel las moléculas pequeñas se meten en los poros y se retrasan.",e:"En filtración en gel salen primero las proteínas grandes: la tiroglobulina (669 kDa) es el pico 1."},
-{t:"pur",q:"¿Cómo sabes que un proceso de purificación es eficaz?",o:["La actividad específica aumenta y el número de proteínas diferentes disminuye en cada paso","La proteína total aumenta en cada paso","La actividad total aumenta en cada paso","El volumen aumenta en cada paso"],h:"Son dos comprobaciones: una de actividad y otra de cuántas proteínas distintas quedan.",e:"Si la purificación funciona, la actividad específica ↑ y la cantidad de proteínas diferentes ↓ en cada paso."},
-{t:"pur",q:"La electroforesis en gel de poliacrilamida con SDS (SDS-PAGE) separa por…",o:["Tamaño y carga (con carga uniforme dada por el SDS)","Polaridad","Punto isoeléctrico","Afinidad a un anticuerpo"],h:"El gel funciona como un tamiz molecular.",e:"SDS-PAGE separa por tamaño y carga; el SDS da carga negativa proporcional a la masa, así que al final manda el tamaño."},
-{t:"pur",q:"En SDS-PAGE, ¿hacia dónde migran los complejos SDS-proteína?",o:["Hacia el ánodo (polo positivo)","Hacia el cátodo (polo negativo)","Se quedan en el pozo","Hacia el punto donde pH = pI"],h:"El SDS es un detergente aniónico.",e:"Los complejos tienen carga negativa y migran del electrodo negativo al positivo (ánodo), de arriba hacia abajo."},
-{t:"pur",q:"En SDS-PAGE, las moléculas pequeñas…",o:["Se mueven más rápido a través del gel","Se mueven más lento","No entran al gel","Salen primero del pozo pero se detienen"],h:"Imagina caminar por una malla: ¿quién pasa más fácil?",e:"Las moléculas pequeñas atraviesan más rápido la malla; las grandes se mueven lento."},
-{t:"pur",q:"¿Cuál es la función del TEMED en la polimerización del gel?",o:["Catalizador que acelera la descomposición del APS para producir radicales libres de sulfato","Entrecruzar las cadenas de acrilamida","Teñir las proteínas","Reducir los puentes disulfuro"],h:"Trabaja junto con el persulfato de amonio (APS).",e:"El TEMED cataliza la descomposición del APS y genera radicales libres de sulfato que atacan a los monómeros de acrilamida."},
-{t:"pur",q:"¿Qué forma la malla 3D del gel de poliacrilamida?",o:["La polimerización de acrilamida y el entrecruzamiento con bisacrilamida","La unión de SDS a las proteínas","El agua y el β-mercaptoetanol","La agarosa y los polianfolitos"],h:"Uno polimeriza y el otro entrecruza.",e:"Acrilamida polimeriza y la bisacrilamida (metileno) entrecruza las cadenas, formando la malla 3D."},
-{t:"pur",q:"En condiciones desnaturalizantes, ¿cuántos aniones de SDS se unen aproximadamente a la cadena principal?",o:["1 anión por cada 2 aminoácidos","1 anión por cada aminoácido","1 anión por proteína","1 anión por cada 20 aminoácidos"],h:"Es mucho SDS: la carga que aporta supera a la carga nativa.",e:"Se une ~1 anión de SDS por cada 2 aa, por eso la carga negativa es proporcional a la masa."},
-{t:"pur",q:"¿Qué se agrega para lograr condiciones reductoras en PAGE?",o:["β-mercaptoetanol (BME) o ditiotreitol (DTT)","SDS y calor","Persulfato de amonio","Azul de Coomassie"],h:"Hay que romper enlaces S–S.",e:"BME o DTT reducen los enlaces disulfuro, separando subunidades unidas covalentemente."},
-{t:"pur",q:"A diferencia de la filtración en gel, en la PAGE…",o:["Todas las moléculas, sin importar su tamaño, se mueven a través del tamiz por el campo eléctrico","Las moléculas grandes salen primero","Las proteínas no se desnaturalizan nunca","Se separa por polaridad"],h:"¿Qué empuja a las proteínas en la electroforesis?",e:"Por el campo eléctrico, en PAGE todas las moléculas atraviesan el tamiz; en filtración en gel las grandes rodean los poros."},
-{t:"pur",q:"¿Con qué se tiñen comúnmente los geles de poliacrilamida?",o:["Nitrato de plata o azul de Coomassie","Hematoxilina y eosina","Yodo y cristal violeta","GFP"],h:"Uno es plateado y el otro es azul.",e:"Se visualizan con nitrato de plata o azul de Coomassie; también puede usarse autorradiografía (¹²⁵I en Tyr)."},
-{t:"pur",q:"Una proteína trimérica con subunidades de 20, 60 y 110 kDa se corre en SDS-PAGE desnaturalizante y reductora. ¿Cuántas bandas esperas?",o:["3 bandas","1 banda","2 bandas","6 bandas"],h:"En esas condiciones todas las subunidades quedan separadas.",e:"Con SDS + agente reductor cada subunidad distinta migra sola: 3 bandas (20, 60 y 110 kDa)."},
-{t:"pur",q:"Hemoglobina (homotetrámero, 64,500 Da) en SDS-PAGE: ¿qué ves con y sin BME?",o:["1 banda de ~16,125 Da en ambos casos","1 banda de 64,500 Da sin BME y 4 con BME","2 bandas en ambos casos","4 bandas de 16 kDa con BME"],h:"Homo = subunidades iguales; el SDS ya rompe uniones no covalentes.",e:"El SDS separa las 4 subunidades idénticas (unidas no covalentemente): 1 sola banda de ~16 kDa, con o sin BME."},
-{t:"pur",q:"Un anticuerpo (α2β2, 150 kDa; α = 25 kDa, β = 50 kDa) unido por disulfuros en SDS-PAGE: ¿qué ves sin BME y con BME?",o:["Sin BME: 1 banda de 150 kDa; con BME: 2 bandas (50 y 25 kDa)","Sin BME: 2 bandas; con BME: 1 banda","1 banda de 150 kDa en ambos casos","Sin BME: 4 bandas; con BME: 2 bandas"],h:"Las cadenas del anticuerpo están unidas por puentes disulfuro.",e:"Sin reductor los disulfuros mantienen el tetrámero (150 kDa). El BME los rompe: banda de cadena pesada (50 kDa) y ligera (25 kDa)."},
-{t:"pur",q:"El enfoque isoeléctrico separa las proteínas por…",o:["Su punto isoeléctrico (pI)","Su masa","Su coeficiente de sedimentación","Su polaridad"],h:"El nombre de la técnica lo dice.",e:"Separa por pI, que depende del porcentaje de aminoácidos ácidos y básicos."},
-{t:"pur",q:"El punto isoeléctrico (pI) es…",o:["El pH en el que la carga neta de la proteína es cero","El pH óptimo de una enzima","El pH donde la proteína se desnaturaliza","La concentración de SDS necesaria"],h:"En ese pH la proteína deja de moverse en el campo eléctrico.",e:"pI = pH con carga neta cero; ahí no hay movilidad electroforética."},
-{t:"pur",q:"Una proteína está en una zona donde el pH es menor que su pI. ¿Qué carga neta tiene?",o:["Positiva","Negativa","Cero","Depende del SDS"],h:"pH bajo = muchos protones disponibles.",e:"Si pH < pI la proteína está protonada: carga neta +. Si pH > pI, carga neta −."},
-{t:"pur",q:"¿Cuál de estas es una proteína básica según su pI?",o:["Citocromo c (pI = 10.6)","Albúmina sérica (pI = 4.8)","Ambas son ácidas","Ninguna tiene pI"],h:"Un pI alto indica más aminoácidos básicos.",e:"Citocromo c tiene pI 10.6 (básico); la albúmina sérica, 4.8 (ácida)."},
-{t:"pur",q:"¿Qué se usa para formar el gradiente de pH en el enfoque isoeléctrico?",o:["Polianfolitos (polímeros pequeños multicargados)","SDS","Sacarosa al 5-20%","β-mercaptoetanol"],h:"Son polímeros con muchas cargas y distintos pI.",e:"Una mezcla de polianfolitos con distintos pI en poliacrilamida o agarosa forma el gradiente de pH."},
-{t:"pur",q:"En la electroforesis bidimensional, la primera y segunda dimensión separan por…",o:["1ª: punto isoeléctrico; 2ª: tamaño y carga (SDS-PAGE)","1ª: tamaño; 2ª: polaridad","1ª: masa; 2ª: densidad","1ª: SDS-PAGE; 2ª: HPLC"],h:"Combina el isoelectroenfoque con SDS-PAGE.",e:"Primero enfoque isoeléctrico (horizontal, por pI) y luego SDS-PAGE (vertical, por tamaño): patrón de puntos."},
-{t:"pur",q:"¿Con qué técnica se identifican los puntos de un gel 2D?",o:["Espectrometría de masas","ELISA","Autorradiografía","Ultracentrifugación"],h:"Mide masa/carga de los péptidos.",e:"Los puntos se identifican por espectrometría de masas."},
-{t:"pur",q:"En ultracentrifugación, un valor S (Svedberg) menor indica que la molécula…",o:["Se mueve más lento en el campo centrífugo","Se mueve más rápido","Es más densa","Tiene mayor masa"],h:"S cuantifica la velocidad de sedimentación.",e:"El coeficiente de sedimentación mide la velocidad: S menor = sedimenta más lento."},
-{t:"pur",q:"¿Cómo sedimentan las partículas alargadas comparadas con las esféricas de igual masa?",o:["Más lento, porque tienen más fricción viscosa","Más rápido","Igual","No sedimentan"],h:"Piensa en el coeficiente de fricción (f).",e:"La forma alargada aumenta la fricción viscosa, así que sedimentan más lento que las esféricas."},
-{t:"pur",q:"En la centrifugación zonal, ¿para qué sirve el gradiente de sacarosa (5% arriba, 20% al fondo)?",o:["Evita el movimiento por calor (convección) y permite separar por coeficiente de sedimentación","Desnaturaliza las proteínas","Da carga negativa a las proteínas","Forma un gradiente de pH"],h:"Sin gradiente, las corrientes de calor mezclarían las zonas.",e:"El gradiente de densidad estabiliza la muestra (evita movimiento por calor) y las proteínas se separan por su S."},
-{t:"pur",q:"La actividad específica se calcula como…",o:["Actividad total / proteína total","Proteína total / actividad total","Actividad de la fracción / actividad inicial × 100","Concentración × volumen"],h:"Es “cuánta actividad hay por cada mg de proteína”.",e:"Actividad específica = actividad total ÷ proteína total."},
-{t:"pur",q:"El nivel de purificación (aumento de pureza) se obtiene al dividir…",o:["Actividad específica de la fracción / actividad específica del extracto inicial","Actividad total de la fracción / actividad total inicial","Proteína total / volumen","Rendimiento / 100"],h:"Compara actividades específicas, no actividades totales.",e:"Nivel de purificación = act. específica de cada fracción ÷ act. específica del extracto inicial."},
-{t:"pur",q:"El rendimiento de un paso de purificación es…",o:["El % de actividad que se conserva respecto al extracto inicial (100%)","El aumento de la actividad específica","La cantidad de proteína total","El número de bandas en el gel"],h:"Se expresa en porcentaje y siempre parte del 100%.",e:"Rendimiento = actividad retenida en cada fracción como % del extracto inicial."},
+{t:"pur",s:"hplc",q:"La cromatografía líquida de alta eficiencia (HPLC) separa las proteínas principalmente por…",o:["Polaridad","Punto isoeléctrico","Coeficiente de sedimentación","Antigenicidad"],h:"Piensa en por qué existen la fase normal y la fase reversa.",e:"La HPLC separa por polaridad: la interacción depende de qué tan polar es la fase estacionaria frente a la móvil."},
+{t:"pur",s:"hplc",q:"¿De qué tamaño son aproximadamente las partículas de la fase estacionaria en HPLC?",o:["~3 µm","~3 mm","~30 µm","~3 nm"],h:"Son muy finas: más sitios de interacción y mejor resolución.",e:"Partículas de ~3 µm dan más sitios de interacción y por eso mayor poder de resolución."},
+{t:"pur",s:"hplc",q:"En HPLC de fase reversa…",o:["La fase estacionaria es no polar y la móvil es polar","La fase estacionaria es polar y la móvil no polar","Ambas fases son polares","La separación es por tamaño"],h:"“Reversa” es lo contrario de la fase normal, que tiene la estacionaria polar.",e:"Fase reversa: estacionaria no polar y móvil polar, así se retienen las moléculas no polares."},
+{t:"pur",s:"hplc",q:"En HPLC de fase normal, ¿qué tipo de molécula queda retenida?",o:["Molécula polar","Molécula no polar","Molécula de mayor masa","Molécula con carga neta cero"],h:"Lo semejante atrae a lo semejante: la estacionaria es polar.",e:"Fase normal = estacionaria polar + móvil no polar, por lo que se retiene la molécula polar."},
+{t:"pur",s:"hplc",q:"¿A qué longitud de onda se detectan las proteínas en el perfil de elución de HPLC?",o:["220 nm","260 nm","595 nm","450 nm"],h:"Es la absorbancia del enlace peptídico.",e:"A 220 nm absorbe el enlace peptídico; en ~10 min se obtienen picos agudos que representan proteínas."},
+{t:"pur",s:"hplc",q:"¿Qué presión aproximada se aplica a la columna de HPLC?",o:["45 MPa","4.5 kPa","450 MPa","Ninguna, fluye por gravedad"],h:"Es muy alta y la columna mide solo 2-5 mm de diámetro.",e:"Se aplican ~45 MPa en una columna de 2-5 mm para lograr buen flujo, alta resolución y separación rápida."},
+{t:"pur",s:"hplc",q:"En una HPLC por filtración en gel con tiroglobulina, catalasa, albúmina, ovoalbúmina y ribonucleasa, ¿cuál sale primero?",o:["Tiroglobulina (669 kDa)","Ribonucleasa (13.4 kDa)","Ovoalbúmina (43 kDa)","Albúmina sérica bovina (67 kDa)"],h:"En filtración en gel las moléculas pequeñas se meten en los poros y se retrasan.",e:"En filtración en gel salen primero las proteínas grandes: la tiroglobulina (669 kDa) es el pico 1."},
+{t:"pur",s:"eficacia",q:"¿Cómo sabes que un proceso de purificación es eficaz?",o:["La actividad específica aumenta y el número de proteínas diferentes disminuye en cada paso","La proteína total aumenta en cada paso","La actividad total aumenta en cada paso","El volumen aumenta en cada paso"],h:"Son dos comprobaciones: una de actividad y otra de cuántas proteínas distintas quedan.",e:"Si la purificación funciona, la actividad específica ↑ y la cantidad de proteínas diferentes ↓ en cada paso."},
+{t:"pur",s:"sdspage",q:"La electroforesis en gel de poliacrilamida con SDS (SDS-PAGE) separa por…",o:["Tamaño y carga (con carga uniforme dada por el SDS)","Polaridad","Punto isoeléctrico","Afinidad a un anticuerpo"],h:"El gel funciona como un tamiz molecular.",e:"SDS-PAGE separa por tamaño y carga; el SDS da carga negativa proporcional a la masa, así que al final manda el tamaño."},
+{t:"pur",s:"sdspage",q:"En SDS-PAGE, ¿hacia dónde migran los complejos SDS-proteína?",o:["Hacia el ánodo (polo positivo)","Hacia el cátodo (polo negativo)","Se quedan en el pozo","Hacia el punto donde pH = pI"],h:"El SDS es un detergente aniónico.",e:"Los complejos tienen carga negativa y migran del electrodo negativo al positivo (ánodo), de arriba hacia abajo."},
+{t:"pur",s:"sdspage",q:"En SDS-PAGE, las moléculas pequeñas…",o:["Se mueven más rápido a través del gel","Se mueven más lento","No entran al gel","Salen primero del pozo pero se detienen"],h:"Imagina caminar por una malla: ¿quién pasa más fácil?",e:"Las moléculas pequeñas atraviesan más rápido la malla; las grandes se mueven lento."},
+{t:"pur",s:"gel",q:"¿Cuál es la función del TEMED en la polimerización del gel?",o:["Catalizador que acelera la descomposición del APS para producir radicales libres de sulfato","Entrecruzar las cadenas de acrilamida","Teñir las proteínas","Reducir los puentes disulfuro"],h:"Trabaja junto con el persulfato de amonio (APS).",e:"El TEMED cataliza la descomposición del APS y genera radicales libres de sulfato que atacan a los monómeros de acrilamida."},
+{t:"pur",s:"gel",q:"¿Qué forma la malla 3D del gel de poliacrilamida?",o:["La polimerización de acrilamida y el entrecruzamiento con bisacrilamida","La unión de SDS a las proteínas","El agua y el β-mercaptoetanol","La agarosa y los polianfolitos"],h:"Uno polimeriza y el otro entrecruza.",e:"Acrilamida polimeriza y la bisacrilamida (metileno) entrecruza las cadenas, formando la malla 3D."},
+{t:"pur",s:"condiciones",q:"En condiciones desnaturalizantes, ¿cuántos aniones de SDS se unen aproximadamente a la cadena principal?",o:["1 anión por cada 2 aminoácidos","1 anión por cada aminoácido","1 anión por proteína","1 anión por cada 20 aminoácidos"],h:"Es mucho SDS: la carga que aporta supera a la carga nativa.",e:"Se une ~1 anión de SDS por cada 2 aa, por eso la carga negativa es proporcional a la masa."},
+{t:"pur",s:"condiciones",q:"¿Qué se agrega para lograr condiciones reductoras en PAGE?",o:["β-mercaptoetanol (BME) o ditiotreitol (DTT)","SDS y calor","Persulfato de amonio","Azul de Coomassie"],h:"Hay que romper enlaces S–S.",e:"BME o DTT reducen los enlaces disulfuro, separando subunidades unidas covalentemente."},
+{t:"pur",s:"sdspage",q:"A diferencia de la filtración en gel, en la PAGE…",o:["Todas las moléculas, sin importar su tamaño, se mueven a través del tamiz por el campo eléctrico","Las moléculas grandes salen primero","Las proteínas no se desnaturalizan nunca","Se separa por polaridad"],h:"¿Qué empuja a las proteínas en la electroforesis?",e:"Por el campo eléctrico, en PAGE todas las moléculas atraviesan el tamiz; en filtración en gel las grandes rodean los poros."},
+{t:"pur",s:"tincion",q:"¿Con qué se tiñen comúnmente los geles de poliacrilamida?",o:["Nitrato de plata o azul de Coomassie","Hematoxilina y eosina","Yodo y cristal violeta","GFP"],h:"Uno es plateado y el otro es azul.",e:"Se visualizan con nitrato de plata o azul de Coomassie; también puede usarse autorradiografía (¹²⁵I en Tyr)."},
+{t:"pur",s:"condiciones",q:"Una proteína trimérica con subunidades de 20, 60 y 110 kDa se corre en SDS-PAGE desnaturalizante y reductora. ¿Cuántas bandas esperas?",o:["3 bandas","1 banda","2 bandas","6 bandas"],h:"En esas condiciones todas las subunidades quedan separadas.",e:"Con SDS + agente reductor cada subunidad distinta migra sola: 3 bandas (20, 60 y 110 kDa)."},
+{t:"pur",s:"condiciones",q:"Hemoglobina (homotetrámero, 64,500 Da) en SDS-PAGE: ¿qué ves con y sin BME?",o:["1 banda de ~16,125 Da en ambos casos","1 banda de 64,500 Da sin BME y 4 con BME","2 bandas en ambos casos","4 bandas de 16 kDa con BME"],h:"Homo = subunidades iguales; el SDS ya rompe uniones no covalentes.",e:"El SDS separa las 4 subunidades idénticas (unidas no covalentemente): 1 sola banda de ~16 kDa, con o sin BME."},
+{t:"pur",s:"condiciones",q:"Un anticuerpo (α2β2, 150 kDa; α = 25 kDa, β = 50 kDa) unido por disulfuros en SDS-PAGE: ¿qué ves sin BME y con BME?",o:["Sin BME: 1 banda de 150 kDa; con BME: 2 bandas (50 y 25 kDa)","Sin BME: 2 bandas; con BME: 1 banda","1 banda de 150 kDa en ambos casos","Sin BME: 4 bandas; con BME: 2 bandas"],h:"Las cadenas del anticuerpo están unidas por puentes disulfuro.",e:"Sin reductor los disulfuros mantienen el tetrámero (150 kDa). El BME los rompe: banda de cadena pesada (50 kDa) y ligera (25 kDa)."},
+{t:"pur",s:"ief",q:"El enfoque isoeléctrico separa las proteínas por…",o:["Su punto isoeléctrico (pI)","Su masa","Su coeficiente de sedimentación","Su polaridad"],h:"El nombre de la técnica lo dice.",e:"Separa por pI, que depende del porcentaje de aminoácidos ácidos y básicos."},
+{t:"pur",s:"ief",q:"El punto isoeléctrico (pI) es…",o:["El pH en el que la carga neta de la proteína es cero","El pH óptimo de una enzima","El pH donde la proteína se desnaturaliza","La concentración de SDS necesaria"],h:"En ese pH la proteína deja de moverse en el campo eléctrico.",e:"pI = pH con carga neta cero; ahí no hay movilidad electroforética."},
+{t:"pur",s:"ief",q:"Una proteína está en una zona donde el pH es menor que su pI. ¿Qué carga neta tiene?",o:["Positiva","Negativa","Cero","Depende del SDS"],h:"pH bajo = muchos protones disponibles.",e:"Si pH < pI la proteína está protonada: carga neta +. Si pH > pI, carga neta −."},
+{t:"pur",s:"ief",q:"¿Cuál de estas es una proteína básica según su pI?",o:["Citocromo c (pI = 10.6)","Albúmina sérica (pI = 4.8)","Ambas son ácidas","Ninguna tiene pI"],h:"Un pI alto indica más aminoácidos básicos.",e:"Citocromo c tiene pI 10.6 (básico); la albúmina sérica, 4.8 (ácida)."},
+{t:"pur",s:"ief",q:"¿Qué se usa para formar el gradiente de pH en el enfoque isoeléctrico?",o:["Polianfolitos (polímeros pequeños multicargados)","SDS","Sacarosa al 5-20%","β-mercaptoetanol"],h:"Son polímeros con muchas cargas y distintos pI.",e:"Una mezcla de polianfolitos con distintos pI en poliacrilamida o agarosa forma el gradiente de pH."},
+{t:"pur",s:"dosd",q:"En la electroforesis bidimensional, la primera y segunda dimensión separan por…",o:["1ª: punto isoeléctrico; 2ª: tamaño y carga (SDS-PAGE)","1ª: tamaño; 2ª: polaridad","1ª: masa; 2ª: densidad","1ª: SDS-PAGE; 2ª: HPLC"],h:"Combina el isoelectroenfoque con SDS-PAGE.",e:"Primero enfoque isoeléctrico (horizontal, por pI) y luego SDS-PAGE (vertical, por tamaño): patrón de puntos."},
+{t:"pur",s:"dosd",q:"¿Con qué técnica se identifican los puntos de un gel 2D?",o:["Espectrometría de masas","ELISA","Autorradiografía","Ultracentrifugación"],h:"Mide masa/carga de los péptidos.",e:"Los puntos se identifican por espectrometría de masas."},
+{t:"pur",s:"ultra",q:"En ultracentrifugación, un valor S (Svedberg) menor indica que la molécula…",o:["Se mueve más lento en el campo centrífugo","Se mueve más rápido","Es más densa","Tiene mayor masa"],h:"S cuantifica la velocidad de sedimentación.",e:"El coeficiente de sedimentación mide la velocidad: S menor = sedimenta más lento."},
+{t:"pur",s:"ultra",q:"¿Cómo sedimentan las partículas alargadas comparadas con las esféricas de igual masa?",o:["Más lento, porque tienen más fricción viscosa","Más rápido","Igual","No sedimentan"],h:"Piensa en el coeficiente de fricción (f).",e:"La forma alargada aumenta la fricción viscosa, así que sedimentan más lento que las esféricas."},
+{t:"pur",s:"zonal",q:"En la centrifugación zonal, ¿para qué sirve el gradiente de sacarosa (5% arriba, 20% al fondo)?",o:["Evita el movimiento por calor (convección) y permite separar por coeficiente de sedimentación","Desnaturaliza las proteínas","Da carga negativa a las proteínas","Forma un gradiente de pH"],h:"Sin gradiente, las corrientes de calor mezclarían las zonas.",e:"El gradiente de densidad estabiliza la muestra (evita movimiento por calor) y las proteínas se separan por su S."},
+{t:"pur",s:"evaluacion",q:"La actividad específica se calcula como…",o:["Actividad total / proteína total","Proteína total / actividad total","Actividad de la fracción / actividad inicial × 100","Concentración × volumen"],h:"Es “cuánta actividad hay por cada mg de proteína”.",e:"Actividad específica = actividad total ÷ proteína total."},
+{t:"pur",s:"evaluacion",q:"El nivel de purificación (aumento de pureza) se obtiene al dividir…",o:["Actividad específica de la fracción / actividad específica del extracto inicial","Actividad total de la fracción / actividad total inicial","Proteína total / volumen","Rendimiento / 100"],h:"Compara actividades específicas, no actividades totales.",e:"Nivel de purificación = act. específica de cada fracción ÷ act. específica del extracto inicial."},
+{t:"pur",s:"evaluacion",q:"El rendimiento de un paso de purificación es…",o:["El % de actividad que se conserva respecto al extracto inicial (100%)","El aumento de la actividad específica","La cantidad de proteína total","El número de bandas en el gel"],h:"Se expresa en porcentaje y siempre parte del 100%.",e:"Rendimiento = actividad retenida en cada fracción como % del extracto inicial."},
 /* --- Detección --- */
-{t:"det",q:"¿Qué células producen los anticuerpos?",o:["Linfocitos B","Linfocitos T","Eritrocitos","Plaquetas"],h:"Su letra es la segunda del abecedario.",e:"Los anticuerpos son proteínas en forma de Y producidas por linfocitos B."},
-{t:"det",q:"Un antígeno es…",o:["Una molécula ajena al organismo que induce una respuesta inmunológica","Una proteína en forma de Y que neutraliza patógenos","Una enzima que genera color","Un tipo de linfocito"],h:"Es lo que el anticuerpo reconoce.",e:"Antígeno: molécula ajena (proteína, carbohidrato, ácido nucleico o lípido) que induce respuesta inmune."},
-{t:"det",q:"¿Qué enzimas se unen típicamente al anticuerpo secundario en un ELISA?",o:["HRP (peroxidasa de rábano) y ALP (fosfatasa alcalina)","Tripsina y quimotripsina","Hexocinasa y aldolasa","DNA polimerasa y ligasa"],h:"Una viene del rábano.",e:"El anticuerpo 2º va unido a HRP o ALP, que generan un producto detectable (color)."},
-{t:"det",q:"En el ELISA competitivo, la intensidad de la señal es…",o:["Inversamente proporcional a la cantidad de antígeno/anticuerpo","Directamente proporcional","Siempre constante","Independiente de la muestra"],h:"Más muestra = menos molécula marcada logra unirse.",e:"En el competitivo, más antígeno en la muestra desplaza a la molécula marcada: menos señal."},
-{t:"det",q:"¿En qué modalidades de ELISA la señal es directamente proporcional a la cantidad de antígeno/anticuerpo?",o:["Directo, indirecto y sándwich","Solo competitivo","Competitivo y sándwich","Ninguna"],h:"Es todas menos una.",e:"En ELISA directo, indirecto y sándwich, a más antígeno más señal."},
-{t:"det",q:"¿Para qué es útil especialmente el ELISA competitivo?",o:["Para determinar cantidades bajas de antígenos/anticuerpos","Para separar proteínas por tamaño","Para medir el pI","Para teñir geles"],h:"Tiene que ver con la sensibilidad.",e:"El ELISA competitivo es útil para detectar cantidades bajas de antígenos o anticuerpos."},
-{t:"det",q:"En la detección colorimétrica, ¿con qué se detiene la reacción?",o:["Solución de H₂SO₄","Agua destilada","SDS","β-mercaptoetanol"],h:"Es un ácido fuerte.",e:"Se detiene con H₂SO₄ al alcanzar la señal deseada y se cuantifica en el lector de placas."},
-{t:"det",q:"En la detección quimioluminiscente, la señal de luz puede capturarse con…",o:["Un dispositivo de carga acoplada (CCD) o película radiográfica","Un lector de pH","Una balanza analítica","Un ultracentrífuga"],h:"Es un chip semiconductor de silicio que convierte carga → voltaje → número.",e:"AP o HRP producen luz como subproducto; se captura con una CCD o una película radiográfica."},
-{t:"det",q:"Comparada con la quimioluminiscente, la detección colorimétrica tiene…",o:["Sensibilidad media","Sensibilidad mucho mayor","Riesgo radiactivo","Necesidad de luz UV"],h:"La quimioluminiscente es la más sensible de las dos.",e:"La colorimétrica tiene sensibilidad media comparada con la quimioluminiscente."},
-{t:"det",q:"¿Qué color de fluorescencia emiten GFP y mCherry, respectivamente?",o:["Verde y roja","Roja y verde","Azul y amarilla","Ambas verde"],h:"G de green; cherry = cereza.",e:"GFP: fluorescencia verde. mCherry: roja. La luciferina puede dar azul, amarilla o roja."},
-{t:"det",q:"¿Qué isótopos se usan en la detección radiactiva?",o:["¹²⁵I y ³²P","¹⁴C y ³H","⁶⁰Co y ¹³⁷Cs","¹⁸F y ⁹⁹ᵐTc"],h:"Uno es un halógeno y el otro está en los fosfatos.",e:"Se usan ¹²⁵I y ³²P; es riesgosa, los anticuerpos marcados duran poco y requiere área restringida."},
-{t:"det",q:"En el Western blot capilar, ¿para qué se incuba el gel 15 min en buffer SSC 10X?",o:["Para eliminar el exceso de SDS no unido","Para teñir las proteínas","Para polimerizar el gel","Para bloquear la membrana"],h:"Algo sobra del SDS-PAGE.",e:"El SSC 10X elimina el exceso de SDS no unido antes de transferir."},
-{t:"det",q:"¿Qué membrana se usa en el Western blot capilar descrito en clase?",o:["Nitrocelulosa","Diálisis de celulosa","Papel filtro","Poliacrilamida"],h:"Se hidrata con buffer SSC.",e:"Se usa membrana de nitrocelulosa hidratada con SSC."},
-{t:"det",q:"¿Por qué se cubren los bordes del gel con Parafilm en el Western blot capilar?",o:["Para forzar que el flujo de buffer pase a través del gel","Para que no se seque la membrana","Para teñir los bordes","Para aplicar corriente eléctrica"],h:"El buffer debe pasar por donde están las proteínas.",e:"El Parafilm obliga al flujo de SSC a atravesar el gel y arrastrar las proteínas hacia la membrana."},
-{t:"det",q:"¿Cuánto tiempo se deja transferir por capilaridad en el Western blot?",o:["16 horas","15 minutos","2 horas","3 días"],h:"Es toda una noche.",e:"Se deja transferir ~16 h; la sal favorece la fijación hidrofóbica y electrostática en la membrana."},
+{t:"det",s:"inmuno",q:"¿Qué células producen los anticuerpos?",o:["Linfocitos B","Linfocitos T","Eritrocitos","Plaquetas"],h:"Su letra es la segunda del abecedario.",e:"Los anticuerpos son proteínas en forma de Y producidas por linfocitos B."},
+{t:"det",s:"inmuno",q:"Un antígeno es…",o:["Una molécula ajena al organismo que induce una respuesta inmunológica","Una proteína en forma de Y que neutraliza patógenos","Una enzima que genera color","Un tipo de linfocito"],h:"Es lo que el anticuerpo reconoce.",e:"Antígeno: molécula ajena (proteína, carbohidrato, ácido nucleico o lípido) que induce respuesta inmune."},
+{t:"det",s:"elisa",q:"¿Qué enzimas se unen típicamente al anticuerpo secundario en un ELISA?",o:["HRP (peroxidasa de rábano) y ALP (fosfatasa alcalina)","Tripsina y quimotripsina","Hexocinasa y aldolasa","DNA polimerasa y ligasa"],h:"Una viene del rábano.",e:"El anticuerpo 2º va unido a HRP o ALP, que generan un producto detectable (color)."},
+{t:"det",s:"elisatipos",q:"En el ELISA competitivo, la intensidad de la señal es…",o:["Inversamente proporcional a la cantidad de antígeno/anticuerpo","Directamente proporcional","Siempre constante","Independiente de la muestra"],h:"Más muestra = menos molécula marcada logra unirse.",e:"En el competitivo, más antígeno en la muestra desplaza a la molécula marcada: menos señal."},
+{t:"det",s:"elisatipos",q:"¿En qué modalidades de ELISA la señal es directamente proporcional a la cantidad de antígeno/anticuerpo?",o:["Directo, indirecto y sándwich","Solo competitivo","Competitivo y sándwich","Ninguna"],h:"Es todas menos una.",e:"En ELISA directo, indirecto y sándwich, a más antígeno más señal."},
+{t:"det",s:"elisatipos",q:"¿Para qué es útil especialmente el ELISA competitivo?",o:["Para determinar cantidades bajas de antígenos/anticuerpos","Para separar proteínas por tamaño","Para medir el pI","Para teñir geles"],h:"Tiene que ver con la sensibilidad.",e:"El ELISA competitivo es útil para detectar cantidades bajas de antígenos o anticuerpos."},
+{t:"det",s:"deteccion",q:"En la detección colorimétrica, ¿con qué se detiene la reacción?",o:["Solución de H₂SO₄","Agua destilada","SDS","β-mercaptoetanol"],h:"Es un ácido fuerte.",e:"Se detiene con H₂SO₄ al alcanzar la señal deseada y se cuantifica en el lector de placas."},
+{t:"det",s:"deteccion",q:"En la detección quimioluminiscente, la señal de luz puede capturarse con…",o:["Un dispositivo de carga acoplada (CCD) o película radiográfica","Un lector de pH","Una balanza analítica","Un ultracentrífuga"],h:"Es un chip semiconductor de silicio que convierte carga → voltaje → número.",e:"AP o HRP producen luz como subproducto; se captura con una CCD o una película radiográfica."},
+{t:"det",s:"deteccion",q:"Comparada con la quimioluminiscente, la detección colorimétrica tiene…",o:["Sensibilidad media","Sensibilidad mucho mayor","Riesgo radiactivo","Necesidad de luz UV"],h:"La quimioluminiscente es la más sensible de las dos.",e:"La colorimétrica tiene sensibilidad media comparada con la quimioluminiscente."},
+{t:"det",s:"deteccion",q:"¿Qué color de fluorescencia emiten GFP y mCherry, respectivamente?",o:["Verde y roja","Roja y verde","Azul y amarilla","Ambas verde"],h:"G de green; cherry = cereza.",e:"GFP: fluorescencia verde. mCherry: roja. La luciferina puede dar azul, amarilla o roja."},
+{t:"det",s:"deteccion",q:"¿Qué isótopos se usan en la detección radiactiva?",o:["¹²⁵I y ³²P","¹⁴C y ³H","⁶⁰Co y ¹³⁷Cs","¹⁸F y ⁹⁹ᵐTc"],h:"Uno es un halógeno y el otro está en los fosfatos.",e:"Se usan ¹²⁵I y ³²P; es riesgosa, los anticuerpos marcados duran poco y requiere área restringida."},
+{t:"det",s:"western",q:"En el Western blot capilar, ¿para qué se incuba el gel 15 min en buffer SSC 10X?",o:["Para eliminar el exceso de SDS no unido","Para teñir las proteínas","Para polimerizar el gel","Para bloquear la membrana"],h:"Algo sobra del SDS-PAGE.",e:"El SSC 10X elimina el exceso de SDS no unido antes de transferir."},
+{t:"det",s:"western",q:"¿Qué membrana se usa en el Western blot capilar descrito en clase?",o:["Nitrocelulosa","Diálisis de celulosa","Papel filtro","Poliacrilamida"],h:"Se hidrata con buffer SSC.",e:"Se usa membrana de nitrocelulosa hidratada con SSC."},
+{t:"det",s:"western",q:"¿Por qué se cubren los bordes del gel con Parafilm en el Western blot capilar?",o:["Para forzar que el flujo de buffer pase a través del gel","Para que no se seque la membrana","Para teñir los bordes","Para aplicar corriente eléctrica"],h:"El buffer debe pasar por donde están las proteínas.",e:"El Parafilm obliga al flujo de SSC a atravesar el gel y arrastrar las proteínas hacia la membrana."},
+{t:"det",s:"western",q:"¿Cuánto tiempo se deja transferir por capilaridad en el Western blot?",o:["16 horas","15 minutos","2 horas","3 días"],h:"Es toda una noche.",e:"Se deja transferir ~16 h; la sal favorece la fijación hidrofóbica y electrostática en la membrana."},
 /* --- Enzimas --- */
-{t:"enz",q:"El anabolismo se caracteriza por…",o:["Biosíntesis de macromoléculas: requiere monómeros y energía","Ruptura de macromoléculas: libera energía","Producir monómeros","No requerir enzimas"],h:"Ana- = construir.",e:"Anabolismo: biosíntesis, requiere monómeros y energía. Catabolismo: ruptura, produce monómeros y libera energía."},
-{t:"enz",q:"¿Cómo aceleran las enzimas una reacción?",o:["Disminuyen la energía de activación sin afectar el equilibrio","Aumentan la energía de activación","Cambian el equilibrio de la reacción","Se consumen en la reacción"],h:"Bajan la “barrera” de energía.",e:"Las enzimas reducen la energía de activación (aceleran 10⁸–10²⁰ veces) y no modifican el equilibrio."},
-{t:"enz",q:"Un cofactor enzimático es…",o:["Un componente no proteico requerido para la actividad enzimática","La parte proteica de una holoenzima","Un inhibidor competitivo","El producto de la reacción"],h:"Se clasifica en iones metálicos, coenzimas y grupos prostéticos.",e:"Cofactor: componente no proteico necesario para la actividad; incluye iones metálicos, coenzimas y grupos prostéticos."},
-{t:"enz",q:"Las coenzimas…",o:["Se unen de forma débil y reversible y la mayoría derivan de vitaminas","Se unen covalentemente y de forma permanente","Siempre son iones metálicos","Son la parte proteica de la enzima"],h:"Entran y salen del sitio activo transportando grupos.",e:"Coenzimas: transportadores transitorios de grupos funcionales, unión no covalente; muchas derivan de vitaminas (NAD⁺, NADP⁺, CoA)."},
-{t:"enz",q:"¿Cuál es un ejemplo de coenzima?",o:["NAD⁺","Zn²⁺","Grupo hemo","Apoenzima"],h:"Viene de la niacina (vitamina B3).",e:"NAD⁺, NADP⁺ y la coenzima A son coenzimas; el Zn²⁺ es un ion metálico y el hemo un grupo prostético."},
-{t:"enz",q:"Un grupo prostético se une a la apoenzima…",o:["De forma permanente (covalente o con muy alta afinidad)","De forma laxa y reversible","Solo cuando hay inhibidor","Nunca se une"],h:"El hemo de la catalasa no se suelta.",e:"El grupo prostético se une permanentemente para formar la holoenzima, ej. hemo en citocromos, catalasas y peroxidasas."},
-{t:"enz",q:"La holoenzima es…",o:["La enzima completa y activa: apoenzima + cofactor(es)","La forma inactiva sin cofactor","Solo la parte proteica","Un tipo de inhibidor"],h:"Holo = todo.",e:"Holoenzima = apoenzima (parte proteica) + iones/coenzima/grupo prostético; es catalíticamente activa."},
-{t:"enz",q:"En la superóxido dismutasa (SOD) de Cu y Zn, ¿qué hace el Cu²⁺?",o:["Participa en el ciclo redox para dismutar el superóxido en O₂ y H₂O₂","Guía al sustrato y orienta la geometría","Se une al ADN","Neutraliza los fosfatos del ATP"],h:"El cobre cambia de estado de oxidación.",e:"Cu²⁺ hace el ciclo redox; Zn²⁺ guía al sustrato y orienta la geometría del sitio activo."},
-{t:"enz",q:"En la hexocinasa dependiente de ATP, ¿qué papel tiene el Mg²⁺?",o:["Se coordina con los fosfatos del ATP y neutraliza sus cargas negativas","Forma un dedo de zinc","Es el grupo prostético hemo","Reduce los disulfuros"],h:"Los fosfatos tienen cargas negativas que estorban.",e:"El Mg²⁺ se coordina con los fosfatos del ATP y Asp del sitio activo, permitiendo que se acerque el –OH de la glucosa."},
-{t:"enz",q:"En el motivo dedo de zinc (TFIIIA), el Zn²⁺ se coordina con…",o:["Cys₂His₂ en forma tetraédrica","Asp y Glu","El grupo hemo","Cuatro moléculas de agua"],h:"Dos cisteínas y dos histidinas.",e:"Zn²⁺ se coordina tetraédricamente con 2 Cys y 2 His; el motivo se une al ADN."},
-{t:"enz",q:"En el número EC 2.7.1.1, ¿qué indica el primer número (2)?",o:["La clase: transferasa","La subclase: fosfotransferasa","El aceptor: grupo OH","El sustrato: D-glucosa"],h:"Va de lo general a lo particular.",e:"EC 2 = transferasa; 7 = fosfotransferasa; 1 = aceptor OH; 1 = D-glucosa como aceptor."},
-{t:"enz",q:"¿En cuántas clases principales divide a las enzimas el sistema de clasificación que vieron en clase?",o:["6","4","10","3"],h:"Oxidorreductasas, transferasas, hidrolasas, liasas, isomerasas y…",e:"Son 6 clases (oxidorreductasas, transferasas, hidrolasas, liasas, isomerasas y ligasas), cada una con subclases."},
-{t:"enz",q:"Según la nomenclatura común, ¿qué hace la celulasa?",o:["Degrada celulosa","Sintetiza celulosa","Fosforila celulosa","Oxida glucosa"],h:"Sustrato + “-asa”.",e:"Nombre común = sustrato + reacción + terminación -asa: la celulasa degrada celulosa."},
-{t:"enz",q:"El sitio activo de una enzima…",o:["Es una hendidura 3D formada por aminoácidos de diferentes partes de la secuencia","Ocupa la mayor parte del volumen de la enzima","Está formado por aminoácidos consecutivos","Siempre está lleno de agua"],h:"Es pequeño y tridimensional.",e:"Es una hendidura 3D con aa de distintas partes de la cadena; ocupa una pequeña parte del volumen y suele excluir el agua."},
-{t:"enz",q:"¿Qué tipo de uniones mantienen al sustrato en el sitio activo?",o:["Múltiples uniones débiles no covalentes (iónicas, hidrofóbicas, van der Waals, puentes de H)","Enlaces covalentes permanentes","Puentes disulfuro","Enlaces peptídicos"],h:"Deben ser reversibles para que el producto se libere.",e:"Sustrato y enzima se unen por múltiples uniones débiles y reversibles."},
-{t:"enz",q:"El modelo de ajuste inducido propone que…",o:["La enzima es flexible y su sitio activo cambia de forma al unirse el sustrato","El sitio activo es rígido como una cerradura","El sustrato se une de forma covalente","La enzima no tiene sitio activo"],h:"Opuesto al modelo de llave y cerradura de Emil Fischer.",e:"Ajuste inducido: enzimas flexibles cuyo sitio activo se modifica al unir el sustrato."},
-{t:"enz",q:"La aldolasa A y la aldolasa B son marcadores de daño…",o:["Muscular (A) y hepático (B)","Hepático (A) y muscular (B)","Renal y cardiaco","Pancreático y pulmonar"],h:"La A va con el músculo que se mueve; la B con el órgano que procesa casi todo.",e:"Aldolasa A: daño muscular. Aldolasa B: daño hepático. Participa en la glucólisis (fructosa difosfato aldolasa)."},
-{t:"enz",q:"Verdadero o falso: “Una enzima se consume durante la reacción y modifica el equilibrio.”",o:["Falso","Verdadero"],h:"Los catalizadores se recuperan al final.",e:"Falso: la enzima no se consume y no cambia el equilibrio; solo acelera llegar a él."},
-{t:"enz",q:"Verdadero o falso: “Todos los cofactores enzimáticos son moléculas orgánicas derivadas de vitaminas.”",o:["Falso","Verdadero"],h:"Piensa en el Mg²⁺ o el Zn²⁺.",e:"Falso: los iones metálicos también son cofactores y no son orgánicos."},
-{t:"enz",q:"Verdadero o falso: “El sitio activo es la región 3D donde se une el sustrato y ocurre la catálisis, formada por aminoácidos de diferentes partes de la cadena.”",o:["Verdadero","Falso"],h:"Recuerda la definición de la diapositiva del sitio activo.",e:"Verdadero: es exactamente la definición de sitio activo."},
+{t:"enz",s:"metabolismo",q:"El anabolismo se caracteriza por…",o:["Biosíntesis de macromoléculas: requiere monómeros y energía","Ruptura de macromoléculas: libera energía","Producir monómeros","No requerir enzimas"],h:"Ana- = construir.",e:"Anabolismo: biosíntesis, requiere monómeros y energía. Catabolismo: ruptura, produce monómeros y libera energía."},
+{t:"enz",s:"enzimas",q:"¿Cómo aceleran las enzimas una reacción?",o:["Disminuyen la energía de activación sin afectar el equilibrio","Aumentan la energía de activación","Cambian el equilibrio de la reacción","Se consumen en la reacción"],h:"Bajan la “barrera” de energía.",e:"Las enzimas reducen la energía de activación (aceleran 10⁸–10²⁰ veces) y no modifican el equilibrio."},
+{t:"enz",s:"cofactores",q:"Un cofactor enzimático es…",o:["Un componente no proteico requerido para la actividad enzimática","La parte proteica de una holoenzima","Un inhibidor competitivo","El producto de la reacción"],h:"Se clasifica en iones metálicos, coenzimas y grupos prostéticos.",e:"Cofactor: componente no proteico necesario para la actividad; incluye iones metálicos, coenzimas y grupos prostéticos."},
+{t:"enz",s:"coenzimas",q:"Las coenzimas…",o:["Se unen de forma débil y reversible y la mayoría derivan de vitaminas","Se unen covalentemente y de forma permanente","Siempre son iones metálicos","Son la parte proteica de la enzima"],h:"Entran y salen del sitio activo transportando grupos.",e:"Coenzimas: transportadores transitorios de grupos funcionales, unión no covalente; muchas derivan de vitaminas (NAD⁺, NADP⁺, CoA)."},
+{t:"enz",s:"coenzimas",q:"¿Cuál es un ejemplo de coenzima?",o:["NAD⁺","Zn²⁺","Grupo hemo","Apoenzima"],h:"Viene de la niacina (vitamina B3).",e:"NAD⁺, NADP⁺ y la coenzima A son coenzimas; el Zn²⁺ es un ion metálico y el hemo un grupo prostético."},
+{t:"enz",s:"prostetico",q:"Un grupo prostético se une a la apoenzima…",o:["De forma permanente (covalente o con muy alta afinidad)","De forma laxa y reversible","Solo cuando hay inhibidor","Nunca se une"],h:"El hemo de la catalasa no se suelta.",e:"El grupo prostético se une permanentemente para formar la holoenzima, ej. hemo en citocromos, catalasas y peroxidasas."},
+{t:"enz",s:"prostetico",q:"La holoenzima es…",o:["La enzima completa y activa: apoenzima + cofactor(es)","La forma inactiva sin cofactor","Solo la parte proteica","Un tipo de inhibidor"],h:"Holo = todo.",e:"Holoenzima = apoenzima (parte proteica) + iones/coenzima/grupo prostético; es catalíticamente activa."},
+{t:"enz",s:"metales",q:"En la superóxido dismutasa (SOD) de Cu y Zn, ¿qué hace el Cu²⁺?",o:["Participa en el ciclo redox para dismutar el superóxido en O₂ y H₂O₂","Guía al sustrato y orienta la geometría","Se une al ADN","Neutraliza los fosfatos del ATP"],h:"El cobre cambia de estado de oxidación.",e:"Cu²⁺ hace el ciclo redox; Zn²⁺ guía al sustrato y orienta la geometría del sitio activo."},
+{t:"enz",s:"metales",q:"En la hexocinasa dependiente de ATP, ¿qué papel tiene el Mg²⁺?",o:["Se coordina con los fosfatos del ATP y neutraliza sus cargas negativas","Forma un dedo de zinc","Es el grupo prostético hemo","Reduce los disulfuros"],h:"Los fosfatos tienen cargas negativas que estorban.",e:"El Mg²⁺ se coordina con los fosfatos del ATP y Asp del sitio activo, permitiendo que se acerque el –OH de la glucosa."},
+{t:"enz",s:"metales",q:"En el motivo dedo de zinc (TFIIIA), el Zn²⁺ se coordina con…",o:["Cys₂His₂ en forma tetraédrica","Asp y Glu","El grupo hemo","Cuatro moléculas de agua"],h:"Dos cisteínas y dos histidinas.",e:"Zn²⁺ se coordina tetraédricamente con 2 Cys y 2 His; el motivo se une al ADN."},
+{t:"enz",s:"nomenclatura",q:"En el número EC 2.7.1.1, ¿qué indica el primer número (2)?",o:["La clase: transferasa","La subclase: fosfotransferasa","El aceptor: grupo OH","El sustrato: D-glucosa"],h:"Va de lo general a lo particular.",e:"EC 2 = transferasa; 7 = fosfotransferasa; 1 = aceptor OH; 1 = D-glucosa como aceptor."},
+{t:"enz",s:"nomenclatura",q:"¿En cuántas clases principales divide a las enzimas el sistema de clasificación que vieron en clase?",o:["6","4","10","3"],h:"Oxidorreductasas, transferasas, hidrolasas, liasas, isomerasas y…",e:"Son 6 clases (oxidorreductasas, transferasas, hidrolasas, liasas, isomerasas y ligasas), cada una con subclases."},
+{t:"enz",s:"nomenclatura",q:"Según la nomenclatura común, ¿qué hace la celulasa?",o:["Degrada celulosa","Sintetiza celulosa","Fosforila celulosa","Oxida glucosa"],h:"Sustrato + “-asa”.",e:"Nombre común = sustrato + reacción + terminación -asa: la celulasa degrada celulosa."},
+{t:"enz",s:"sitio",q:"El sitio activo de una enzima…",o:["Es una hendidura 3D formada por aminoácidos de diferentes partes de la secuencia","Ocupa la mayor parte del volumen de la enzima","Está formado por aminoácidos consecutivos","Siempre está lleno de agua"],h:"Es pequeño y tridimensional.",e:"Es una hendidura 3D con aa de distintas partes de la cadena; ocupa una pequeña parte del volumen y suele excluir el agua."},
+{t:"enz",s:"sitio",q:"¿Qué tipo de uniones mantienen al sustrato en el sitio activo?",o:["Múltiples uniones débiles no covalentes (iónicas, hidrofóbicas, van der Waals, puentes de H)","Enlaces covalentes permanentes","Puentes disulfuro","Enlaces peptídicos"],h:"Deben ser reversibles para que el producto se libere.",e:"Sustrato y enzima se unen por múltiples uniones débiles y reversibles."},
+{t:"enz",s:"modelos",q:"El modelo de ajuste inducido propone que…",o:["La enzima es flexible y su sitio activo cambia de forma al unirse el sustrato","El sitio activo es rígido como una cerradura","El sustrato se une de forma covalente","La enzima no tiene sitio activo"],h:"Opuesto al modelo de llave y cerradura de Emil Fischer.",e:"Ajuste inducido: enzimas flexibles cuyo sitio activo se modifica al unir el sustrato."},
+{t:"enz",s:"enzimas",q:"La aldolasa A y la aldolasa B son marcadores de daño…",o:["Muscular (A) y hepático (B)","Hepático (A) y muscular (B)","Renal y cardiaco","Pancreático y pulmonar"],h:"La A va con el músculo que se mueve; la B con el órgano que procesa casi todo.",e:"Aldolasa A: daño muscular. Aldolasa B: daño hepático. Participa en la glucólisis (fructosa difosfato aldolasa)."},
+{t:"enz",s:"enzimas",q:"Verdadero o falso: “Una enzima se consume durante la reacción y modifica el equilibrio.”",o:["Falso","Verdadero"],h:"Los catalizadores se recuperan al final.",e:"Falso: la enzima no se consume y no cambia el equilibrio; solo acelera llegar a él."},
+{t:"enz",s:"cofactores",q:"Verdadero o falso: “Todos los cofactores enzimáticos son moléculas orgánicas derivadas de vitaminas.”",o:["Falso","Verdadero"],h:"Piensa en el Mg²⁺ o el Zn²⁺.",e:"Falso: los iones metálicos también son cofactores y no son orgánicos."},
+{t:"enz",s:"sitio",q:"Verdadero o falso: “El sitio activo es la región 3D donde se une el sustrato y ocurre la catálisis, formada por aminoácidos de diferentes partes de la cadena.”",o:["Verdadero","Falso"],h:"Recuerda la definición de la diapositiva del sitio activo.",e:"Verdadero: es exactamente la definición de sitio activo."},
 /* --- Cinética e inhibición --- */
-{t:"inh",q:"La gráfica de Lineweaver-Burk representa…",o:["1/V₀ contra 1/[S]","V₀ contra [S]","log V₀ contra [S]","Km contra Vmax"],h:"Es la gráfica “doblemente recíproca”.",e:"Lineweaver-Burk grafica 1/V₀ vs 1/[S] y produce una línea recta."},
-{t:"inh",q:"En la gráfica de Lineweaver-Burk, la pendiente es igual a…",o:["Km/Vmax","Vmax/Km","1/Vmax","−1/Km"],h:"y = mx + b, con x = 1/[S].",e:"Pendiente = Km/Vmax; la ordenada al origen es 1/Vmax y el corte en el eje x es −1/Km."},
-{t:"inh",q:"¿Dónde corta la recta de Lineweaver-Burk al eje 1/V₀?",o:["En 1/Vmax","En Km","En −1/Km","En Vmax/2"],h:"Es la ordenada al origen (b).",e:"La intersección con el eje 1/V₀ es 1/Vmax."},
-{t:"inh",q:"¿Cuál es la principal ventaja de la gráfica de Lineweaver-Burk?",o:["Determinar con más precisión la Vmax y los mecanismos de inhibición","Medir el pI","Separar proteínas","Ver la forma sigmoidea de las enzimas alostéricas"],h:"En la gráfica V₀ vs [S] la Vmax solo se aproxima.",e:"Permite determinar con precisión Vmax y Km e identificar el tipo de inhibición."},
-{t:"inh",q:"Un inhibidor competitivo…",o:["Se parece al sustrato, se une al sitio activo y no cambia la Vmax","Se une solo al complejo ES","Disminuye la Vmax y no se supera con más sustrato","Se une covalentemente"],h:"Se supera aumentando [S].",e:"El competitivo compite por el sitio activo: aumenta la Km aparente, la Vmax no cambia y se supera con exceso de S."},
-{t:"inh",q:"¿Cuál de estos es un inhibidor competitivo?",o:["Metotrexato (de la dihidrofolato reductasa)","Penicilina","Nevirapina","Epristerida"],h:"Es un análogo estructural del dihidrofolato.",e:"Metotrexato, malonato (succinato deshidrogenasa) y captopril (ECA) son inhibidores competitivos."},
-{t:"inh",q:"El malonato inhibe competitivamente a…",o:["La succinato deshidrogenasa (ciclo de Krebs)","La ciclooxigenasa","La transcriptasa reversa","La transpeptidasa"],h:"Se parece al succinato.",e:"El malonato es análogo del succinato e inhibe a la succinato deshidrogenasa."},
-{t:"inh",q:"El captopril, usado como antihipertensivo, inhibe a…",o:["La enzima convertidora de angiotensina (ECA)","La 5-alfa-reductasa","La ornitina descarboxilasa","La hexocinasa"],h:"Tiene que ver con la angiotensina.",e:"El captopril es inhibidor competitivo de la ECA."},
-{t:"inh",q:"En la inhibición acompetitiva…",o:["El inhibidor se une solo al complejo enzima-sustrato","El inhibidor se une al sitio activo libre","Se supera añadiendo más sustrato","El inhibidor es covalente"],h:"Depende del sustrato: sin ES no hay sitio para el I.",e:"Acompetitiva: el I se une solo al complejo ES (forma ESI inactivo); no se supera con más S."},
-{t:"inh",q:"La epristerida, usada en el crecimiento benigno de próstata, es un inhibidor…",o:["Acompetitivo de la 5-alfa-reductasa","Competitivo de la ECA","Irreversible de la ciclooxigenasa","No competitivo de la transcriptasa reversa"],h:"La 5-α-reductasa convierte testosterona en dihidrotestosterona.",e:"La epristerida es inhibidor acompetitivo de la esteroide 5-α-reductasa."},
-{t:"inh",q:"En la inhibición no competitiva (mixta)…",o:["El I se une a la E libre o al complejo ES en un sitio distinto del activo","El I compite con el S por el sitio activo","El I solo se une al complejo ES","Se supera aumentando [S]"],h:"I y S tienen sitios diferentes.",e:"No competitiva: I y S se unen en sitios distintos; el I disminuye la enzima funcional y no se supera con más S."},
-{t:"inh",q:"Nevirapina y efavirenz son inhibidores…",o:["No competitivos de la transcriptasa reversa del VIH","Competitivos de la ECA","Irreversibles de la transpeptidasa","Suicidas de la ODC"],h:"Son antirretrovirales.",e:"Nevirapina y efavirenz son inhibidores no competitivos de la transcriptasa reversa del VIH."},
-{t:"inh",q:"Un inhibidor competitivo, ¿qué efecto tiene sobre V₀ y Vmax?",o:["Disminuye V₀ pero no afecta la Vmax","Disminuye V₀ y Vmax","Aumenta la Vmax","No cambia nada"],h:"Con suficiente sustrato se recupera la velocidad máxima.",e:"Competitivo: ↓V₀, Vmax igual. No competitivo: ↓V₀ y ↓Vmax."},
-{t:"inh",q:"Las enzimas alostéricas cooperativas muestran una gráfica V₀ vs [S]…",o:["Sigmoidea","Hiperbólica","Lineal","Constante"],h:"No obedecen la cinética de Michaelis-Menten.",e:"Tienen varias subunidades y la unión de S facilita la unión a otros sitios: curva sigmoidea (ej. fosfofructocinasa)."},
-{t:"inh",q:"¿Cuál es un ejemplo de enzima alostérica cooperativa?",o:["Fosfofructocinasa","Lisozima","Quimotripsina","Ribonucleasa"],h:"Es clave en la glucólisis.",e:"La fosfofructocinasa es el ejemplo clásico de enzima alostérica cooperativa."},
-{t:"inh",q:"La penicilina es un inhibidor irreversible de…",o:["La transpeptidasa, impidiendo la síntesis de pared celular bacteriana","La ciclooxigenasa","La ECA","La dihidrofolato reductasa"],h:"Actúa sobre la pared de las bacterias.",e:"La penicilina modifica covalentemente la transpeptidasa; la aspirina hace lo mismo con la ciclooxigenasa."},
-{t:"inh",q:"El di-isopropilfluorofosfato (DIFP) inhibe a la quimotripsina modificando…",o:["La Ser195 del sitio activo","La Cys del sitio activo","El grupo hemo","El Zn²⁺"],h:"Es una serina proteasa.",e:"El DIFP modifica covalentemente la Ser195, clave en el sitio activo de la quimotripsina."},
-{t:"inh",q:"Los inactivadores suicidas…",o:["Son poco reactivos hasta unirse al sitio activo, donde se convierten en un compuesto que se une irreversiblemente","Se unen al complejo ES de forma reversible","Compiten con el sustrato de forma reversible","Aumentan la actividad enzimática"],h:"También se llaman “inactivadores basados en mecanismos”.",e:"Inician la reacción normal pero se vuelven reactivos y se unen irreversiblemente; son fármacos de precisión con pocos efectos secundarios."},
-{t:"inh",q:"La difluorometilornitina (DFMO) se usa contra la enfermedad del sueño porque inhibe a…",o:["La ornitina descarboxilasa (ODC) de Trypanosoma brucei","La transpeptidasa","La transcriptasa reversa","La ciclooxigenasa"],h:"Es el primer paso de la síntesis de poliaminas.",e:"DFMO es un inactivador suicida de la ODC; la Cys del sitio activo forma un complejo covalente irreversible con el I-PLP."},
-{t:"inh",q:"¿Qué coenzima participa en el mecanismo de la ornitina descarboxilasa inhibida por DFMO?",o:["Piridoxal fosfato (PLP)","NAD⁺","Coenzima A","FAD"],h:"Deriva de la vitamina B6.",e:"La ODC usa PLP; los 2 F del DFMO desvían los electrones y se forma un complejo covalente irreversible."}
+{t:"inh",s:"lb",q:"La gráfica de Lineweaver-Burk representa…",o:["1/V₀ contra 1/[S]","V₀ contra [S]","log V₀ contra [S]","Km contra Vmax"],h:"Es la gráfica “doblemente recíproca”.",e:"Lineweaver-Burk grafica 1/V₀ vs 1/[S] y produce una línea recta."},
+{t:"inh",s:"lb",q:"En la gráfica de Lineweaver-Burk, la pendiente es igual a…",o:["Km/Vmax","Vmax/Km","1/Vmax","−1/Km"],h:"y = mx + b, con x = 1/[S].",e:"Pendiente = Km/Vmax; la ordenada al origen es 1/Vmax y el corte en el eje x es −1/Km."},
+{t:"inh",s:"lb",q:"¿Dónde corta la recta de Lineweaver-Burk al eje 1/V₀?",o:["En 1/Vmax","En Km","En −1/Km","En Vmax/2"],h:"Es la ordenada al origen (b).",e:"La intersección con el eje 1/V₀ es 1/Vmax."},
+{t:"inh",s:"lb",q:"¿Cuál es la principal ventaja de la gráfica de Lineweaver-Burk?",o:["Determinar con más precisión la Vmax y los mecanismos de inhibición","Medir el pI","Separar proteínas","Ver la forma sigmoidea de las enzimas alostéricas"],h:"En la gráfica V₀ vs [S] la Vmax solo se aproxima.",e:"Permite determinar con precisión Vmax y Km e identificar el tipo de inhibición."},
+{t:"inh",s:"competitiva",q:"Un inhibidor competitivo…",o:["Se parece al sustrato, se une al sitio activo y no cambia la Vmax","Se une solo al complejo ES","Disminuye la Vmax y no se supera con más sustrato","Se une covalentemente"],h:"Se supera aumentando [S].",e:"El competitivo compite por el sitio activo: aumenta la Km aparente, la Vmax no cambia y se supera con exceso de S."},
+{t:"inh",s:"competitiva",q:"¿Cuál de estos es un inhibidor competitivo?",o:["Metotrexato (de la dihidrofolato reductasa)","Penicilina","Nevirapina","Epristerida"],h:"Es un análogo estructural del dihidrofolato.",e:"Metotrexato, malonato (succinato deshidrogenasa) y captopril (ECA) son inhibidores competitivos."},
+{t:"inh",s:"competitiva",q:"El malonato inhibe competitivamente a…",o:["La succinato deshidrogenasa (ciclo de Krebs)","La ciclooxigenasa","La transcriptasa reversa","La transpeptidasa"],h:"Se parece al succinato.",e:"El malonato es análogo del succinato e inhibe a la succinato deshidrogenasa."},
+{t:"inh",s:"competitiva",q:"El captopril, usado como antihipertensivo, inhibe a…",o:["La enzima convertidora de angiotensina (ECA)","La 5-alfa-reductasa","La ornitina descarboxilasa","La hexocinasa"],h:"Tiene que ver con la angiotensina.",e:"El captopril es inhibidor competitivo de la ECA."},
+{t:"inh",s:"acompetitiva",q:"En la inhibición acompetitiva…",o:["El inhibidor se une solo al complejo enzima-sustrato","El inhibidor se une al sitio activo libre","Se supera añadiendo más sustrato","El inhibidor es covalente"],h:"Depende del sustrato: sin ES no hay sitio para el I.",e:"Acompetitiva: el I se une solo al complejo ES (forma ESI inactivo); no se supera con más S."},
+{t:"inh",s:"acompetitiva",q:"La epristerida, usada en el crecimiento benigno de próstata, es un inhibidor…",o:["Acompetitivo de la 5-alfa-reductasa","Competitivo de la ECA","Irreversible de la ciclooxigenasa","No competitivo de la transcriptasa reversa"],h:"La 5-α-reductasa convierte testosterona en dihidrotestosterona.",e:"La epristerida es inhibidor acompetitivo de la esteroide 5-α-reductasa."},
+{t:"inh",s:"nocompetitiva",q:"En la inhibición no competitiva (mixta)…",o:["El I se une a la E libre o al complejo ES en un sitio distinto del activo","El I compite con el S por el sitio activo","El I solo se une al complejo ES","Se supera aumentando [S]"],h:"I y S tienen sitios diferentes.",e:"No competitiva: I y S se unen en sitios distintos; el I disminuye la enzima funcional y no se supera con más S."},
+{t:"inh",s:"nocompetitiva",q:"Nevirapina y efavirenz son inhibidores…",o:["No competitivos de la transcriptasa reversa del VIH","Competitivos de la ECA","Irreversibles de la transpeptidasa","Suicidas de la ODC"],h:"Son antirretrovirales.",e:"Nevirapina y efavirenz son inhibidores no competitivos de la transcriptasa reversa del VIH."},
+{t:"inh",s:"competitiva",q:"Un inhibidor competitivo, ¿qué efecto tiene sobre V₀ y Vmax?",o:["Disminuye V₀ pero no afecta la Vmax","Disminuye V₀ y Vmax","Aumenta la Vmax","No cambia nada"],h:"Con suficiente sustrato se recupera la velocidad máxima.",e:"Competitivo: ↓V₀, Vmax igual. No competitivo: ↓V₀ y ↓Vmax."},
+{t:"inh",s:"alostericas",q:"Las enzimas alostéricas cooperativas muestran una gráfica V₀ vs [S]…",o:["Sigmoidea","Hiperbólica","Lineal","Constante"],h:"No obedecen la cinética de Michaelis-Menten.",e:"Tienen varias subunidades y la unión de S facilita la unión a otros sitios: curva sigmoidea (ej. fosfofructocinasa)."},
+{t:"inh",s:"alostericas",q:"¿Cuál es un ejemplo de enzima alostérica cooperativa?",o:["Fosfofructocinasa","Lisozima","Quimotripsina","Ribonucleasa"],h:"Es clave en la glucólisis.",e:"La fosfofructocinasa es el ejemplo clásico de enzima alostérica cooperativa."},
+{t:"inh",s:"irreversible",q:"La penicilina es un inhibidor irreversible de…",o:["La transpeptidasa, impidiendo la síntesis de pared celular bacteriana","La ciclooxigenasa","La ECA","La dihidrofolato reductasa"],h:"Actúa sobre la pared de las bacterias.",e:"La penicilina modifica covalentemente la transpeptidasa; la aspirina hace lo mismo con la ciclooxigenasa."},
+{t:"inh",s:"irreversible",q:"El di-isopropilfluorofosfato (DIFP) inhibe a la quimotripsina modificando…",o:["La Ser195 del sitio activo","La Cys del sitio activo","El grupo hemo","El Zn²⁺"],h:"Es una serina proteasa.",e:"El DIFP modifica covalentemente la Ser195, clave en el sitio activo de la quimotripsina."},
+{t:"inh",s:"suicidas",q:"Los inactivadores suicidas…",o:["Son poco reactivos hasta unirse al sitio activo, donde se convierten en un compuesto que se une irreversiblemente","Se unen al complejo ES de forma reversible","Compiten con el sustrato de forma reversible","Aumentan la actividad enzimática"],h:"También se llaman “inactivadores basados en mecanismos”.",e:"Inician la reacción normal pero se vuelven reactivos y se unen irreversiblemente; son fármacos de precisión con pocos efectos secundarios."},
+{t:"inh",s:"suicidas",q:"La difluorometilornitina (DFMO) se usa contra la enfermedad del sueño porque inhibe a…",o:["La ornitina descarboxilasa (ODC) de Trypanosoma brucei","La transpeptidasa","La transcriptasa reversa","La ciclooxigenasa"],h:"Es el primer paso de la síntesis de poliaminas.",e:"DFMO es un inactivador suicida de la ODC; la Cys del sitio activo forma un complejo covalente irreversible con el I-PLP."},
+{t:"inh",s:"suicidas",q:"¿Qué coenzima participa en el mecanismo de la ornitina descarboxilasa inhibida por DFMO?",o:["Piridoxal fosfato (PLP)","NAD⁺","Coenzima A","FAD"],h:"Deriva de la vitamina B6.",e:"La ODC usa PLP; los 2 F del DFMO desvían los electrones y se forma un complejo covalente irreversible."}
 ];
 
 /* Preguntas abiertas: k = grupos de palabras clave (basta un sinónimo de cada grupo). */
 const OPEN = [
-{t:"pur",q:"Explica el fundamento de la electroforesis en gel de poliacrilamida (SDS-PAGE).",h:"Habla del SDS, la carga, el campo eléctrico y el gel como tamiz.",a:"Las proteínas se desnaturalizan con SDS (y calor), que les da carga negativa proporcional a su masa. Al aplicar un campo eléctrico migran del electrodo negativo al positivo a través de un gel poroso (tamiz molecular) de poliacrilamida: las pequeñas avanzan más rápido y las grandes más lento, así se separan por tamaño.",k:[["sds"],["carga","negativ"],["campo electrico","electric","anodo","positivo"],["tamiz","poro","malla"],["tamano","masa","pequen"]]},
-{t:"pur",q:"¿Cuántas bandas esperas al separar una proteína trimérica con subunidades de 20, 60 y 110 kDa en condiciones desnaturalizantes y reductoras? ¿Por qué?",h:"El SDS rompe uniones no covalentes y el reductor rompe disulfuros.",a:"3 bandas (20, 60 y 110 kDa), porque el SDS desnaturaliza y el agente reductor (BME o DTT) rompe los puentes disulfuro, de modo que cada subunidad migra por separado según su tamaño.",k:[["3","tres"],["sds","desnaturaliz"],["reduct","disulfuro","bme","mercaptoetanol","dtt"],["subunidad","separad"]]},
-{t:"pur",q:"¿Cuál es la diferencia entre HPLC de fase normal y de fase reversa?",h:"Fíjate en cuál fase es polar en cada caso.",a:"Fase normal: fase estacionaria polar y móvil no polar, retiene moléculas polares. Fase reversa: fase estacionaria no polar y móvil polar, retiene moléculas no polares.",k:[["normal"],["revers"],["polar"],["no polar","apolar"],["estacionaria"],["movil"]]},
-{t:"pur",q:"¿Qué es el punto isoeléctrico y cómo se separan las proteínas en el isoelectroenfoque?",h:"Gradiente de pH + voltaje.",a:"El pI es el pH en el que la carga neta de la proteína es cero. En un gradiente de pH formado por polianfolitos, al aplicar voltaje cada proteína migra hasta la posición donde pH = pI y ahí se detiene (con carga + donde pH < pI y − donde pH > pI).",k:[["carga neta","carga"],["cero"],["gradiente"],["ph"],["polianfolito","voltaje","migra"]]},
-{t:"pur",q:"Describe la electroforesis bidimensional y para qué sirve.",h:"Dos técnicas combinadas, una por dimensión.",a:"Combina el enfoque isoeléctrico (1ª dimensión, separa por pI en horizontal) con SDS-PAGE (2ª dimensión, separa por tamaño en vertical), dando un patrón de puntos de muy alta resolución. Sirve para analizar el proteoma (ej. >1,000 proteínas de E. coli), comparar estados fisiológicos y los puntos se identifican por espectrometría de masas.",k:[["isoelectric","isoelectroenfoque","pi"],["sds"],["tamano","masa"],["punto","patron"],["proteoma","espectrometria","resolucion"]]},
-{t:"pur",q:"¿De qué depende la velocidad de sedimentación en la ultracentrifugación?",h:"Son cuatro factores de la ecuación.",a:"De la masa (más masa, sedimenta más rápido), la forma (las alargadas tienen más fricción y sedimentan más lento), la densidad de la partícula (más densa, más rápido) y la densidad del medio (se hunde si es más densa que el medio, flota si es menos densa).",k:[["masa"],["forma","friccion"],["densidad"],["medio"]]},
-{t:"pur",q:"¿Qué parámetros se miden para evaluar un esquema de purificación?",h:"Son cinco: dos totales, uno que es división, un porcentaje y uno de pureza.",a:"Proteína total, actividad total, actividad específica (actividad total / proteína total), rendimiento (% de actividad respecto al extracto inicial) y nivel de purificación (actividad específica de la fracción / actividad específica inicial). Además se corre SDS-PAGE en cada paso.",k:[["proteina total"],["actividad total"],["actividad especifica"],["rendimiento"],["purificacion","pureza"]]},
-{t:"det",q:"Explica en qué consiste el ELISA.",h:"Antígeno, anticuerpo primario, anticuerpo secundario con enzima, color.",a:"Es un ensayo inmunoadsorbente ligado a enzimas: un antígeno inmovilizado en pozos de microplaca es reconocido por un anticuerpo primario, y este por un anticuerpo secundario unido a una enzima (HRP o ALP) que genera un producto de color. El color se cuantifica espectrofotométricamente y es una medida de la concentración de antígeno. Se usa en diagnóstico.",k:[["antigeno"],["anticuerpo"],["enzima","hrp","alp","peroxidasa","fosfatasa"],["color","espectrofotometr"],["placa","pozo","diagnostico"]]},
-{t:"det",q:"Menciona los tipos de ELISA y cómo se relaciona la señal con la cantidad de antígeno.",h:"Hay tres de un lado y uno del otro.",a:"Directo, indirecto y sándwich: la señal es directamente proporcional a la cantidad de antígeno/anticuerpo. Competitivo: la señal es inversamente proporcional, porque una molécula acoplada a enzima compite por la unión; es útil para cantidades bajas.",k:[["directo"],["indirecto"],["sandwich"],["competitivo"],["inversa"],["proporcional"]]},
-{t:"det",q:"Describe los pasos del Western blot capilar.",h:"SSC, membrana, pila de papeles, peso y tiempo.",a:"1) Incubar el gel de SDS-PAGE en SSC 10X 15 min para quitar el SDS no unido. 2) Hidratar la membrana de nitrocelulosa en SSC. 3) Armar en bandeja: esponja, 3 papeles filtro, gel, membrana, 3 papeles filtro. 4) Cubrir bordes con Parafilm y poner papel absorbente y un peso de 300-500 g. 5) Transferir por capilaridad 16 h.",k:[["ssc"],["nitrocelulosa","membrana"],["papel"],["parafilm","peso"],["capilaridad","16"]]},
-{t:"enz",q:"¿Cuál es la diferencia entre coenzima y grupo prostético?",h:"Piensa en qué tan fuerte y permanente es la unión.",a:"La coenzima es una molécula orgánica pequeña (muchas derivan de vitaminas) que se une de forma débil y reversible y entra y sale del sitio activo transportando grupos (ej. NAD⁺, CoA). El grupo prostético se une de forma permanente (covalente o con muy alta afinidad) a la apoenzima (ej. hemo).",k:[["coenzima"],["reversible","debil","transitori"],["permanente","covalente"],["vitamina","nad","coa"],["hemo","apoenzima"]]},
-{t:"enz",q:"Define holoenzima y apoenzima.",h:"Una es el todo y la otra solo la parte proteica.",a:"Apoenzima: parte proteica de la enzima, inactiva por sí sola. Holoenzima: enzima completa (apoenzima unida a iones metálicos, coenzima y/o grupo prostético), catalíticamente activa.",k:[["proteic"],["complet"],["activ"],["cofactor","coenzima","prostetico","ion"]]},
-{t:"enz",q:"Explica el número EC 2.7.1.1 de la hexocinasa.",h:"Cada número es más específico que el anterior.",a:"2 = clase transferasa; 7 = subclase fosfotransferasa; 1 = fosfotransferasa con un grupo OH como aceptor; 1 = D-glucosa como aceptor del grupo fosforilo.",k:[["transferasa"],["fosfotransferasa"],["oh","hidroxilo"],["glucosa"]]},
-{t:"enz",q:"Compara el modelo de llave-cerradura con el de ajuste inducido.",h:"Uno es rígido y el otro flexible.",a:"Llave-cerradura (Emil Fischer): el sitio activo tiene una forma rígida complementaria al sustrato. Ajuste inducido: la enzima es flexible y la forma del sitio activo se modifica al unirse el sustrato.",k:[["fischer","rigid","complementari"],["flexible"],["sitio activo"],["modific","cambi"]]},
-{t:"inh",q:"¿Cuál es la utilidad de la gráfica de Lineweaver-Burk?",h:"Línea recta, pendiente, interceptos.",a:"Transforma la ecuación de Michaelis-Menten en una línea recta (1/V₀ vs 1/[S]) con pendiente Km/Vmax, intercepto 1/Vmax en el eje y y −1/Km en el eje x. Permite determinar con más precisión Vmax y Km e identificar el mecanismo de inhibición.",k:[["recta","lineal"],["1/v","reciproc","inverso"],["vmax"],["km"],["inhibicion","mecanismo"]]},
-{t:"inh",q:"¿En qué consiste la inhibición enzimática reversible e irreversible?",h:"La diferencia está en qué tan rápido se separa el complejo E-I.",a:"Reversible: el complejo enzima-inhibidor se disocia rápido (inhibición temporal). Irreversible: el inhibidor se disocia extremadamente lento o queda unido de forma permanente (covalente), eliminando un grupo catalítico; ej. penicilina y aspirina.",k:[["reversible"],["disoci","temporal"],["irreversible"],["permanente","covalente"],["penicilina","aspirina","ejemplo"]]},
-{t:"inh",q:"¿Qué tipos de inhibición reversible revisaron y cómo se diferencian?",h:"Son tres: ¿dónde se une el inhibidor en cada uno?",a:"Competitiva: el I se parece al S y se une al sitio activo; se supera con más S, Vmax no cambia. Acompetitiva: el I se une solo al complejo ES; no se supera con más S. No competitiva (mixta): el I se une a la E libre o al ES en otro sitio; disminuye Vmax y no se supera con más S.",k:[["competitiva"],["acompetitiva"],["no competitiva","mixta"],["sitio activo"],["complejo es","enzima-sustrato","es"]]},
-{t:"inh",q:"¿En qué consiste la inhibición competitiva? Da un ejemplo.",h:"El inhibidor y el sustrato se pelean por el mismo lugar.",a:"El inhibidor se parece al sustrato y se une al sitio activo, evitando la unión del S (E se une a S o a I, no a ambos). Se supera aumentando [S]; la Vmax no cambia y la Km aparente aumenta. Ejemplos: malonato, metotrexato, captopril.",k:[["parece","analogo","semejan"],["sitio activo"],["supera","aumentar","exceso"],["vmax"],["malonato","metotrexato","captopril"]]},
-{t:"inh",q:"¿Qué son los inactivadores suicidas y cuál es su aplicación?",h:"Recuerda el “caballo de Troya bioquímico”.",a:"Son compuestos poco reactivos hasta unirse al sitio activo; inician la reacción normal pero se convierten en un compuesto reactivo que se une irreversiblemente a la enzima. Se usan como fármacos de precisión con pocos efectos secundarios, ej. DFMO que inhibe la ornitina descarboxilasa de Trypanosoma brucei (enfermedad del sueño).",k:[["poco reactiv"],["sitio activo"],["irreversibl"],["farmaco","medicamento","precision"],["dfmo","ornitina","trypanosoma","sueno"]]}
+{t:"pur",s:"sdspage",q:"Explica el fundamento de la electroforesis en gel de poliacrilamida (SDS-PAGE).",h:"Habla del SDS, la carga, el campo eléctrico y el gel como tamiz.",a:"Las proteínas se desnaturalizan con SDS (y calor), que les da carga negativa proporcional a su masa. Al aplicar un campo eléctrico migran del electrodo negativo al positivo a través de un gel poroso (tamiz molecular) de poliacrilamida: las pequeñas avanzan más rápido y las grandes más lento, así se separan por tamaño.",k:[["sds"],["carga","negativ"],["campo electrico","electric","anodo","positivo"],["tamiz","poro","malla"],["tamano","masa","pequen"]]},
+{t:"pur",s:"condiciones",q:"¿Cuántas bandas esperas al separar una proteína trimérica con subunidades de 20, 60 y 110 kDa en condiciones desnaturalizantes y reductoras? ¿Por qué?",h:"El SDS rompe uniones no covalentes y el reductor rompe disulfuros.",a:"3 bandas (20, 60 y 110 kDa), porque el SDS desnaturaliza y el agente reductor (BME o DTT) rompe los puentes disulfuro, de modo que cada subunidad migra por separado según su tamaño.",k:[["3","tres"],["sds","desnaturaliz"],["reduct","disulfuro","bme","mercaptoetanol","dtt"],["subunidad","separad"]]},
+{t:"pur",s:"hplc",q:"¿Cuál es la diferencia entre HPLC de fase normal y de fase reversa?",h:"Fíjate en cuál fase es polar en cada caso.",a:"Fase normal: fase estacionaria polar y móvil no polar, retiene moléculas polares. Fase reversa: fase estacionaria no polar y móvil polar, retiene moléculas no polares.",k:[["normal"],["revers"],["polar"],["no polar","apolar"],["estacionaria"],["movil"]]},
+{t:"pur",s:"ief",q:"¿Qué es el punto isoeléctrico y cómo se separan las proteínas en el isoelectroenfoque?",h:"Gradiente de pH + voltaje.",a:"El pI es el pH en el que la carga neta de la proteína es cero. En un gradiente de pH formado por polianfolitos, al aplicar voltaje cada proteína migra hasta la posición donde pH = pI y ahí se detiene (con carga + donde pH < pI y − donde pH > pI).",k:[["carga neta","carga"],["cero"],["gradiente"],["ph"],["polianfolito","voltaje","migra"]]},
+{t:"pur",s:"dosd",q:"Describe la electroforesis bidimensional y para qué sirve.",h:"Dos técnicas combinadas, una por dimensión.",a:"Combina el enfoque isoeléctrico (1ª dimensión, separa por pI en horizontal) con SDS-PAGE (2ª dimensión, separa por tamaño en vertical), dando un patrón de puntos de muy alta resolución. Sirve para analizar el proteoma (ej. >1,000 proteínas de E. coli), comparar estados fisiológicos y los puntos se identifican por espectrometría de masas.",k:[["isoelectric","isoelectroenfoque","pi"],["sds"],["tamano","masa"],["punto","patron"],["proteoma","espectrometria","resolucion"]]},
+{t:"pur",s:"ultra",q:"¿De qué depende la velocidad de sedimentación en la ultracentrifugación?",h:"Son cuatro factores de la ecuación.",a:"De la masa (más masa, sedimenta más rápido), la forma (las alargadas tienen más fricción y sedimentan más lento), la densidad de la partícula (más densa, más rápido) y la densidad del medio (se hunde si es más densa que el medio, flota si es menos densa).",k:[["masa"],["forma","friccion"],["densidad"],["medio"]]},
+{t:"pur",s:"evaluacion",q:"¿Qué parámetros se miden para evaluar un esquema de purificación?",h:"Son cinco: dos totales, uno que es división, un porcentaje y uno de pureza.",a:"Proteína total, actividad total, actividad específica (actividad total / proteína total), rendimiento (% de actividad respecto al extracto inicial) y nivel de purificación (actividad específica de la fracción / actividad específica inicial). Además se corre SDS-PAGE en cada paso.",k:[["proteina total"],["actividad total"],["actividad especifica"],["rendimiento"],["purificacion","pureza"]]},
+{t:"det",s:"elisa",q:"Explica en qué consiste el ELISA.",h:"Antígeno, anticuerpo primario, anticuerpo secundario con enzima, color.",a:"Es un ensayo inmunoadsorbente ligado a enzimas: un antígeno inmovilizado en pozos de microplaca es reconocido por un anticuerpo primario, y este por un anticuerpo secundario unido a una enzima (HRP o ALP) que genera un producto de color. El color se cuantifica espectrofotométricamente y es una medida de la concentración de antígeno. Se usa en diagnóstico.",k:[["antigeno"],["anticuerpo"],["enzima","hrp","alp","peroxidasa","fosfatasa"],["color","espectrofotometr"],["placa","pozo","diagnostico"]]},
+{t:"det",s:"elisatipos",q:"Menciona los tipos de ELISA y cómo se relaciona la señal con la cantidad de antígeno.",h:"Hay tres de un lado y uno del otro.",a:"Directo, indirecto y sándwich: la señal es directamente proporcional a la cantidad de antígeno/anticuerpo. Competitivo: la señal es inversamente proporcional, porque una molécula acoplada a enzima compite por la unión; es útil para cantidades bajas.",k:[["directo"],["indirecto"],["sandwich"],["competitivo"],["inversa"],["proporcional"]]},
+{t:"det",s:"western",q:"Describe los pasos del Western blot capilar.",h:"SSC, membrana, pila de papeles, peso y tiempo.",a:"1) Incubar el gel de SDS-PAGE en SSC 10X 15 min para quitar el SDS no unido. 2) Hidratar la membrana de nitrocelulosa en SSC. 3) Armar en bandeja: esponja, 3 papeles filtro, gel, membrana, 3 papeles filtro. 4) Cubrir bordes con Parafilm y poner papel absorbente y un peso de 300-500 g. 5) Transferir por capilaridad 16 h.",k:[["ssc"],["nitrocelulosa","membrana"],["papel"],["parafilm","peso"],["capilaridad","16"]]},
+{t:"enz",s:"prostetico",q:"¿Cuál es la diferencia entre coenzima y grupo prostético?",h:"Piensa en qué tan fuerte y permanente es la unión.",a:"La coenzima es una molécula orgánica pequeña (muchas derivan de vitaminas) que se une de forma débil y reversible y entra y sale del sitio activo transportando grupos (ej. NAD⁺, CoA). El grupo prostético se une de forma permanente (covalente o con muy alta afinidad) a la apoenzima (ej. hemo).",k:[["coenzima"],["reversible","debil","transitori"],["permanente","covalente"],["vitamina","nad","coa"],["hemo","apoenzima"]]},
+{t:"enz",s:"prostetico",q:"Define holoenzima y apoenzima.",h:"Una es el todo y la otra solo la parte proteica.",a:"Apoenzima: parte proteica de la enzima, inactiva por sí sola. Holoenzima: enzima completa (apoenzima unida a iones metálicos, coenzima y/o grupo prostético), catalíticamente activa.",k:[["proteic"],["complet"],["activ"],["cofactor","coenzima","prostetico","ion"]]},
+{t:"enz",s:"nomenclatura",q:"Explica el número EC 2.7.1.1 de la hexocinasa.",h:"Cada número es más específico que el anterior.",a:"2 = clase transferasa; 7 = subclase fosfotransferasa; 1 = fosfotransferasa con un grupo OH como aceptor; 1 = D-glucosa como aceptor del grupo fosforilo.",k:[["transferasa"],["fosfotransferasa"],["oh","hidroxilo"],["glucosa"]]},
+{t:"enz",s:"modelos",q:"Compara el modelo de llave-cerradura con el de ajuste inducido.",h:"Uno es rígido y el otro flexible.",a:"Llave-cerradura (Emil Fischer): el sitio activo tiene una forma rígida complementaria al sustrato. Ajuste inducido: la enzima es flexible y la forma del sitio activo se modifica al unirse el sustrato.",k:[["fischer","rigid","complementari"],["flexible"],["sitio activo"],["modific","cambi"]]},
+{t:"inh",s:"lb",q:"¿Cuál es la utilidad de la gráfica de Lineweaver-Burk?",h:"Línea recta, pendiente, interceptos.",a:"Transforma la ecuación de Michaelis-Menten en una línea recta (1/V₀ vs 1/[S]) con pendiente Km/Vmax, intercepto 1/Vmax en el eje y y −1/Km en el eje x. Permite determinar con más precisión Vmax y Km e identificar el mecanismo de inhibición.",k:[["recta","lineal"],["1/v","reciproc","inverso"],["vmax"],["km"],["inhibicion","mecanismo"]]},
+{t:"inh",s:"inhibicion",q:"¿En qué consiste la inhibición enzimática reversible e irreversible?",h:"La diferencia está en qué tan rápido se separa el complejo E-I.",a:"Reversible: el complejo enzima-inhibidor se disocia rápido (inhibición temporal). Irreversible: el inhibidor se disocia extremadamente lento o queda unido de forma permanente (covalente), eliminando un grupo catalítico; ej. penicilina y aspirina.",k:[["reversible"],["disoci","temporal"],["irreversible"],["permanente","covalente"],["penicilina","aspirina","ejemplo"]]},
+{t:"inh",s:"inhibicion",q:"¿Qué tipos de inhibición reversible revisaron y cómo se diferencian?",h:"Son tres: ¿dónde se une el inhibidor en cada uno?",a:"Competitiva: el I se parece al S y se une al sitio activo; se supera con más S, Vmax no cambia. Acompetitiva: el I se une solo al complejo ES; no se supera con más S. No competitiva (mixta): el I se une a la E libre o al ES en otro sitio; disminuye Vmax y no se supera con más S.",k:[["competitiva"],["acompetitiva"],["no competitiva","mixta"],["sitio activo"],["complejo es","enzima-sustrato","es"]]},
+{t:"inh",s:"competitiva",q:"¿En qué consiste la inhibición competitiva? Da un ejemplo.",h:"El inhibidor y el sustrato se pelean por el mismo lugar.",a:"El inhibidor se parece al sustrato y se une al sitio activo, evitando la unión del S (E se une a S o a I, no a ambos). Se supera aumentando [S]; la Vmax no cambia y la Km aparente aumenta. Ejemplos: malonato, metotrexato, captopril.",k:[["parece","analogo","semejan"],["sitio activo"],["supera","aumentar","exceso"],["vmax"],["malonato","metotrexato","captopril"]]},
+{t:"inh",s:"suicidas",q:"¿Qué son los inactivadores suicidas y cuál es su aplicación?",h:"Recuerda el “caballo de Troya bioquímico”.",a:"Son compuestos poco reactivos hasta unirse al sitio activo; inician la reacción normal pero se convierten en un compuesto reactivo que se une irreversiblemente a la enzima. Se usan como fármacos de precisión con pocos efectos secundarios, ej. DFMO que inhibe la ornitina descarboxilasa de Trypanosoma brucei (enfermedad del sueño).",k:[["poco reactiv"],["sitio activo"],["irreversibl"],["farmaco","medicamento","precision"],["dfmo","ornitina","trypanosoma","sueno"]]}
 ];
+
+/* ---- Preguntas adicionales ---- */
+MCQ.push(
+/* Purificación */
+{t:"pur",s:"hplc",q:"En el perfil de elución de una HPLC, cada pico agudo representa…",o:["Una proteína","Un aminoácido libre","Una banda de SDS","Un cambio de pH"],h:"El detector va registrando lo que sale de la columna.",e:"Cada pico agudo del perfil de elución corresponde a una proteína que salió de la columna."},
+{t:"pur",s:"hplc",q:"¿En cuánto tiempo aproximado se obtienen los picos de proteínas en HPLC?",o:["~10 minutos","~10 horas","~10 segundos","~10 días"],h:"La HPLC es famosa por ser rápida.",e:"En unos 10 minutos ya se obtienen picos agudos: la HPLC es rápida y de alta resolución."},
+{t:"pur",s:"hplc",q:"¿Qué diámetro tiene la columna de HPLC?",o:["2-5 mm","2-5 cm","20-50 cm","2-5 µm"],h:"Es un tubo de diámetro pequeño.",e:"La columna es un tubo de 2-5 mm de diámetro al que se aplica alta presión."},
+{t:"pur",s:"hplc",q:"¿Por qué las partículas muy finas de la fase estacionaria mejoran la resolución en HPLC?",o:["Porque ofrecen más sitios de interacción","Porque tienen más carga negativa","Porque son más polares siempre","Porque absorben a 220 nm"],h:"Más superficie, más contacto con las proteínas.",e:"Partículas de ~3 µm tienen más sitios de interacción, lo que da mayor poder de resolución."},
+{t:"pur",s:"hplc",q:"¿Qué parte del equipo de HPLC monitorea la absorbancia del eluato?",o:["El detector, al final de la columna","La bomba de presión","La fase móvil","El inyector"],h:"Está justo donde sale el líquido.",e:"El detector, al final de la columna, mide la absorbancia del eluato a una longitud de onda dada."},
+{t:"pur",s:"hplc",q:"¿Se pueden acoplar otros tipos de cromatografía a la HPLC?",o:["Sí, por ejemplo la filtración en gel","No, la HPLC solo separa por polaridad","Solo la electroforesis","Solo la ultracentrifugación"],h:"Recuerda la gráfica de tiroglobulina, catalasa y albúmina.",e:"Sí: distintos tipos de cromatografía se acoplan a la HPLC, como la HPLC por filtración en gel."},
+{t:"pur",s:"sdspage",q:"En SDS-PAGE, ¿en qué dirección se mueven las proteínas dentro del gel?",o:["De arriba hacia abajo, del electrodo negativo al positivo","De abajo hacia arriba, del positivo al negativo","De izquierda a derecha según su pI","No se mueven, solo se tiñen"],h:"El pozo está arriba y el ánodo abajo.",e:"Se aplica un campo eléctrico y las proteínas migran del electrodo negativo al positivo, de arriba hacia abajo."},
+{t:"pur",s:"sdspage",q:"¿Por qué se dice que el gel de poliacrilamida funciona como un tamiz molecular?",o:["Porque es un gel poroso que frena más a las moléculas grandes","Porque tiene carga positiva","Porque separa por polaridad","Porque contiene anticuerpos"],h:"Un tamiz es como un colador.",e:"El gel es poroso: las moléculas pequeñas pasan rápido por los poros y las grandes avanzan lento."},
+{t:"pur",s:"condiciones",q:"¿Qué tipo de detergente es el SDS y qué altera?",o:["Aniónico; altera las interacciones no covalentes","Catiónico; rompe enlaces peptídicos","Neutro; rompe puentes disulfuro","Aniónico; rompe enlaces peptídicos"],h:"Dodecil sulfato de sodio: el sulfato tiene carga negativa.",e:"El SDS es un detergente aniónico que altera interacciones no covalentes y desnaturaliza a la proteína."},
+{t:"pur",s:"condiciones",q:"Además de agregar SDS, ¿qué se hace a la muestra para lograr condiciones desnaturalizantes?",o:["Se calienta","Se congela","Se le agrega anticuerpo","Se centrifuga a 150,000 rpm"],h:"Se hace en un termobloque o baño.",e:"En condiciones desnaturalizantes las proteínas se mezclan con SDS y se calientan."},
+{t:"pur",s:"condiciones",q:"Comparada con la carga de la proteína nativa, la carga que aporta el SDS es…",o:["Mayor, así el complejo queda con carga neta negativa proporcional a su masa","Menor, así que no cambia la carga","Igual y de signo positivo","Nula"],h:"Es tanto SDS que “tapa” la carga original.",e:"La carga del SDS supera a la de la proteína nativa: el complejo queda con carga neta negativa proporcional a su masa."},
+{t:"pur",s:"gel",q:"¿En qué modo se corre normalmente el gel de poliacrilamida?",o:["Vertical","Horizontal","Circular","En columna a presión"],h:"El pozo está arriba y las proteínas bajan.",e:"La PAGE se corre en modo vertical; el gel de poliacrilamida es inerte."},
+{t:"pur",s:"gel",q:"¿Qué genera el persulfato de amonio (APS) disuelto en agua?",o:["Iones sulfato que, con TEMED, forman radicales libres de sulfato","Radicales libres de oxígeno sin ayuda","Cargas positivas en las proteínas","Puentes disulfuro"],h:"Necesita a su compañero, el TEMED.",e:"El APS en agua genera iones sulfato; en presencia de TEMED se forman radicales libres de sulfato que atacan a la acrilamida."},
+{t:"pur",s:"tincion",q:"En la autorradiografía de proteínas, ¿qué marca se incorpora y dónde?",o:["¹²⁵I en tirosinas","³²P en serinas siempre","GFP en cisteínas","Coomassie en lisinas"],h:"Es un yodo radiactivo y se une a un aminoácido aromático.",e:"Se incorpora ¹²⁵I a Tyr y se coloca una película de rayos X sobre el gel."},
+{t:"pur",s:"ief",q:"¿Qué determina el punto isoeléctrico de una proteína?",o:["Su porcentaje de aminoácidos ácidos y básicos","Su masa molecular","Su forma","Su número de puentes disulfuro"],h:"Piensa en qué aminoácidos aportan cargas.",e:"El pI depende del porcentaje de aminoácidos ácidos y básicos de la proteína."},
+{t:"pur",s:"ief",q:"¿Se usa SDS en el isoelectroenfoque?",o:["No; sin SDS cada proteína se mueve hasta donde pH = pI","Sí, siempre","Solo para teñir","Sí, para dar carga positiva"],h:"El SDS cambiaría la carga de la proteína.",e:"No se usa SDS: cada proteína conserva su carga y se detiene donde el pH es igual a su pI."},
+{t:"pur",s:"ief",q:"Una proteína está en una zona donde el pH es mayor que su pI. ¿Hacia dónde va?",o:["Tiene carga negativa y migra hacia el ánodo (+) hasta llegar a su pI","Tiene carga positiva y migra al cátodo","No se mueve","Sale del gel"],h:"pH alto = pierde protones.",e:"Si pH > pI la carga neta es negativa, migra hacia el polo positivo hasta llegar a la zona donde pH = pI."},
+{t:"pur",s:"ief",q:"¿Qué resolución tiene el isoelectroenfoque?",o:["Diferencias de pI de 0.01 unidades de pH","Diferencias de 10 aminoácidos","Diferencias de S = 2","Diferencias de 1 kDa"],h:"Es muy fina y se mide en unidades de pH.",e:"El isoelectroenfoque resuelve proteínas con diferencias de pI de 0.01 unidades de pH."},
+{t:"pur",s:"dosd",q:"En un gel 2D, dos proteínas con el mismo pI se separan por…",o:["Su masa (en la 2ª dimensión, SDS-PAGE)","Su color","Su coeficiente de sedimentación","No se pueden separar"],h:"La segunda dimensión es SDS-PAGE.",e:"Las proteínas con el mismo pI quedan en la misma columna pero se separan verticalmente por masa."},
+{t:"pur",s:"dosd",q:"Al comparar dos geles 2D, un punto que aparece en uno y no en otro indica…",o:["Una proteína diferencial","Un error de tinción siempre","La misma proteína a otra concentración","Que el pI cambió"],h:"Presencia/ausencia vs intensidad.",e:"Presencia o ausencia de puntos = proteínas diferenciales; intensidad distinta = concentración distinta."},
+{t:"pur",s:"dosd",q:"¿Para qué se usa la electroforesis 2D en diagnóstico molecular?",o:["Para analizar el proteoma celular y comparar estados fisiológicos","Para medir la Vmax de una enzima","Para medir la glucosa","Para secuenciar ADN"],h:"Se comparan tejidos de la misma persona.",e:"Permite analizar el proteoma y comparar puntos e intensidades entre condiciones fisiológicas."},
+{t:"pur",s:"dosd",q:"En la electroforesis 2D, ¿qué indica la posición horizontal de un punto?",o:["La distancia recorrida en el enfoque isoeléctrico (pI)","Su masa","Su forma","Su actividad enzimática"],h:"La horizontal es la primera dimensión.",e:"La separación horizontal refleja el pI (1ª dimensión); la vertical, tamaño y carga."},
+{t:"pur",s:"ultra",q:"¿Qué propiedades permite determinar la ultracentrifugación?",o:["Masa, densidad, forma e interacciones","Solo el pI","Solo la polaridad","La secuencia de aminoácidos"],h:"Son cuatro propiedades físicas.",e:"La ultracentrifugación permite determinar masa, densidad, forma e interacciones."},
+{t:"pur",s:"ultra",q:"En la ecuación del coeficiente de sedimentación, ¿qué representa f?",o:["El coeficiente de fricción, que depende de la forma","La fuerza centrífuga","La frecuencia del rotor","La fracción de proteína"],h:"Tiene que ver con qué tan fácil se desliza la partícula.",e:"f es el coeficiente de fricción, una medida de la forma de la partícula."},
+{t:"pur",s:"ultra",q:"Una partícula con la misma densidad que el medio, durante la centrifugación…",o:["No se mueve","Se hunde rápido","Flota","Se desnaturaliza"],h:"Compara su densidad con la del medio.",e:"Se hunde si es más densa, flota si es menos densa y no se mueve si su densidad es igual a la del medio."},
+{t:"pur",s:"ultra",q:"Si dos partículas tienen la misma forma pero una tiene mayor masa, la de mayor masa…",o:["Sedimenta más rápido","Sedimenta más lento","Flota","Sedimenta igual"],h:"Primera conclusión de la ecuación.",e:"A mayor masa, más rápido sedimenta la partícula."},
+{t:"pur",s:"zonal",q:"¿Cuál es la resolución de la centrifugación zonal?",o:["Diferencia de S = 2","Diferencia de pI = 0.01","Diferencia de 10 aminoácidos","Diferencia de 1 nm"],h:"Se mide en unidades Svedberg.",e:"La centrifugación zonal separa partículas con diferencias de S de 2."},
+{t:"pur",s:"zonal",q:"En la centrifugación zonal, ¿cómo se recolectan las zonas de proteína?",o:["Por un orificio en el fondo del tubo","Cortando el gel","Con un anticuerpo","Por la parte superior con una pipeta de vidrio siempre"],h:"Se dejan gotear.",e:"Se perfora el fondo del tubo y se recolectan las zonas para cuantificar y medir actividad."},
+{t:"pur",s:"evaluacion",q:"La actividad específica sube de 10 U/mg en el extracto inicial a 200 U/mg en una fracción. ¿Cuál es el nivel de purificación?",o:["20 veces","190 veces","2,000 veces","0.05 veces"],h:"Divide la actividad específica de la fracción entre la inicial.",e:"Nivel de purificación = 200 ÷ 10 = 20 veces."},
+{t:"pur",s:"evaluacion",q:"El extracto inicial tiene una actividad total de 1,000 U y una fracción tiene 600 U. ¿Cuál es el rendimiento?",o:["60%","40%","1.6%","600%"],h:"Fracción ÷ inicial × 100.",e:"Rendimiento = 600 ÷ 1,000 × 100 = 60% de la actividad retenida."},
+{t:"pur",s:"evaluacion",q:"¿Cómo se calcula la proteína total de una fracción?",o:["Concentración de proteína × volumen total","Actividad total ÷ volumen","Actividad específica × 100","Número de bandas × volumen"],h:"Se multiplica por el volumen.",e:"Proteína total = [proteína] de la fracción × volumen total."},
+/* Detección */
+{t:"det",s:"inmuno",q:"¿Qué es el sistema inmunológico?",o:["El conjunto de órganos, células y moléculas que defienden al cuerpo de las infecciones","Un solo órgano que produce hormonas","El conjunto de enzimas digestivas","Las proteínas del plasma únicamente"],h:"Es un conjunto de tres tipos de componentes.",e:"Sistema inmunológico: órganos, células y moléculas que defienden al cuerpo de las infecciones."},
+{t:"det",s:"inmuno",q:"¿Qué forma tienen los anticuerpos?",o:["Forma de Y","Forma de anillo","Forma de hélice simple","Forma de esfera hueca"],h:"Parece una letra.",e:"Los anticuerpos son proteínas en forma de Y que identifican y neutralizan patógenos."},
+{t:"det",s:"inmuno",q:"¿De qué naturaleza pueden ser los antígenos producidos por patógenos?",o:["Proteínas, carbohidratos, ácidos nucleicos y lípidos","Solo proteínas","Solo lípidos","Solo iones metálicos"],h:"Son las cuatro grandes biomoléculas.",e:"Los antígenos pueden ser proteínas, carbohidratos, ácidos nucleicos o lípidos."},
+{t:"det",s:"elisa",q:"¿Qué significa ELISA?",o:["Ensayo inmunoadsorbente ligado a enzimas","Electroforesis lineal de inmunoproteínas","Espectrometría ligada a isótopos","Ensayo de lisis antigénica"],h:"Enzyme-Linked ImmunoSorbent Assay.",e:"ELISA = ensayo inmunoadsorbente ligado a enzimas."},
+{t:"det",s:"elisa",q:"En el ELISA, ¿dónde se colocan las diluciones de la muestra?",o:["En los pozos de una microplaca","En un gel de poliacrilamida","En una columna de HPLC","En un tubo con sacarosa"],h:"Es una placa con muchos pocitos.",e:"Las diluciones de la muestra se agregan a pozos de microplacas."},
+{t:"det",s:"elisa",q:"¿Cuál es la aplicación clínica del ELISA?",o:["Detectar antígenos o anticuerpos en una muestra biológica para diagnosticar enfermedades","Purificar proteínas por tamaño","Medir la presión arterial","Secuenciar proteínas"],h:"Se usa mucho en laboratorios clínicos.",e:"El ELISA detecta antígenos/anticuerpos en muestras biológicas para el diagnóstico de enfermedades."},
+{t:"det",s:"elisatipos",q:"¿Cuáles son los dos tipos de ELISA competitivo que vieron?",o:["Antígeno acoplado a enzima para detectar antígeno, y anticuerpo acoplado a enzima para detectar anticuerpo","Directo e indirecto","Sándwich y doble sándwich","Colorimétrico y fluorescente"],h:"Uno detecta antígeno y el otro anticuerpo.",e:"1) Antígeno acoplado a enzima para detectar antígeno. 2) Anticuerpo acoplado a enzima para detectar anticuerpo."},
+{t:"det",s:"elisatipos",q:"En un ELISA competitivo, una muestra con mucho antígeno dará…",o:["Poca señal","Mucha señal","Señal igual que una sin antígeno","Señal radiactiva"],h:"La señal es inversamente proporcional.",e:"Mucho antígeno compite y desplaza a la molécula marcada con enzima, así que la señal baja."},
+{t:"det",s:"deteccion",q:"En la detección colorimétrica, ¿qué hacen la AP y la HRP?",o:["Convierten un sustrato en un precipitado coloreado","Emiten luz UV","Marcan con isótopos","Rompen el anticuerpo"],h:"El color se va acumulando.",e:"AP y HRP convierten un sustrato en un precipitado coloreado visible a simple vista."},
+{t:"det",s:"deteccion",q:"¿Qué hace un dispositivo de carga acoplada (CCD)?",o:["Convierte la luz en carga, luego en voltaje y en un valor digital","Mide el pH","Separa proteínas","Genera radicales libres"],h:"Es un chip semiconductor de silicio.",e:"La CCD capta la luz: carga → voltaje → valor digital (un número)."},
+{t:"det",s:"deteccion",q:"En la detección fluorescente, ¿qué excita al fluoróforo?",o:["Una fuente de luz UV de alta energía","Una reacción con H₂SO₄","La radiación del ³²P","El campo eléctrico"],h:"Es luz de mucha energía.",e:"La luz UV excita al fluoróforo, que pasa a un estado de energía superior y emite fluorescencia captada por una cámara."},
+{t:"det",s:"deteccion",q:"¿Qué colores de fluorescencia puede dar la luciferina?",o:["Azul, amarilla o roja","Solo verde","Solo ultravioleta","Ninguno, no es fluoróforo"],h:"Es la del ejemplo con varios colores.",e:"La luciferina puede dar fluorescencia azul, amarilla o roja."},
+{t:"det",s:"deteccion",q:"¿Cuál es una desventaja de la detección radiactiva?",o:["Vida útil limitada por el decaimiento y necesidad de área restringida","No se puede ver en película","Es la menos sensible de todas","No requiere entrenamiento"],h:"Los isótopos se van “gastando”.",e:"Es riesgosa: los anticuerpos marcados duran poco por el decaimiento y se requiere entrenamiento y área restringida."},
+{t:"det",s:"western",q:"¿Cuál es el orden de la pila en el Western blot capilar (de abajo hacia arriba)?",o:["Esponja, 3 papeles filtro, gel, membrana, 3 papeles filtro","Membrana, gel, esponja, papeles","Gel, esponja, membrana, papeles","Papeles, membrana, esponja, gel"],h:"El gel va debajo de la membrana.",e:"Esponja → 3 papeles filtro → gel → membrana → 3 papeles filtro, luego papel absorbente y peso."},
+{t:"det",s:"western",q:"¿Qué peso se coloca encima de la pila en el Western blot capilar?",o:["300-500 g","5-8 kg","30-50 g","Ninguno"],h:"Va sobre 5-8 cm de papel absorbente.",e:"Se coloca papel absorbente (5-8 cm) y un peso de 300-500 g."},
+{t:"det",s:"western",q:"Durante la transferencia, ¿qué favorece que las proteínas se fijen a la membrana?",o:["La sal del buffer SSC (fijación hidrofóbica y electrostática)","El calor","El SDS","La luz UV"],h:"El SSC es un buffer salino.",e:"El flujo de SSC arrastra las proteínas y la sal favorece su fijación hidrofóbica y electrostática."},
+{t:"det",s:"western",q:"Además del Western blot capilar, ¿qué otra forma de transferencia se mencionó?",o:["Electroblotting","Ultracentrifugación","Isoelectroenfoque","HPLC"],h:"Usa corriente eléctrica.",e:"El electroblotting transfiere las proteínas usando un campo eléctrico en lugar de capilaridad."},
+/* Enzimas */
+{t:"enz",s:"metabolismo",q:"El catabolismo se caracteriza por…",o:["Romper macromoléculas, producir monómeros y liberar energía","Construir macromoléculas y requerir energía","No producir monómeros","Ocurrir solo en bacterias"],h:"Cata- = hacia abajo, romper.",e:"Catabolismo: ruptura de macromoléculas, produce monómeros y libera energía."},
+{t:"enz",s:"metabolismo",q:"El metabolismo celular es…",o:["La suma de todas las reacciones químicas que ocurren en la célula","Solo la digestión","Solo la síntesis de proteínas","La división celular"],h:"Incluye anabolismo y catabolismo.",e:"Metabolismo = suma de todas las reacciones químicas de la célula (anabolismo + catabolismo)."},
+{t:"enz",s:"enzimas",q:"Además de proteínas, ¿qué otra molécula puede actuar como enzima?",o:["ARN","Lípidos","Glucosa","Colesterol"],h:"Las ribozimas.",e:"La mayoría de las enzimas son proteínas, pero también hay ARN con actividad catalítica."},
+{t:"enz",s:"enzimas",q:"¿Qué es la energía de activación?",o:["La energía necesaria para llevar a las moléculas a un estado reactivo","La energía liberada por la reacción","La energía del ATP","La energía de los enlaces disulfuro"],h:"Es la barrera que hay que superar.",e:"Es la energía para llevar a las moléculas de una reacción a un estado reactivo; las enzimas la disminuyen."},
+{t:"enz",s:"enzimas",q:"¿Cuál de estas condiciones NO se mencionó como factor que afecta la velocidad de reacción enzimática?",o:["El color de la enzima","La temperatura","La concentración de sustrato","La afinidad de la enzima"],h:"Tres de estas sí estaban en la diapositiva de la aldolasa.",e:"Afectan la velocidad: temperatura, [enzima], [sustrato] y afinidad de la enzima."},
+{t:"enz",s:"enzimas",q:"En el ciclo catalítico de la aldolasa, ¿qué ocurre primero?",o:["La enzima cambia de conformación y tensa los enlaces del sustrato, que se rompe en 2 productos","La enzima se consume","El sustrato se une covalentemente para siempre","Se libera ATP"],h:"Cambio de forma → tensión → ruptura.",e:"La enzima cambia su conformación, tensa los enlaces del sustrato y lo rompe en 2 productos; luego regresa a su forma original."},
+{t:"enz",s:"cofactores",q:"¿Cuáles son las tres clases de cofactores?",o:["Iones metálicos, coenzimas y grupos prostéticos","Vitaminas, minerales y agua","Sustratos, productos e inhibidores","Apoenzimas, holoenzimas y zimógenos"],h:"Uno es inorgánico, otro orgánico pequeño y otro unido permanentemente.",e:"Cofactores: iones metálicos, moléculas orgánicas pequeñas (coenzimas) y grupos prostéticos."},
+{t:"enz",s:"cofactores",q:"¿Qué funciones pueden cumplir los iones metálicos en una enzima?",o:["Centro catalítico, puente de unión E-S y estabilizador de la conformación","Solo dar color","Solo transportar electrones fuera de la célula","Romper enlaces peptídicos de la enzima"],h:"Son tres funciones.",e:"Los iones metálicos pueden ser centro catalítico, puente de unión enzima-sustrato y estabilizar la conformación."},
+{t:"enz",s:"cofactores",q:"Verdadero o falso: “La holoenzima es la forma inactiva que aún no se ha unido a su cofactor.”",o:["Falso","Verdadero"],h:"Holo = completa.",e:"Falso: la forma sin cofactor es la apoenzima; la holoenzima es la completa y activa."},
+{t:"enz",s:"coenzimas",q:"¿Qué ejemplo se dio de una enzima que requiere coenzimas y iones metálicos?",o:["El complejo piruvato deshidrogenasa","La lisozima","La celulasa","La catalasa"],h:"Conecta la glucólisis con el ciclo de Krebs.",e:"El complejo piruvato deshidrogenasa necesita varias coenzimas y iones metálicos."},
+{t:"enz",s:"coenzimas",q:"¿Qué función tienen las coenzimas?",o:["Transportar transitoriamente grupos funcionales","Formar la pared celular","Ser la parte proteica de la enzima","Inhibir irreversiblemente a la enzima"],h:"Entran y salen del sitio activo.",e:"Las coenzimas son transportadores transitorios de grupos funcionales."},
+{t:"enz",s:"prostetico",q:"¿En qué enzimas se encuentra el grupo prostético hemo?",o:["Citocromos, catalasas y peroxidasas","Hexocinasa y aldolasa","Tripsina y pepsina","Celulasa y ribonucleasa"],h:"Una de ellas descompone el agua oxigenada.",e:"El grupo hemo está en citocromos, catalasas y peroxidasas."},
+{t:"enz",s:"prostetico",q:"¿Qué funciones pueden tener los grupos prostéticos?",o:["Centro catalítico, unión a gases y transporte de electrones","Solo dar estructura","Solo marcar a la proteína para degradación","Separar proteínas"],h:"Piensa en el hemo de la hemoglobina y de los citocromos.",e:"Los grupos prostéticos actúan como centro catalítico, en la unión a gases y en el transporte de e⁻."},
+{t:"enz",s:"prostetico",q:"¿Cuáles son ejemplos de modificación covalente que regulan la actividad enzimática?",o:["Metilación, acetilación, fosforilación y glucosilación","Desnaturalización y precipitación","Tinción y autorradiografía","Filtración y centrifugación"],h:"Se agregan grupos químicos a la enzima.",e:"Algunas enzimas se regulan por metilación, acetilación, fosforilación o glucosilación."},
+{t:"enz",s:"prostetico",q:"Verdadero o falso: “Un grupo prostético se une a la apoenzima de forma laxa y reversible.”",o:["Falso","Verdadero"],h:"Eso describe a la coenzima, no al grupo prostético.",e:"Falso: el grupo prostético se une de forma permanente (covalente o con muy alta afinidad)."},
+{t:"enz",s:"metales",q:"En la SOD de Cu y Zn, ¿qué función tiene el Zn²⁺?",o:["Guía al sustrato y orienta la geometría del centro activo","Hace el ciclo redox","Se une al ADN","Forma el grupo hemo"],h:"El otro metal es el que hace el redox.",e:"Zn²⁺ guía al sustrato y orienta la geometría; Cu²⁺ hace el ciclo redox."},
+{t:"enz",s:"metales",q:"¿Qué reacción cataliza la superóxido dismutasa?",o:["Dismuta el anión superóxido en O₂ y H₂O₂","Fosforila glucosa","Degrada celulosa","Reduce puentes disulfuro"],h:"Es una enzima antioxidante.",e:"La SOD convierte el anión superóxido en O₂ y H₂O₂."},
+{t:"enz",s:"nomenclatura",q:"En EC 2.7.1.1, ¿qué indica el segundo número (7)?",o:["Subclase: fosfotransferasa","Clase: transferasa","Aceptor: grupo OH","Aceptor: D-glucosa"],h:"Después de la clase viene la subclase.",e:"El 7 indica la subclase fosfotransferasa."},
+{t:"enz",s:"nomenclatura",q:"En EC 2.7.1.1, ¿qué indica el cuarto número?",o:["D-glucosa como aceptor del grupo fosforilo","La clase transferasa","La subclase fosfotransferasa","El cofactor Mg²⁺"],h:"Es el más específico de todos.",e:"El 4º número (1) indica que la D-glucosa es el aceptor del grupo fosforilo."},
+{t:"enz",s:"nomenclatura",q:"¿Quién mantiene el sistema internacional de nomenclatura de enzimas?",o:["El Comité de nomenclatura de la Unión Internacional de Bioquímica y Biología Molecular","La OMS","La FDA","Cada laboratorio por separado"],h:"Sus siglas en inglés son IUBMB.",e:"El comité de nomenclatura de la IUBMB mantiene la lista de enzimas (enzyme-database.org)."},
+{t:"enz",s:"nomenclatura",q:"¿Cuál es el nombre sistemático de la hexocinasa?",o:["ATP:glucosa fosfotransferasa","Glucosa oxidasa","Fosfoglucosa isomerasa","Glucosa hidrolasa"],h:"Indica donador:aceptor y la reacción.",e:"El nombre sistemático es ATP:glucosa fosfotransferasa (transfiere un fosforilo del ATP a la glucosa)."},
+{t:"enz",s:"nomenclatura",q:"Según su nombre común, ¿qué hace la ribonucleasa?",o:["Degrada ácido ribonucleico (ARN)","Sintetiza ribosa","Fosforila nucleótidos","Oxida glucosa"],h:"Sustrato + -asa.",e:"La ribonucleasa degrada el ARN."},
+{t:"enz",s:"sitio",q:"¿La mayoría de los aminoácidos de una enzima contactan al sustrato?",o:["No, solo unos pocos forman el sitio activo","Sí, todos","Sí, la mitad","Depende del color"],h:"El sitio activo ocupa una parte pequeña.",e:"La mayoría de los aa no contactan al sustrato; algunos forman el sitio activo y el resto lo posiciona correctamente."},
+{t:"enz",s:"sitio",q:"¿Qué le da especificidad a la unión E-S a través de los puentes de hidrógeno?",o:["Su direccionalidad (alineamiento donador-H…aceptor a 180°)","Que son covalentes","Que son muy lentos","Que no dependen de la forma"],h:"Los puentes de H tienen una geometría preferida.",e:"La direccionalidad de los puentes de H entre E y S da especificidad."},
+{t:"enz",s:"sitio",q:"¿Qué es el producto de una reacción enzimática?",o:["La molécula que resulta de la transformación bioquímica del sustrato","La enzima al final de la reacción","El cofactor","El inhibidor"],h:"Es lo que sale.",e:"Producto = molécula que resulta de la transformación bioquímica."},
+{t:"enz",s:"modelos",q:"¿Qué propone el modelo de selección de conformación?",o:["El sustrato se une a ciertas conformaciones de la enzima que ya existen","El sitio activo es rígido","La enzima se consume","El sustrato cambia de forma al inhibidor"],h:"La enzima “ya tiene” varias formas posibles.",e:"Selección de conformación: el sustrato se une a ciertas conformaciones preexistentes de la enzima."},
+/* Inhibición */
+{t:"inh",s:"lb",q:"¿Cómo se obtiene la ecuación de Lineweaver-Burk?",o:["Aplicando el inverso a ambos lados de la ecuación de Michaelis-Menten","Derivando la ecuación de Henderson-Hasselbalch","Multiplicando Km por Vmax","Graficando V₀ contra el tiempo"],h:"Por eso se llama doblemente recíproca.",e:"Se invierte la ecuación de Michaelis-Menten en ambos lados y se separan los términos."},
+{t:"inh",s:"lb",q:"¿Dónde corta la recta de Lineweaver-Burk al eje 1/[S]?",o:["En −1/Km","En 1/Vmax","En Km/Vmax","En cero"],h:"Es el corte en el eje x.",e:"La intersección con el eje 1/[S] es −1/Km."},
+{t:"inh",s:"inhibicion",q:"¿Para qué sirven los inhibidores en el estudio de las enzimas?",o:["Para identificar aminoácidos críticos para la catálisis","Para aumentar la Vmax","Para teñir geles","Para medir el pI"],h:"Si al bloquear algo la enzima deja de funcionar, ese algo era importante.",e:"Los inhibidores permiten identificar residuos (aa) críticos para la catálisis."},
+{t:"inh",s:"competitiva",q:"En la inhibición competitiva, la enzima puede unirse…",o:["Al sustrato o al inhibidor, pero no a ambos","A ambos al mismo tiempo","Solo al inhibidor","Solo al complejo ES"],h:"Compiten por el mismo lugar.",e:"La E forma ES o EI, nunca ESI, porque S e I compiten por el sitio activo."},
+{t:"inh",s:"competitiva",q:"¿Cuántas veces más afín es el metotrexato a la dihidrofolato reductasa que el sustrato?",o:["~1000 veces","~10 veces","~2 veces","Igual"],h:"Es un número redondo grande.",e:"El metotrexato es ~1000X más afín que el dihidrofolato e inhibe la síntesis de bases."},
+{t:"inh",s:"competitiva",q:"¿Por qué en la inhibición competitiva la Vmax no se altera?",o:["Porque con exceso de sustrato la enzima logra la saturación","Porque el inhibidor se une al complejo ES","Porque el inhibidor es covalente","Porque baja la concentración de enzima"],h:"El sustrato puede desplazar al inhibidor.",e:"Con suficiente sustrato se desplaza al inhibidor y la enzima se satura: la Vmax se alcanza igual."},
+{t:"inh",s:"acompetitiva",q:"En la inhibición acompetitiva, ¿cómo se genera el sitio de unión del inhibidor?",o:["Por la interacción entre la enzima y el sustrato","Está siempre en la enzima libre","Es el mismo sitio activo","Lo forma el producto"],h:"Sin sustrato unido, el sitio no existe.",e:"El sitio del inhibidor alostérico se genera al formarse el complejo ES."},
+{t:"inh",s:"acompetitiva",q:"En la inhibición acompetitiva, el complejo ESI es…",o:["Catalíticamente inactivo","Más activo que ES","Igual de activo que ES","Un complejo covalente irreversible"],h:"El inhibidor “atrapa” al complejo.",e:"El I forma el complejo ESI catalíticamente inactivo; la reacción E + S → ES tiende a formar más ES."},
+{t:"inh",s:"nocompetitiva",q:"En la inhibición no competitiva, ¿puede el sustrato unirse al complejo EI?",o:["Sí, el S puede unirse a la E o al complejo EI","No, nunca","Solo si hay exceso de inhibidor","Solo a bajas temperaturas"],h:"I y S tienen sitios distintos.",e:"El I no compite con el S: el S se une tanto a la E como al complejo EI, pero la catálisis se reduce."},
+{t:"inh",s:"nocompetitiva",q:"Un inhibidor no competitivo disminuye…",o:["La concentración de enzima funcional, sin cambiar la proporción de E unida al S","La afinidad por el sustrato únicamente","La concentración de sustrato","Nada"],h:"Es como si hubiera menos enzima.",e:"El inhibidor no competitivo ↓ la enzima funcional (↓Vmax) pero no la proporción de E unida al S."},
+{t:"inh",s:"alostericas",q:"En las enzimas alostéricas, ¿dónde se unen las moléculas reguladoras?",o:["En sitios distintos a los catalíticos","Siempre en el sitio activo","En el ADN","En la membrana celular"],h:"Alo- = otro.",e:"Los reguladores se unen reversiblemente a sitios distintos de los catalíticos."},
+{t:"inh",s:"alostericas",q:"¿Por qué las enzimas alostéricas son importantes en el metabolismo?",o:["Son reguladores clave de rutas metabólicas","Son las únicas que obedecen a Michaelis-Menten","No tienen sitio activo","Se usan para teñir geles"],h:"Ajustan su actividad a lo que la célula necesita.",e:"Sus propiedades catalíticas se ajustan a las necesidades celulares: son reguladores clave de rutas metabólicas."},
+{t:"inh",s:"irreversible",q:"La aspirina es un inhibidor irreversible de…",o:["La ciclooxigenasa, reduciendo moléculas de inflamación","La transpeptidasa","La ECA","La 5-α-reductasa"],h:"Por eso quita la inflamación.",e:"La aspirina modifica covalentemente la ciclooxigenasa y reduce la síntesis de moléculas de inflamación."},
+{t:"inh",s:"irreversible",q:"¿Qué le ocurre a la enzima al unirse un inhibidor irreversible?",o:["Se elimina un grupo funcional catalítico","Aumenta su Vmax","Cambia su pI a cero","Se convierte en coenzima"],h:"Queda “dañada” en su sitio activo.",e:"La unión del inhibidor irreversible elimina un grupo funcional catalítico."},
+{t:"inh",s:"suicidas",q:"¿Qué organismo causa la enfermedad del sueño africana?",o:["Trypanosoma brucei","Plasmodium falciparum","Escherichia coli","Mycobacterium tuberculosis"],h:"Es un protozoario flagelado.",e:"La enfermedad del sueño africana la causa Trypanosoma brucei."},
+{t:"inh",s:"suicidas",q:"¿Por qué el sistema inmune no logra eliminar a T. brucei?",o:["Cambia su cubierta proteica por recombinación y deja de ser reconocido","Es resistente al calor","Vive dentro de los eritrocitos","No tiene proteínas"],h:"Por eso la fiebre regresa en ciclos.",e:"Por recombinación cambia a una cubierta nueva no reconocida, generando un ciclo mortal."},
+{t:"inh",s:"suicidas",q:"¿Qué poliaminas se sintetizan en la vía que inhibe el DFMO y para qué sirven?",o:["Espermina y espermidina; empaquetamiento del ADN","Glucosa y fructosa; energía","Colesterol y triglicéridos; membranas","Hemo y clorofila; transporte de gases"],h:"Sus nombres suenan parecidos entre sí.",e:"La ODC inicia la síntesis de espermina y espermidina, necesarias para empaquetar el ADN del parásito."},
+{t:"inh",s:"suicidas",q:"¿Por qué el DFMO funciona como inactivador suicida?",o:["Sus 2 átomos de flúor son buenos grupos salientes y desvían los electrones","Porque es un análogo del NAD⁺","Porque se une al ADN","Porque baja el pH"],h:"Fíjate en el “difluoro” del nombre.",e:"Los 2 F son buenos grupos salientes: los e⁻ van a un F en vez del anillo del PLP y se forma un complejo reactivo con la Cys."},
+{t:"inh",s:"suicidas",q:"¿Cuál es la ventaja de los fármacos de inactivación suicida?",o:["Tienen pocos efectos secundarios (medicamentos de precisión)","Son muy baratos siempre","Actúan sobre todas las enzimas","No necesitan sitio activo"],h:"Solo se activan en su enzima blanco.",e:"Como solo se vuelven reactivos dentro del sitio activo de su enzima, tienen pocos efectos secundarios."}
+);
+
+OPEN.push(
+{t:"pur",s:"hplc",q:"Describe las partes y características de la HPLC: fase estacionaria, columna y detector.",h:"Tamaño de partícula, diámetro, presión y longitud de onda.",a:"La fase estacionaria tiene partículas muy finas (~3 µm) con más sitios de interacción y mejor resolución. La columna es un tubo de 2-5 mm al que se aplica alta presión (~45 MPa) para lograr un flujo adecuado y separación rápida. El detector, al final de la columna, mide la absorbancia del eluato; las proteínas se detectan a 220 nm (enlace peptídico).",k:[["3 µm","3 um","fina","particula"],["columna","2-5 mm"],["presion","mpa"],["detector","absorbancia"],["220"]]},
+{t:"pur",s:"eficacia",q:"¿Cómo sabes si un proceso de purificación es eficaz?",h:"Son dos comprobaciones en cada paso.",a:"1) La actividad específica debe aumentar en cada paso de purificación. 2) La cantidad de proteínas diferentes en la muestra debe disminuir en cada paso (se comprueba con SDS-PAGE).",k:[["actividad especifica"],["aumenta","incrementa","sube","mayor"],["proteinas diferentes","distintas","bandas"],["disminuye","menos","baja"]]},
+{t:"pur",s:"sdspage",q:"¿En qué se diferencia la SDS-PAGE de la filtración en gel?",h:"Piensa qué empuja a las proteínas y quién sale primero.",a:"En la filtración en gel las proteínas grandes salen primero porque no entran a los poros. En la SDS-PAGE el campo eléctrico obliga a todas las moléculas a atravesar el tamiz, así que las pequeñas avanzan más rápido y las grandes más lento.",k:[["filtracion"],["campo electrico","electric"],["todas"],["pequen","rapido"],["grande"]]},
+{t:"pur",s:"gel",q:"Explica cómo se polimeriza el gel de poliacrilamida (APS, TEMED, bisacrilamida).",h:"Radicales libres, monómeros y entrecruzamiento.",a:"La acrilamida polimeriza y la bisacrilamida entrecruza las cadenas formando una malla 3D. El persulfato de amonio (APS) en agua genera iones sulfato; el TEMED cataliza su descomposición para producir radicales libres de sulfato, que atacan a los monómeros de acrilamida e inician la polimerización.",k:[["acrilamida"],["bisacrilamida","entrecruz"],["aps","persulfato"],["temed","catalizador"],["radical"]]},
+{t:"pur",s:"condiciones",q:"¿Qué son las condiciones desnaturalizantes y reductoras de la PAGE?",h:"Una usa SDS y calor; la otra rompe disulfuros.",a:"Desnaturalizantes: la proteína se mezcla con SDS (detergente aniónico que altera interacciones no covalentes) y se calienta; el SDS se une ~1 anión por cada 2 aa y da carga negativa proporcional a la masa. Reductoras: se añade β-mercaptoetanol o DTT para reducir los enlaces disulfuro.",k:[["sds"],["calent","calor"],["no covalente"],["disulfuro"],["mercaptoetanol","bme","dtt"]]},
+{t:"pur",s:"condiciones",q:"Ejercicio: ¿cuántas bandas y de qué tamaño ves para hemoglobina (homotetrámero, 64,500 Da) con y sin BME?",h:"Las subunidades de la hemoglobina no están unidas por disulfuros.",a:"Con y sin BME se ve 1 sola banda de ~16,125 Da (64,500 ÷ 4). El SDS ya separa las 4 subunidades idénticas porque están unidas por interacciones no covalentes, y no hay puentes disulfuro entre ellas que el BME tenga que romper.",k:[["1","una"],["16"],["sds"],["no covalente","disulfuro"],["ambos","con y sin","igual"]]},
+{t:"pur",s:"tincion",q:"¿Cómo se visualizan las proteínas en un gel de poliacrilamida?",h:"Dos tinciones y una técnica con radiactividad.",a:"Por tinción con nitrato de plata o con azul de Coomassie, o por autorradiografía: se incorporan marcas radiactivas a las proteínas (¹²⁵I en Tyr) y se coloca una película de rayos X sobre el gel. La resolución es de diferencias de ~10 aa.",k:[["plata"],["coomassie"],["autorradiografia","autoradiografia","radiactiv"],["125","yodo","pelicula"]]},
+{t:"pur",s:"dosd",q:"¿Cómo se interpretan los geles 2D?",h:"Puntos presentes/ausentes e intensidad.",a:"Se comparan los puntos y su intensidad entre condiciones: la presencia o ausencia de puntos indica proteínas diferenciales, y una intensidad diferente indica distinta concentración de proteínas específicas. Sirve para el diagnóstico molecular del proteoma y los puntos se identifican por espectrometría de masas.",k:[["presencia","ausencia"],["diferencial"],["intensidad"],["concentracion"],["espectrometria","proteoma"]]},
+{t:"pur",s:"zonal",q:"Describe los pasos de la centrifugación zonal.",h:"Gradiente, mezcla, centrifugación, recolección.",a:"1) Formar un gradiente de densidad con sacarosa (5% arriba, 20% al fondo), que evita el movimiento por calor. 2) Colocar la mezcla sobre el gradiente. 3) Centrifugar: las proteínas se separan por su coeficiente de sedimentación. 4) Recolectar las zonas por un orificio en el fondo del tubo para cuantificar y medir actividad.",k:[["gradiente"],["sacarosa"],["centrifug"],["sedimentacion","s"],["orificio","fondo","recolect"]]},
+{t:"det",s:"inmuno",q:"¿Cuál es la diferencia entre anticuerpo y antígeno?",h:"Uno reconoce y el otro es reconocido.",a:"El anticuerpo es una proteína en forma de Y producida por linfocitos B que identifica y neutraliza patógenos. El antígeno es una molécula ajena al organismo (proteína, carbohidrato, ácido nucleico o lípido) que induce una respuesta inmunológica.",k:[["forma de y","proteina"],["linfocito"],["ajena","extrana"],["respuesta inmun"],["neutraliz","identific","reconoc"]]},
+{t:"det",s:"deteccion",q:"Menciona los cuatro tipos de detección del antígeno/anticuerpo y una característica de cada uno.",h:"Color, luz, fluorescencia y radiactividad.",a:"Colorimétrica: AP o HRP forman un precipitado de color, se detiene con H₂SO₄ y tiene sensibilidad media. Quimioluminiscente: se produce luz que se capta con CCD o película. Fluorescente: anticuerpo con fluoróforo (GFP, mCherry) excitado con luz UV. Radiactiva: isótopos ¹²⁵I o ³²P, riesgosa y requiere área restringida.",k:[["colorimetric","color"],["quimioluminiscen","luz"],["fluorescen","fluoroforo"],["radiactiv","radioactiv","isotopo"]]},
+{t:"det",s:"elisatipos",q:"Explica el ELISA competitivo y sus dos variantes.",h:"La molécula marcada compite con la de la muestra.",a:"Requiere una molécula acoplada a enzima que compite por la unión a un antígeno/anticuerpo; la señal es inversamente proporcional a la cantidad en la muestra y es útil para cantidades bajas. Variantes: 1) antígeno acoplado a enzima para detectar antígeno; 2) anticuerpo acoplado a enzima para detectar anticuerpo.",k:[["compite"],["inversa"],["acoplad","enzima"],["antigeno"],["anticuerpo"]]},
+{t:"enz",s:"metabolismo",q:"¿Cuál es la diferencia entre anabolismo y catabolismo?",h:"Construir vs romper.",a:"Anabolismo: biosíntesis de macromoléculas, requiere monómeros y energía. Catabolismo: ruptura de macromoléculas, produce monómeros y libera energía. Juntos forman el metabolismo celular.",k:[["anabolismo"],["biosintesis","sintesis","construi"],["catabolismo"],["ruptura","degrad","romp"],["energia"]]},
+{t:"enz",s:"enzimas",q:"Menciona las características principales de las enzimas.",h:"Naturaleza, energía de activación, conformación, especificidad, condiciones.",a:"Son proteínas (la mayoría) o ARN; disminuyen la energía de activación (aceleran 10⁸-10²⁰ veces) sin afectar el equilibrio; su actividad depende de su conformación nativa; son altamente específicas y activas en un rango de temperatura y pH.",k:[["proteina","arn"],["energia de activacion"],["equilibrio"],["conformacion"],["especific"],["temperatura","ph"]]},
+{t:"enz",s:"cofactores",q:"¿Qué es un cofactor y cuáles son sus tres clases? Da un ejemplo de cada una.",h:"Inorgánico, orgánico pequeño y unido permanentemente.",a:"Componente no proteico requerido para la actividad enzimática. Clases: 1) iones metálicos (Zn²⁺, Mg²⁺, Cu²⁺); 2) coenzimas, moléculas orgánicas pequeñas que transportan grupos (NAD⁺, CoA); 3) grupos prostéticos, unidos de forma permanente (hemo).",k:[["no proteic"],["ion","metal"],["coenzima"],["prostetico"],["nad","coa","hemo","zn","mg"]]},
+{t:"enz",s:"metales",q:"Explica tres ejemplos de enzimas que usan iones metálicos.",h:"SOD, hexocinasa y dedo de zinc.",a:"SOD: Cu²⁺ hace el ciclo redox que dismuta el superóxido en O₂ y H₂O₂, y Zn²⁺ orienta al sustrato. Hexocinasa: Mg²⁺ se coordina con los fosfatos del ATP y neutraliza sus cargas para que se acerque el –OH de la glucosa. Dedo de zinc (TFIIIA): Zn²⁺ coordinado con Cys₂His₂ para unirse al ADN.",k:[["sod","superoxido"],["cu","cobre"],["hexocinasa","mg","magnesio"],["dedo de zinc","zn","zinc"],["adn","cys","his"]]},
+{t:"enz",s:"sitio",q:"Describe las propiedades generales del sitio activo.",h:"Forma, tamaño, ambiente y tipo de uniones.",a:"Es una hendidura 3D formada por aa de diferentes partes de la secuencia; ocupa una pequeña parte del volumen total; es un microambiente único, no polar y sin agua (salvo que sea reactivo); el sustrato se une por múltiples uniones débiles no covalentes, y la especificidad depende de la disposición definida de sus átomos.",k:[["hendidura","3d","tridimensional"],["pequena","volumen"],["no polar","agua"],["debil","no covalente"],["especific"]]},
+{t:"inh",s:"acompetitiva",q:"¿En qué se diferencian la inhibición acompetitiva y la no competitiva?",h:"¿A qué se une el inhibidor en cada caso?",a:"Acompetitiva: el inhibidor se une solo al complejo ES (su sitio se genera por la interacción E-S), formando ESI inactivo; ej. epristerida. No competitiva (mixta): el inhibidor se une a la E libre o al complejo ES en un sitio distinto del activo y disminuye la enzima funcional; ej. nevirapina y efavirenz. Ninguna se supera aumentando [S].",k:[["acompetitiva"],["solo","complejo es"],["no competitiva","mixta"],["libre"],["no se supera","no se revierte"]]},
+{t:"inh",s:"alostericas",q:"¿Qué son las enzimas alostéricas cooperativas?",h:"Varias subunidades, curva sigmoidea.",a:"Enzimas con varias subunidades y sitios activos que no obedecen a Michaelis-Menten: muestran curva sigmoidea V₀ vs [S] porque la unión del S a un sitio facilita su unión a otros. Su actividad se regula por moléculas que se unen a sitios distintos del catalítico; son reguladores clave del metabolismo. Ej.: fosfofructocinasa.",k:[["subunidad"],["sigmoid"],["michaelis"],["regulador","sitio distinto","alosteric"],["fosfofructocinasa"]]},
+{t:"inh",s:"irreversible",q:"Da ejemplos de inhibidores irreversibles y explica cómo actúan.",h:"Dos medicamentos y un compuesto de laboratorio.",a:"Penicilina: modifica covalentemente la transpeptidasa e impide la síntesis de pared bacteriana. Aspirina: modifica covalentemente la ciclooxigenasa y reduce moléculas de inflamación. DIFP: modifica la Ser195 del sitio activo de la quimotripsina. Todos eliminan un grupo catalítico.",k:[["penicilina"],["transpeptidasa"],["aspirina"],["ciclooxigenasa"],["covalente","difp"]]}
+);
+
+/* =================== LECCIONES (sección Estudiar) =================== */
+const LESSONS=[
+{id:"hplc",t:"pur",title:"Cromatografía líquida de alta eficiencia (HPLC)",body:`
+<p>La HPLC separa proteínas <b>por polaridad</b>. La muestra viaja en una <b>fase móvil</b> a través de una <b>columna</b> rellena de <b>fase estacionaria</b>; cada proteína interactúa distinto con esa fase y por eso sale a un tiempo diferente.</p>
+<ul>
+<li><b>Fase estacionaria (matriz):</b> partículas muy finas, de ~3 µm. Al ser tan pequeñas hay más superficie y más sitios de interacción, lo que da mejor poder de resolución.</li>
+<li><b>Columna:</b> tubo de diámetro pequeño (2-5 mm). Como las partículas son tan finas, hay que aplicar mucha presión (~45 MPa) para que el líquido fluya a buena velocidad. Resultado: alta resolución y separación rápida.</li>
+<li><b>Detector:</b> al final de la columna, mide la absorbancia del eluato a una longitud de onda fija.</li>
+</ul>
+<h4>Fase normal vs fase reversa</h4>
+<ul>
+<li><b>Fase normal:</b> estacionaria <b>polar</b> y móvil no polar → se retienen las moléculas <b>polares</b>.</li>
+<li><b>Fase reversa:</b> estacionaria <b>no polar</b> y móvil polar → se retienen las moléculas <b>no polares</b>.</li>
+</ul>
+<p>Regla para recordar: lo semejante se queda pegado a lo semejante.</p>
+<h4>Perfil de elución</h4>
+<p>Las proteínas se detectan a <b>220 nm</b>, que es donde absorbe el enlace peptídico. En unos 10 minutos se obtienen picos agudos y cada pico representa una proteína.</p>
+<p>A la HPLC se le pueden acoplar otros tipos de cromatografía, por ejemplo la <b>filtración en gel</b>. En ese caso salen primero las proteínas grandes: tiroglobulina (669 kDa) → catalasa (232 kDa) → albúmina sérica bovina (67 kDa) → ovoalbúmina (43 kDa) → ribonucleasa (13.4 kDa).</p>`,
+key:"Polaridad · partículas de 3 µm · columna de 2-5 mm a 45 MPa · detección a 220 nm · en filtración en gel salen primero las grandes."},
+{id:"eficacia",t:"pur",title:"¿Cómo saber si la purificación es eficaz?",body:`
+<p>En cada paso de purificación se revisan dos cosas:</p>
+<ol>
+<li>Que la <b>actividad específica aumente</b>: cada vez hay más actividad por cada mg de proteína, o sea, la proteína de interés está más concentrada respecto al resto.</li>
+<li>Que la <b>cantidad de proteínas diferentes disminuya</b>: se comprueba corriendo un SDS-PAGE de cada fracción y viendo que hay cada vez menos bandas.</li>
+</ol>`,key:"Actividad específica ↑ y número de proteínas distintas ↓ en cada paso."},
+{id:"sdspage",t:"pur",title:"Electroforesis en gel de poliacrilamida (SDS-PAGE)",body:`
+<p>La SDS-PAGE separa proteínas <b>por tamaño y carga</b>. Como el SDS les da a todas una carga negativa proporcional a su masa, en la práctica la separación depende del <b>tamaño</b>.</p>
+<ul>
+<li>Se hace en un <b>gel poroso</b> que actúa como <b>tamiz molecular</b>.</li>
+<li>Se aplica un <b>campo eléctrico</b> y los complejos SDS-proteína, con carga negativa, migran del electrodo negativo al positivo (<b>hacia el ánodo</b>), de arriba hacia abajo.</li>
+<li>Las <b>moléculas pequeñas se mueven rápido</b>; las grandes, lento.</li>
+</ul>
+<h4>Diferencia con la filtración en gel</h4>
+<p>En la filtración en gel las proteínas grandes no entran a los poros y salen primero. En la PAGE, por el campo eléctrico, <b>todas las moléculas atraviesan el tamiz</b>, sin importar su tamaño, y las pequeñas llegan más lejos.</p>`,
+key:"Separa por tamaño · migran al ánodo (+) · pequeñas más rápido · todas atraviesan el tamiz."},
+{id:"gel",t:"pur",title:"Cómo se forma el gel de poliacrilamida",body:`
+<p>El gel de poliacrilamida es <b>inerte</b> y se corre en <b>modo vertical</b>.</p>
+<ul>
+<li><b>Acrilamida + bisacrilamida:</b> la acrilamida polimeriza en cadenas y la bisacrilamida (metileno) las entrecruza, formando una <b>malla 3D</b>.</li>
+<li><b>Persulfato de amonio (APS):</b> disuelto en agua genera iones sulfato que, en presencia de TEMED, forman <b>radicales libres de sulfato</b> que atacan a los monómeros de acrilamida e inician la polimerización.</li>
+<li><b>TEMED</b> (N,N,N',N'-tetrametil-etilendiamina): es el <b>catalizador</b>; acelera la descomposición del APS para producir los radicales libres.</li>
+</ul>`,key:"Acrilamida polimeriza, bisacrilamida entrecruza, APS da radicales, TEMED cataliza."},
+{id:"condiciones",t:"pur",title:"Condiciones desnaturalizantes y reductoras",body:`
+<h4>Desnaturalizantes</h4>
+<p>Las proteínas se mezclan con <b>SDS</b> (dodecil sulfato de sodio), un detergente <b>aniónico</b> que altera las interacciones no covalentes, y se <b>calientan</b>.</p>
+<ul>
+<li>Se une aproximadamente <b>1 anión de SDS por cada 2 aminoácidos</b>.</li>
+<li>La carga del SDS es mucho mayor que la carga nativa de la proteína, así que el complejo queda con <b>carga neta negativa proporcional a su masa</b>.</li>
+</ul>
+<h4>Reductoras</h4>
+<p>Se añade <b>β-mercaptoetanol (BME)</b> o <b>ditiotreitol (DTT)</b> para reducir los <b>enlaces disulfuro</b>.</p>
+<h4>Cómo contar bandas</h4>
+<ul>
+<li>El SDS solo ya separa subunidades unidas por interacciones no covalentes.</li>
+<li>El reductor además separa las que están unidas por puentes disulfuro.</li>
+<li>Subunidades idénticas dan <b>una sola banda</b>.</li>
+</ul>
+<p><b>Trímero de 20, 60 y 110 kDa</b> (desnaturalizante + reductor): <b>3 bandas</b>.</p>
+<p><b>Hemoglobina</b> (homotetrámero de 64,500 Da, sin disulfuros entre subunidades): <b>1 banda de ~16,125 Da</b> con y sin BME.</p>
+<p><b>Anticuerpo</b> α₂β₂ (150 kDa) unido por disulfuros: sin BME, 1 banda de 150 kDa; con BME, 2 bandas (β = 50 kDa y α = 25 kDa).</p>`,
+key:"SDS + calor desnaturaliza (1 SDS cada 2 aa, carga −) · BME/DTT rompe disulfuros · subunidades iguales = 1 banda."},
+{id:"tincion",t:"pur",title:"Visualización de los geles",body:`
+<ul>
+<li><b>Tinción con nitrato de plata</b> o con <b>azul de Coomassie</b>.</li>
+<li><b>Autorradiografía:</b> se incorporan marcas radiactivas a las proteínas (<b>¹²⁵I en Tyr</b>) y se coloca una película de rayos X sobre el gel.</li>
+</ul>
+<p>La resolución del SDS-PAGE permite distinguir diferencias de unos <b>10 aminoácidos</b>.</p>`,key:"Plata, Coomassie o autorradiografía (¹²⁵I en Tyr) · resolución de 10 aa."},
+{id:"ief",t:"pur",title:"Enfoque isoeléctrico (isoelectroenfoque)",body:`
+<p>Separa proteínas por su <b>punto isoeléctrico (pI)</b> mediante electroforesis en gel. El pI depende del porcentaje de aminoácidos ácidos y básicos.</p>
+<ul>
+<li><b>Punto isoeléctrico:</b> pH en el que la <b>carga neta es cero</b>; ahí la proteína no tiene movilidad electroforética.</li>
+<li>Ejemplos: citocromo c, pI 10.6 (básico); albúmina sérica, pI 4.8 (ácida).</li>
+<li><b>Gradiente de pH:</b> mezcla de <b>polianfolitos</b> (polímeros pequeños multicargados) con distintos pI en poliacrilamida o agarosa.</li>
+<li>Donde <b>pH &lt; pI</b> la proteína tiene <b>carga +</b>; donde <b>pH &gt; pI</b>, <b>carga −</b>.</li>
+<li>Al aplicar voltaje cada proteína migra hasta su pI y ahí se detiene.</li>
+<li><b>No lleva SDS</b>, para no alterar la carga propia de la proteína.</li>
+</ul>
+<p>Resolución: diferencias de pI de <b>0.01 unidades de pH</b>.</p>`,key:"Separa por pI · pH < pI = carga + · gradiente con polianfolitos · sin SDS · resolución de 0.01."},
+{id:"dosd",t:"pur",title:"Electroforesis bidimensional (2D)",body:`
+<p>Combina el <b>enfoque isoeléctrico</b> con la <b>SDS-PAGE</b> para lograr una resolución muy alta (por ejemplo, separar más de 1,000 proteínas de <i>E. coli</i>).</p>
+<ul>
+<li><b>1ª dimensión (horizontal):</b> isoelectroenfoque, separa por pI.</li>
+<li><b>2ª dimensión (vertical):</b> SDS-PAGE, separa por tamaño y carga.</li>
+<li>El resultado es un <b>patrón de puntos</b>. Las proteínas con el mismo pI se separan por su masa.</li>
+</ul>
+<h4>Interpretación</h4>
+<ul>
+<li>Sirve para el <b>diagnóstico molecular</b>: analizar el proteoma celular bajo distintas condiciones fisiológicas.</li>
+<li><b>Presencia o ausencia</b> de puntos → proteínas diferenciales.</li>
+<li><b>Intensidad diferente</b> → distinta concentración de una proteína.</li>
+<li>Los puntos se identifican por <b>espectrometría de masas</b>.</li>
+</ul>`,key:"1ª: pI (horizontal) · 2ª: SDS-PAGE (vertical) · puntos se identifican por espectrometría de masas."},
+{id:"ultra",t:"pur",title:"Ultracentrifugación",body:`
+<p>Separa por <b>masa y densidad</b> centrifugando a velocidades muy altas (20,000-150,000 rpm). Permite determinar masa, densidad, forma e interacciones.</p>
+<p>El <b>coeficiente de sedimentación (s)</b> cuantifica la velocidad con que una partícula se mueve en un líquido; se mide en unidades <b>Svedberg (S)</b>. Un valor S menor indica que la molécula se mueve más lento.</p>
+<p>En la ecuación: m = masa, v̄ = volumen específico, ρ = densidad del medio, f = coeficiente de fricción (forma) y (1 − v̄ρ) = fuerza de flotación.</p>
+<h4>De qué depende la velocidad de sedimentación</h4>
+<ol>
+<li><b>Masa:</b> más masa → sedimenta más rápido.</li>
+<li><b>Forma:</b> las partículas alargadas tienen más fricción y sedimentan más lento que las esféricas.</li>
+<li><b>Densidad de la partícula:</b> más densa → más rápido (menor flotación).</li>
+<li><b>Densidad del medio:</b> la partícula se hunde si es más densa que el medio, flota si es menos densa y no se mueve si es igual.</li>
+</ol>`,key:"S menor = más lento · depende de masa, forma, densidad de la partícula y del medio."},
+{id:"zonal",t:"pur",title:"Centrifugación zonal o en gradiente",body:`
+<p>Separa por <b>coeficiente de sedimentación (S)</b>.</p>
+<ol>
+<li><b>Formar un gradiente de densidad:</b> se mezcla sacarosa de baja densidad (5%, arriba) y de alta densidad (20%, al fondo). El gradiente evita el movimiento por calor.</li>
+<li><b>Colocar la mezcla</b> de proteínas encima del gradiente.</li>
+<li><b>Centrifugar:</b> las proteínas avanzan por el gradiente y se separan según su S.</li>
+<li><b>Recolectar</b> las zonas por un orificio en el fondo del tubo, para cuantificar y medir actividad.</li>
+</ol>
+<p>Las proteínas más pesadas, densas y grandes son las que más avanzan y salen primero por el fondo. Resolución: diferencia de <b>S = 2</b>.</p>`,key:"Gradiente de sacarosa 5% → 20% · separa por S · se recolecta por el fondo · resolución S = 2."},
+{id:"evaluacion",t:"pur",title:"Evaluación del esquema de purificación",body:`
+<p>En cada paso se determina la actividad específica y se corre un SDS-PAGE. Los parámetros son:</p>
+<div class="tbl"><table><thead><tr><th>Parámetro</th><th>Cómo se obtiene</th></tr></thead><tbody>
+<tr><td>Proteína total</td><td>[proteína] de la fracción × volumen total</td></tr>
+<tr><td>Actividad total</td><td>actividad enzimática de la fracción × volumen total</td></tr>
+<tr><td>Actividad específica</td><td>actividad total ÷ proteína total</td></tr>
+<tr><td>Rendimiento</td><td>% de actividad de la fracción respecto al extracto inicial (100%)</td></tr>
+<tr><td>Nivel de purificación</td><td>actividad específica de la fracción ÷ actividad específica inicial</td></tr>
+</tbody></table></div>
+<p><b>Ejemplo:</b> si el extracto inicial tiene 1,000 U y 100 mg (10 U/mg) y una fracción tiene 600 U y 3 mg (200 U/mg):</p>
+<ul>
+<li>Rendimiento = 600 ÷ 1,000 = <b>60%</b>.</li>
+<li>Nivel de purificación = 200 ÷ 10 = <b>20 veces</b>.</li>
+</ul>`,key:"Act. específica = act. total ÷ proteína total · rendimiento en % · purificación = act. esp. fracción ÷ inicial."},
+{id:"inmuno",t:"det",title:"Bases de inmunología",body:`
+<p>El <b>sistema inmunológico</b> es el conjunto de órganos, células y moléculas que defienden al cuerpo de las infecciones.</p>
+<ul>
+<li><b>Anticuerpo:</b> proteína en forma de <b>Y</b>, producida por <b>linfocitos B</b>, que identifica y neutraliza patógenos (bacterias, virus, hongos y protozoarios).</li>
+<li><b>Antígeno:</b> molécula <b>ajena</b> al organismo que induce una respuesta inmunológica. Los patógenos los producen y pueden ser proteínas, carbohidratos, ácidos nucleicos o lípidos.</li>
+</ul>`,key:"Anticuerpo = proteína en Y de linfocitos B · antígeno = molécula ajena que dispara la respuesta."},
+{id:"elisa",t:"det",title:"ELISA: ensayo inmunoadsorbente ligado a enzimas",body:`
+<p>Detecta un antígeno o anticuerpo inmovilizado usando un anticuerpo unido a una enzima que genera un producto detectable (color).</p>
+<ol>
+<li>Se agregan diluciones de la muestra a los <b>pozos de una microplaca</b>.</li>
+<li>El antígeno es reconocido por un <b>anticuerpo primario</b>.</li>
+<li>El primario es reconocido por un <b>anticuerpo secundario unido a una enzima</b>: <b>HRP</b> (peroxidasa de rábano) o <b>ALP</b> (fosfatasa alcalina).</li>
+<li>La enzima produce color, que se <b>cuantifica espectrofotométricamente</b>: es una medida de la concentración de antígeno.</li>
+</ol>
+<p><b>Aplicación clínica:</b> detectar antígenos o anticuerpos en una muestra biológica para diagnosticar enfermedades.</p>`,key:"Antígeno + Ab 1º + Ab 2º con HRP/ALP → color medido por espectrofotometría."},
+{id:"elisatipos",t:"det",title:"Modalidades de ELISA",body:`
+<h4>Señal directamente proporcional</h4>
+<p>En el ELISA <b>directo</b>, <b>indirecto</b> y <b>sándwich</b>, a más antígeno/anticuerpo, más señal.</p>
+<h4>ELISA competitivo: señal inversamente proporcional</h4>
+<ul>
+<li>Requiere una molécula acoplada a una enzima que <b>compite</b> por la unión a un antígeno/anticuerpo.</li>
+<li>Si la muestra tiene mucho antígeno, desplaza a la molécula marcada y la señal <b>baja</b>.</li>
+<li>Es útil para determinar <b>cantidades bajas</b>.</li>
+</ul>
+<p>Hay dos tipos de ELISA competitivo:</p>
+<ol>
+<li>Antígeno acoplado a enzima, para detectar antígeno.</li>
+<li>Anticuerpo acoplado a enzima, para detectar anticuerpo.</li>
+</ol>`,key:"Directo, indirecto y sándwich: señal ∝ cantidad · competitivo: señal inversamente proporcional."},
+{id:"deteccion",t:"det",title:"Tipos de detección del antígeno/anticuerpo",body:`
+<h4>A. Colorimétrica</h4>
+<ul><li>AP o HRP convierten un sustrato en un <b>precipitado coloreado</b>, visible a simple vista.</li>
+<li>La reacción se detiene con <b>H₂SO₄</b> y el color se cuantifica en un lector de placas.</li>
+<li>Sensibilidad <b>media</b> comparada con la quimioluminiscente.</li></ul>
+<h4>B. Quimioluminiscente</h4>
+<ul><li>AP o HRP catalizan una reacción que produce <b>luz</b>.</li>
+<li>La luz se capta con un <b>dispositivo de carga acoplada (CCD)</b>, un chip de silicio que convierte carga → voltaje → número, o con película radiográfica.</li></ul>
+<h4>C. Fluorescente</h4>
+<ul><li>Anticuerpo marcado con un <b>fluoróforo</b>; la <b>luz UV</b> lo excita y una cámara capta la fluorescencia.</li>
+<li>GFP: verde. mCherry: roja. Luciferina: azul, amarilla o roja.</li></ul>
+<h4>D. Radiactiva (riesgosa)</h4>
+<ul><li>Anticuerpo marcado con <b>¹²⁵I o ³²P</b>; la radiación marca una película radiográfica.</li>
+<li>Los anticuerpos marcados duran poco por el decaimiento, y se requiere entrenamiento y un área restringida.</li></ul>`,key:"Color (H₂SO₄, sensibilidad media) · luz (CCD) · fluorescencia (UV, GFP) · radiactiva (¹²⁵I, ³²P)."},
+{id:"western",t:"det",title:"Western blot (inmunoblot capilar)",body:`
+<ol>
+<li>Incubar el gel de SDS-PAGE en buffer <b>SSC 10X por 15 min</b> para eliminar el exceso de SDS no unido.</li>
+<li>Hidratar la <b>membrana de nitrocelulosa</b> con buffer SSC.</li>
+<li>En una bandeja con SSC, armar la pila: esponja, 3 papeles filtro, <b>gel</b>, <b>membrana</b> y 3 papeles filtro.</li>
+<li>Cubrir los bordes del gel con <b>Parafilm</b> (para forzar el flujo a través del gel) y poner encima papel absorbente (5-8 cm) y un peso de <b>300-500 g</b>.</li>
+<li>Dejar transferir por <b>capilaridad 16 h</b>. El flujo de SSC arrastra las proteínas y la sal favorece su fijación hidrofóbica y electrostática en la membrana.</li>
+</ol>
+<p>También existe el <b>electroblotting</b>, que transfiere con corriente eléctrica.</p>`,key:"SSC quita SDS · nitrocelulosa · Parafilm fuerza el flujo · capilaridad 16 h."},
+{id:"metabolismo",t:"enz",title:"Metabolismo celular",body:`
+<p>Es la <b>suma de todas las reacciones químicas</b> que ocurren en la célula.</p>
+<ul>
+<li><b>Anabolismo:</b> biosíntesis de macromoléculas. Requiere monómeros y requiere energía.</li>
+<li><b>Catabolismo:</b> ruptura de macromoléculas. Produce monómeros y libera energía.</li>
+</ul>`,key:"Anabolismo construye y gasta energía · catabolismo rompe y libera energía."},
+{id:"enzimas",t:"enz",title:"¿Qué son las enzimas?",body:`
+<p>Moléculas orgánicas que actúan como <b>catalizadores</b>: aceleran la velocidad de reacción entre 10⁸ y 10²⁰ veces.</p>
+<ul>
+<li>La mayoría son <b>proteínas</b>; también hay <b>ARN</b> catalítico.</li>
+<li><b>Disminuyen la energía de activación</b> (la energía para llevar a las moléculas a un estado reactivo). <b>No afectan el equilibrio</b> y no se consumen.</li>
+<li>Su actividad depende de su <b>conformación nativa</b>.</li>
+<li>Son <b>altamente específicas</b>.</li>
+<li>Son activas en un rango de <b>temperatura y pH</b>.</li>
+</ul>
+<h4>Ciclo catalítico (ejemplo: aldolasa)</h4>
+<p>La aldolasa (fructosa difosfato aldolasa) participa en la glucólisis. La enzima cambia su conformación, tensa los enlaces del sustrato y lo rompe en 2 productos; luego regresa a su conformación original. La aldolasa A es marcador de daño <b>muscular</b> y la B, de daño <b>hepático</b>.</p>
+<p>La velocidad de reacción depende de la temperatura, la [enzima], la [sustrato] y la afinidad de la enzima.</p>`,key:"Bajan la energía de activación · no cambian el equilibrio ni se consumen · específicas · dependen de T y pH."},
+{id:"cofactores",t:"enz",title:"Cofactores enzimáticos",body:`
+<p>Un cofactor es un <b>componente no proteico</b> requerido para la actividad enzimática. Hay tres clases:</p>
+<ol>
+<li><b>Iones metálicos</b> (Zn²⁺, Fe²⁺/³⁺, K⁺, Mg²⁺, Mn²⁺, Ni²⁺…): pueden ser centro catalítico, puente de unión E-S o estabilizadores de la conformación.</li>
+<li><b>Moléculas orgánicas pequeñas (coenzimas):</b> transportan grupos funcionales.</li>
+<li><b>Grupos prostéticos:</b> moléculas orgánicas o inorgánicas unidas de forma permanente.</li>
+</ol>
+<p>No todos los cofactores son orgánicos ni derivan de vitaminas: los iones metálicos son inorgánicos.</p>`,key:"No proteico · tres clases: iones metálicos, coenzimas y grupos prostéticos."},
+{id:"coenzimas",t:"enz",title:"Coenzimas",body:`
+<p>Son <b>transportadores transitorios de grupos funcionales</b>. La mayoría derivan de <b>vitaminas</b> (nutrientes orgánicos necesarios en pequeñas cantidades).</p>
+<ul>
+<li>Se unen a la enzima de forma <b>débil y reversible</b> (no covalente).</li>
+<li>Entran y salen del sitio activo transportando grupos funcionales.</li>
+<li>Ejemplos: <b>NAD⁺, NADP⁺, coenzima A</b>.</li>
+</ul>
+<p>Algunas enzimas requieren una coenzima y uno o más iones metálicos, como el <b>complejo piruvato deshidrogenasa</b>, que conecta con el ciclo de Krebs.</p>`,key:"Unión débil y reversible · de vitaminas · NAD⁺, NADP⁺, CoA."},
+{id:"prostetico",t:"enz",title:"Grupo prostético, holoenzima y apoenzima",body:`
+<p>Un <b>grupo prostético</b> es un componente no proteico (orgánico o inorgánico) que se une a una enzima inactiva para que adquiera su conformación funcional y capacidad catalítica.</p>
+<ul>
+<li>Se une de forma <b>permanente</b> (covalente o con muy alta afinidad) a la apoenzima.</li>
+<li>Funciones: centro catalítico, unión a gases y transporte de electrones.</li>
+<li>Ejemplo: el grupo <b>hemo</b> de citocromos, catalasas y peroxidasas.</li>
+</ul>
+<ul>
+<li><b>Apoenzima (apoproteína):</b> la parte proteica.</li>
+<li><b>Holoenzima:</b> la enzima completa, unida a iones metálicos, coenzima y/o grupo prostético. Es la forma <b>activa</b>.</li>
+</ul>
+<p>Algunas enzimas regulan su actividad por <b>modificación covalente</b>: metilación, acetilación, fosforilación o glucosilación.</p>`,key:"Prostético = unión permanente (hemo) · apoenzima = parte proteica · holoenzima = completa y activa."},
+{id:"metales",t:"enz",title:"Ejemplos de enzimas con iones metálicos",body:`
+<ul>
+<li><b>Superóxido dismutasa (SOD) de Cu y Zn:</b> el Cu²⁺ participa en el ciclo redox que dismuta el anión superóxido en O₂ y H₂O₂; el Zn²⁺ guía al sustrato y orienta la geometría del centro activo.</li>
+<li><b>Hexocinasa dependiente de ATP:</b> el Mg²⁺ se coordina con los fosfatos del ATP y con residuos Asp del sitio activo; neutraliza las cargas negativas de los fosfatos para que se acerque el –OH de la glucosa.</li>
+<li><b>Dedo de zinc en TFIIIA:</b> el Zn²⁺ se coordina en forma tetraédrica con Cys₂His₂; el motivo se une al ADN.</li>
+</ul>`,key:"SOD: Cu redox, Zn orienta · hexocinasa: Mg con fosfatos del ATP · dedo de zinc: Cys₂His₂."},
+{id:"nomenclatura",t:"enz",title:"Clasificación y nomenclatura enzimática",body:`
+<p>El Comité de nomenclatura de la Unión Internacional de Bioquímica y Biología Molecular (IUBMB) mantiene la lista de enzimas. Se dividen en <b>6 clases</b> según el tipo de reacción, cada una con subclases: oxidorreductasas, transferasas, hidrolasas, liasas, isomerasas y ligasas.</p>
+<h4>Nomenclatura sistemática: número EC</h4>
+<p>Asigna una clave de 4 números. Ejemplo, la hexocinasa, <b>EC 2.7.1.1</b> (nombre sistemático: ATP:glucosa fosfotransferasa):</p>
+<ul>
+<li><b>2</b> → clase: transferasa.</li>
+<li><b>7</b> → subclase: fosfotransferasa.</li>
+<li><b>1</b> → fosfotransferasa con un grupo OH como aceptor.</li>
+<li><b>1</b> → D-glucosa como aceptor del grupo fosforilo.</li>
+</ul>
+<h4>Nomenclatura común</h4>
+<p>Sustrato + reacción + terminación <b>-asa</b>: hexocinasa (fosforila hexosas), celulasa (degrada celulosa), glucosa oxidasa (oxida glucosa), ribonucleasa (degrada ARN).</p>`,key:"6 clases · EC 2.7.1.1 = transferasa · fosfotransferasa · aceptor OH · glucosa · común: sustrato + -asa."},
+{id:"sitio",t:"enz",title:"El sitio activo",body:`
+<p>Región de la enzima que une el sustrato (y el cofactor, si lo hay). Contiene los aminoácidos que participan directamente en la formación y ruptura de enlaces. La interacción E-S en el sitio activo promueve la formación de un estado de transición.</p>
+<ul>
+<li><b>Sustrato (S):</b> molécula que se une al sitio activo y sobre la que actúa la enzima.</li>
+<li><b>Producto (P):</b> molécula que resulta de la transformación.</li>
+</ul>
+<h4>Propiedades</h4>
+<ol>
+<li>Es una <b>hendidura 3D</b> formada por grupos que vienen de <b>diferentes partes de la secuencia</b>.</li>
+<li>Ocupa una <b>pequeña parte del volumen</b> de la enzima. La mayoría de los aa no contactan al sustrato, pero ayudan a posicionar a los catalíticos.</li>
+<li>Es un <b>microambiente único</b>: hendiduras no polares y sin agua (a menos que el agua sea reactivo).</li>
+<li>El sustrato se une por <b>múltiples uniones débiles</b> y reversibles: iónicas, hidrofóbicas, de van der Waals y puentes de H. La direccionalidad de los puentes de H (alineamiento a 180°) da especificidad.</li>
+<li>La <b>especificidad</b> depende de la disposición definida de los átomos del sitio activo.</li>
+</ol>`,key:"Hendidura 3D con aa de distintas partes · pequeña · sin agua · uniones débiles · muy específica."},
+{id:"modelos",t:"enz",title:"Modelos de unión enzima-sustrato",body:`
+<ul>
+<li><b>Llave y cerradura (Emil Fischer):</b> el sitio activo tiene una forma rígida, complementaria al sustrato.</li>
+<li><b>Ajuste inducido:</b> la enzima es flexible y la forma del sitio activo se modifica al unirse el sustrato.</li>
+<li><b>Selección de conformación:</b> la enzima existe en varias conformaciones y el sustrato se une a ciertas de ellas.</li>
+</ul>`,key:"Llave-cerradura = rígido · ajuste inducido = flexible · selección de conformación = elige una forma existente."},
+{id:"lb",t:"inh",title:"Gráfica de Lineweaver-Burk",body:`
+<p>Si a la ecuación de Michaelis-Menten se le aplica el inverso en ambos lados, se obtiene la ecuación de Lineweaver-Burk:</p>
+<p class="formula">1/V₀ = (Km/Vmax) · 1/[S] + 1/Vmax</p>
+<p>Tiene la forma <b>y = mx + b</b>. Al graficar 1/V₀ contra 1/[S] se obtiene una <b>línea recta</b>:</p>
+<ul>
+<li><b>Pendiente (m)</b> = Km/Vmax.</li>
+<li><b>Ordenada al origen (b)</b> = 1/Vmax, en el eje 1/V₀.</li>
+<li><b>Corte en el eje 1/[S]</b> = −1/Km.</li>
+</ul>
+<p><b>Ventajas:</b> determina con más precisión la Vmax (que en la gráfica V₀ vs [S] solo se aproxima) y permite identificar mecanismos de inhibición.</p>`,key:"1/V₀ vs 1/[S] es una recta · pendiente Km/Vmax · corte y = 1/Vmax · corte x = −1/Km."},
+{id:"inhibicion",t:"inh",title:"Inhibición enzimática: reversible e irreversible",body:`
+<p>La actividad enzimática puede inhibirse por la unión de moléculas pequeñas o iones. Los inhibidores ayudan a identificar los aminoácidos críticos para la catálisis.</p>
+<ul>
+<li><b>Reversible (temporal):</b> el complejo E-I se disocia rápido.</li>
+<li><b>Irreversible (permanente):</b> el complejo E-I se disocia muy lento o queda unido para siempre.</li>
+</ul>
+<h4>Tipos de inhibición reversible</h4>
+<div class="tbl"><table><thead><tr><th>Tipo</th><th>Se une a</th><th>¿Se supera con más S?</th><th>Vmax</th><th>Ejemplo</th></tr></thead><tbody>
+<tr><td>Competitiva</td><td>Sitio activo (se parece al S)</td><td>Sí</td><td>Igual</td><td>Malonato, metotrexato, captopril</td></tr>
+<tr><td>Acompetitiva</td><td>Solo al complejo ES</td><td>No</td><td>Disminuye</td><td>Epristerida</td></tr>
+<tr><td>No competitiva</td><td>E libre o ES, en otro sitio</td><td>No</td><td>Disminuye</td><td>Nevirapina, efavirenz</td></tr>
+</tbody></table></div>`,key:"Reversible = se disocia rápido · irreversible = permanente · competitiva, acompetitiva y no competitiva."},
+{id:"competitiva",t:"inh",title:"Inhibición competitiva",body:`
+<p>La enzima se une al sustrato (complejo ES) <b>o</b> al inhibidor (complejo EI), pero no a ambos.</p>
+<ul>
+<li>El inhibidor <b>se parece al sustrato</b> y se une al <b>sitio activo</b>, impidiendo que entre el S.</li>
+<li>Disminuye la velocidad porque baja la proporción de enzima unida al S.</li>
+<li><b>Se supera aumentando [S]</b>: el S compite con el I por el sitio activo.</li>
+<li>Se necesita más [S] para saturar la mitad de las enzimas, así que la <b>Km aparente aumenta</b>. Con exceso de S la enzima se satura y la <b>Vmax no cambia</b>.</li>
+<li>Efecto: ↓V₀, pero la Vmax se mantiene.</li>
+</ul>
+<h4>Ejemplos</h4>
+<ul>
+<li><b>Malonato:</b> inhibe a la succinato deshidrogenasa del ciclo de Krebs.</li>
+<li><b>Metotrexato:</b> quimioterapéutico, análogo del dihidrofolato; ~1000 veces más afín que el sustrato a la dihidrofolato reductasa, e inhibe la síntesis de bases nitrogenadas.</li>
+<li><b>Captopril:</b> antihipertensivo, inhibe a la enzima convertidora de angiotensina (ECA).</li>
+</ul>`,key:"Se une al sitio activo · se supera con más S · Km aparente ↑ · Vmax igual · malonato, metotrexato, captopril."},
+{id:"acompetitiva",t:"inh",title:"Inhibición acompetitiva",body:`
+<ul>
+<li>Depende del sustrato: el inhibidor se une <b>solo al complejo ES</b>.</li>
+<li>El sitio de unión del inhibidor se genera por la interacción entre la E y el S.</li>
+<li>Se forma el complejo <b>ESI, catalíticamente inactivo</b>. La reacción E + S → ES tiende a formar más ES, lo que aumenta la afinidad aparente de la enzima.</li>
+<li><b>No se supera</b> añadiendo más sustrato.</li>
+</ul>
+<p><b>Ejemplo:</b> la <b>epristerida</b>, para el crecimiento benigno de la próstata, inhibe a la 5-α-reductasa, que convierte testosterona en dihidrotestosterona.</p>`,key:"Se une solo a ES · forma ESI inactivo · no se supera con más S · epristerida."},
+{id:"nocompetitiva",t:"inh",title:"Inhibición no competitiva",body:`
+<ul>
+<li>El I y el S se unen a la enzima en <b>sitios diferentes</b> (alostéricos).</li>
+<li>A diferencia de la acompetitiva, el I se une a la <b>E libre o al complejo ES</b>, por eso se le llama inhibición mixta.</li>
+<li>El S puede unirse tanto a la E como al complejo EI, pero la unión del I reduce la capacidad catalítica.</li>
+<li>El inhibidor <b>disminuye la cantidad de enzima funcional</b>, pero no la proporción de E unida al S.</li>
+<li><b>No se supera</b> aumentando [S]. Efecto: ↓V₀ y ↓Vmax.</li>
+</ul>
+<p><b>Ejemplos:</b> nevirapina y efavirenz, antirretrovirales que inhiben la transcriptasa reversa del VIH.</p>`,key:"Sitio distinto · se une a E o ES · ↓ enzima funcional y ↓Vmax · nevirapina, efavirenz."},
+{id:"alostericas",t:"inh",title:"Enzimas alostéricas cooperativas",body:`
+<p>Son un grupo importante de enzimas que <b>no obedecen la cinética de Michaelis-Menten</b>.</p>
+<ul>
+<li>Tienen <b>varias subunidades y sitios activos</b>; ejemplo: fosfofructocinasa.</li>
+<li>Muestran una gráfica V₀ vs [S] <b>sigmoidea</b>.</li>
+<li>La unión del S a un sitio activo facilita su unión a los demás (cooperatividad).</li>
+<li>Su actividad se modifica por moléculas reguladoras que se unen reversiblemente a sitios distintos de los catalíticos.</li>
+<li>Ajustan sus propiedades a las necesidades celulares: son <b>reguladores clave de rutas metabólicas</b>.</li>
+</ul>`,key:"Varias subunidades · curva sigmoidea · cooperatividad · fosfofructocinasa."},
+{id:"irreversible",t:"inh",title:"Inhibición irreversible",body:`
+<ul>
+<li>El inhibidor se disocia extremadamente lento o queda unido de forma permanente (covalente).</li>
+<li>Su unión <b>elimina un grupo funcional catalítico</b>.</li>
+<li>Sirve para descubrir qué aminoácidos tienen función catalítica.</li>
+</ul>
+<h4>Ejemplos</h4>
+<ul>
+<li><b>Penicilina:</b> modifica covalentemente la transpeptidasa e impide la síntesis de pared celular bacteriana.</li>
+<li><b>Aspirina:</b> modifica covalentemente la ciclooxigenasa y reduce la síntesis de moléculas de inflamación.</li>
+<li><b>Di-isopropilfluorofosfato (DIFP):</b> modifica la Ser195 del sitio activo de la quimotripsina.</li>
+</ul>`,key:"Unión permanente · elimina un grupo catalítico · penicilina, aspirina, DIFP."},
+{id:"suicidas",t:"inh",title:"Inactivadores suicidas y la enfermedad del sueño",body:`
+<ul>
+<li>Son compuestos <b>poco reactivos hasta que se unen al sitio activo</b>.</li>
+<li>Pasan por los primeros pasos de la reacción normal, pero en vez de volverse producto se convierten en un compuesto reactivo que se une <b>irreversiblemente</b> a la enzima.</li>
+<li>También se llaman inactivadores basados en mecanismos: “secuestran” el mecanismo normal de la enzima.</li>
+<li>Como fármacos tienen <b>pocos efectos secundarios</b> (medicamentos de precisión).</li>
+</ul>
+<h4>Un caballo de Troya bioquímico</h4>
+<p>La enfermedad del sueño africana la causa <i>Trypanosoma brucei</i>. Es muy importante en países en desarrollo. Su cubierta proteica es reconocida en la 1ª infección, pero por recombinación el parásito cambia a una cubierta nueva que no se reconoce y la fiebre regresa en un ciclo mortal.</p>
+<p>El tratamiento usa la <b>difluorometilornitina (DFMO)</b>, un inactivador suicida de la <b>ornitina descarboxilasa (ODC)</b>. Esta enzima, que usa la coenzima <b>PLP</b>, hace el primer paso de la síntesis de poliaminas (espermina y espermidina, necesarias para empaquetar el ADN).</p>
+<ul>
+<li>El DFMO tiene <b>2 átomos de F</b>, que son buenos grupos salientes. Los electrones, en vez de ir al anillo del PLP, se dirigen a un F.</li>
+<li>Se forma un compuesto muy reactivo y el azufre de una <b>Cys</b> del sitio activo forma con él un complejo covalente irreversible.</li>
+</ul>
+<p>Diseñar fármacos a partir del mecanismo de reacción y la estructura 3D de la enzima mejora el método de prueba y error.</p>`,key:"Inertes hasta llegar al sitio activo · se unen irreversiblemente · DFMO inhibe la ODC de T. brucei."}
+];
+const LESSON=Object.fromEntries(LESSONS.map(l=>[l.id,l]));
 
 /* =================== UTILIDADES =================== */
 const $=s=>document.querySelector(s);
@@ -344,148 +849,196 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const norm=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 const pick=a=>a[Math.floor(Math.random()*a.length)];
-const store={get(){try{return JSON.parse(localStorage.getItem("bioq-amor")||"{}")}catch(e){return{}}},set(v){try{localStorage.setItem("bioq-amor",JSON.stringify(v))}catch(e){}}};
+const hash=s=>{let h=5381;for(const c of s)h=((h<<5)+h+c.charCodeAt(0))|0;return (h>>>0).toString(36);};
+const KEY="bioq-amor";
+const store={get(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return{}}},set(v){try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}}};
+
+[...MCQ,...OPEN].forEach(x=>x.id=hash(x.t+x.q));
+const BYID=Object.fromEntries([...MCQ,...OPEN].map(x=>[x.id,x]));
 
 const PRAISE=["¡Exacto, mi amor!","¡Muy bien, preciosa!","¡Eso es! Qué inteligente eres.","¡Perfecto, mi amor!","¡Bravo! Te la sabes."];
 const OOPS=["Casi, mi amor. Mira:","No pasa nada, así se aprende:","Esta se te fue, pero ya la vas a recordar:","Tranquila, mi amor, aquí está:"];
 
-let S=Object.assign({tab:"examen",mode:"mcq",n:10,topics:Object.keys(TOPICS)},store.get());
-let Q=null; /* estado del examen en curso */
+let S=Object.assign({tab:"examen",mode:"mcq",n:10,topics:Object.keys(TOPICS),used:{mcq:[],open:[]},studyTopic:"pur"},store.get().S||{});
+if(!S.used)S.used={mcq:[],open:[]};
+let Q=loadQ(); /* examen en curso (se guarda para no perder el progreso) */
+
+function save(){store.set({S,Q:Q?packQ(Q):null});}
+function packQ(q){return {mode:q.mode,i:q.i,done:q.done,hints:q.hints,note:q.note,retry:q.retry,items:q.items.map(it=>({id:it.src.id,opts:it.opts,score:it.score,pick:it.pick,text:it.text,revealed:!!it.revealed,hinted:!!it.hinted}))};}
+function loadQ(){
+  const raw=store.get().Q;if(!raw||!raw.items)return null;
+  if(raw.items.some(it=>!BYID[it.id]))return null;
+  return Object.assign({},raw,{items:raw.items.map(it=>Object.assign({},it,{src:BYID[it.id]}))});
+}
 
 /* =================== PESTAÑAS =================== */
 document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>go(b.dataset.tab));
-function go(tab){
-  S.tab=tab; store.set({tab:S.tab,mode:S.mode,n:S.n,topics:S.topics});
+function go(tab,opts={}){
+  S.tab=tab;save();
   document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===tab));
-  if(tab==="repaso")renderRepaso();
+  if(tab==="estudiar")renderEstudiar(opts.lesson);
   else if(tab==="amor")renderAmor();
   else if(Q&&!Q.done)renderQ();
   else if(Q&&Q.done)renderResult();
   else renderSetup();
-  window.scrollTo({top:0});
+  backBar(tab);
+  if(!opts.lesson)window.scrollTo({top:0});
 }
 
-/* =================== REPASO =================== */
-const NOTES={
-pur:[["HPLC","Separa por polaridad. Partículas ~3 µm, columna de 2-5 mm, ~45 MPa. Detección a 220 nm (enlace peptídico). Fase normal: estacionaria polar → retiene polares. Fase reversa: estacionaria no polar → retiene no polares."],
- ["¿La purificación funcionó?","La actividad específica ↑ y el número de proteínas distintas ↓ en cada paso."],
- ["SDS-PAGE","Separa por tamaño (el SDS da carga − proporcional a la masa, ~1 SDS cada 2 aa). Migra al ánodo (+). Pequeñas = más rápido. Gel: acrilamida + bisacrilamida; APS genera radicales y TEMED los acelera. Reductor: BME o DTT rompen disulfuros. Tinción: plata o Coomassie; autorradiografía con ¹²⁵I. Resolución: 10 aa."],
- ["Isoelectroenfoque","Separa por pI (pH con carga neta 0). Gradiente de pH con polianfolitos. pH < pI → carga +; pH > pI → carga −. Resolución 0.01 de pH. Citocromo c pI 10.6 (básico); albúmina 4.8 (ácida)."],
- ["Electroforesis 2D","1ª dimensión: pI (horizontal). 2ª: SDS-PAGE (vertical). Patrón de puntos (>1,000 proteínas de E. coli). Puntos se identifican por espectrometría de masas."],
- ["Ultracentrifugación","20,000-150,000 rpm. S (Svedberg) menor = más lento. Depende de masa, forma (alargadas más lento), densidad de la partícula y del medio. Zonal: gradiente de sacarosa 5% → 20%, separa por S (resolución S = 2)."]],
-det:[["Inmunología básica","Anticuerpo: proteína en Y hecha por linfocitos B. Antígeno: molécula ajena que induce respuesta inmune."],
- ["ELISA","Antígeno inmovilizado + anticuerpo 1º + anticuerpo 2º con enzima (HRP o ALP) → color medido por espectrofotometría. Directo, indirecto y sándwich: señal directamente proporcional. Competitivo: inversamente proporcional; útil para cantidades bajas."],
- ["Tipos de detección","Colorimétrica: precipitado de color, se detiene con H₂SO₄, sensibilidad media. Quimioluminiscente: produce luz, se capta con CCD o película. Fluorescente: GFP verde, mCherry roja, luz UV. Radiactiva: ¹²⁵I y ³²P, riesgosa."],
- ["Western blot capilar","Gel en SSC 10X 15 min (quita SDS) → membrana de nitrocelulosa → esponja, 3 papeles, gel, membrana, 3 papeles → Parafilm en bordes, papel absorbente y peso 300-500 g → capilaridad 16 h."]],
-enz:[["Enzimas","Catalizadores (proteínas y ARN) que bajan la energía de activación (10⁸-10²⁰ veces), no cambian el equilibrio, son muy específicas y dependen de su conformación nativa, temperatura y pH."],
- ["Cofactores","Iones metálicos (Zn²⁺, Mg²⁺, Fe, Cu…), coenzimas (orgánicas, unión débil y reversible, de vitaminas: NAD⁺, NADP⁺, CoA) y grupos prostéticos (unión permanente, ej. hemo)."],
- ["Holoenzima y apoenzima","Apoenzima = parte proteica. Holoenzima = apoenzima + cofactor(es), activa."],
- ["Ejemplos con metales","SOD: Cu²⁺ hace el ciclo redox, Zn²⁺ orienta. Hexocinasa: Mg²⁺ neutraliza fosfatos del ATP. Dedo de zinc: Zn²⁺ con Cys₂His₂."],
- ["Nomenclatura","6 clases. EC 2.7.1.1 = transferasa · fosfotransferasa · aceptor OH · D-glucosa. Nombre común: sustrato + “-asa” (celulasa, ribonucleasa)."],
- ["Sitio activo","Hendidura 3D con aa de distintas partes de la secuencia, pequeña parte del volumen, sin agua. Uniones débiles múltiples. Llave-cerradura (Fischer) vs ajuste inducido (flexible)."]],
-inh:[["Lineweaver-Burk","1/V₀ vs 1/[S] da una recta. Pendiente = Km/Vmax. Corte en y = 1/Vmax. Corte en x = −1/Km. Mide Vmax con precisión y distingue inhibiciones."],
- ["Reversible vs irreversible","Reversible: E-I se disocia rápido. Irreversible: disociación lentísima o covalente (penicilina → transpeptidasa; aspirina → ciclooxigenasa; DIFP → Ser195 de quimotripsina)."],
- ["Inactivadores suicidas","Poco reactivos hasta llegar al sitio activo; se vuelven reactivos y se unen irreversiblemente. DFMO inhibe la ODC (con PLP) de T. brucei."]]
-};
-const INHTABLE=[["Competitiva","Sitio activo (se parece al S)","Sí","Igual","Malonato, metotrexato, captopril"],
-["Acompetitiva","Solo al complejo ES","No","Disminuye","Epristerida (5-α-reductasa)"],
-["No competitiva","E libre o ES, sitio distinto","No","Disminuye","Nevirapina, efavirenz"]];
+/* Barra para regresar al examen sin perder el progreso */
+function backBar(tab){
+  const bar=$("#backBar");
+  if(Q&&tab!=="examen"){
+    const answered=Q.items.filter(it=>it.score!==null).length;
+    $("#backText").textContent=Q.done?"Tienes tus resultados guardados":`Examen en pausa · ${answered} de ${Q.items.length} respondidas`;
+    $("#backBtn").textContent=Q.done?"Ver mis resultados":"Volver a mi examen";
+    bar.hidden=false;document.body.classList.add("has-back");
+  }else{bar.hidden=true;document.body.classList.remove("has-back");}
+}
+$("#backBtn").onclick=()=>go("examen");
 
-function renderRepaso(){
+/* =================== ESTUDIAR =================== */
+function renderEstudiar(lessonId){
+  if(lessonId&&LESSON[lessonId])S.studyTopic=LESSON[lessonId].t;
+  const t=S.studyTopic in TOPICS?S.studyTopic:"pur";
+  const list=LESSONS.filter(l=>l.t===t);
   app.innerHTML=`<div class="stack">
-  <p class="muted">Toca cada tema para abrir el resumen. Cuando te sientas lista, ve a <b>Examen</b>.</p>
-  ${Object.entries(TOPICS).map(([k,name],i)=>`
-  <details class="topic"${i===0?" open":""}>
-    <summary><h3>${name}</h3><span class="n">${MCQ.filter(x=>x.t===k).length+OPEN.filter(x=>x.t===k).length} preguntas</span><span class="car" aria-hidden="true">▸</span></summary>
-    <div class="body">
-      ${NOTES[k].map(f=>`<div class="fact"><b>${esc(f[0])}</b><p>${esc(f[1])}</p></div>`).join("")}
-      ${k==="inh"?`<div class="tbl"><table><thead><tr><th>Tipo</th><th>Se une a</th><th>¿Se supera con más S?</th><th>Vmax</th><th>Ejemplo</th></tr></thead><tbody>${INHTABLE.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`:""}
-      <button class="btn" data-practice="${k}">Practicar solo este tema</button>
-    </div>
-  </details>`).join("")}
+    <p class="muted">Aquí está la explicación completa de cada tema. Al final de cada lección hay un resumen en corto y un botón para practicar.</p>
+    <div class="row" role="group" aria-label="Temas">${Object.entries(TOPICS).map(([k,n])=>`<button class="chip" data-st="${k}" aria-pressed="${k===t}">${n}</button>`).join("")}</div>
+    <nav class="toc card" aria-label="Lecciones de ${TOPICS[t]}">
+      <div class="eyebrow">${TOPICS[t]} · ${list.length} lecciones</div>
+      <ol>${list.map(l=>`<li><a href="#l-${l.id}" data-jump="${l.id}">${l.title}</a></li>`).join("")}</ol>
+    </nav>
+    ${list.map(l=>{const nq=[...MCQ,...OPEN].filter(x=>x.s===l.id).length;return `
+    <article class="lesson card" id="l-${l.id}" tabindex="-1">
+      <h2>${l.title}</h2>
+      <div class="prose">${l.body}</div>
+      <div class="incorto"><span class="eyebrow">En corto</span><p>${esc(l.key)}</p></div>
+      <div class="row"><button class="btn sm" data-practice="${l.id}">Practicar esta lección (${nq})</button></div>
+    </article>`;}).join("")}
   </div>`;
-  app.querySelectorAll("[data-practice]").forEach(b=>b.onclick=()=>{S.topics=[b.dataset.practice];Q=null;go("examen");});
+  app.querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>{S.studyTopic=b.dataset.st;save();renderEstudiar();window.scrollTo({top:0});});
+  app.querySelectorAll("[data-jump]").forEach(a=>a.onclick=e=>{e.preventDefault();focusLesson(a.dataset.jump);});
+  app.querySelectorAll("[data-practice]").forEach(b=>b.onclick=()=>practiceLesson(b.dataset.practice));
+  if(lessonId)requestAnimationFrame(()=>focusLesson(lessonId));
 }
+function focusLesson(id){
+  const el=document.getElementById("l-"+id);if(!el)return;
+  el.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+  el.focus({preventScroll:true});
+  el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash");
+}
+function practiceLesson(id){
+  const items=shuffle([...MCQ,...OPEN].filter(x=>x.s===id));
+  const doIt=()=>{Q=null;startWith(items,{mode:"mixed",retry:true});go("examen");};
+  if(Q&&!Q.done)confirmLeave(doIt);else doIt();
+}
+function lessonBtn(x,label="Ver explicación completa"){return x.s&&LESSON[x.s]?`<button class="btn sm study" data-lesson="${x.s}">${label}</button>`:"";}
+function wireLessonBtns(){app.querySelectorAll("[data-lesson]").forEach(b=>b.onclick=()=>go("estudiar",{lesson:b.dataset.lesson}));}
 
 /* =================== CONFIGURAR EXAMEN =================== */
-function pool(){const src=S.mode==="mcq"?MCQ:OPEN;return src.filter(x=>S.topics.includes(x.t));}
+const srcFor=m=>m==="open"?OPEN:MCQ;
+function pool(mode=S.mode){return srcFor(mode).filter(x=>S.topics.includes(x.t));}
+function unseen(mode=S.mode){const u=new Set(S.used[mode]);return pool(mode).filter(x=>!u.has(x.id));}
 function renderSetup(){
-  const p=pool();const max=Math.max(1,p.length);
+  const p=pool(),fresh=unseen().length;const max=Math.max(1,p.length);
   S.n=Math.min(Math.max(1,S.n),max);
   app.innerHTML=`<section class="card stack">
     <div class="eyebrow">Arma tu examen</div>
     <div class="stack" style="gap:8px"><h3>Tipo de examen</h3>
       <div class="seg">
-        <button id="m-mcq" aria-pressed="${S.mode==="mcq"}"><b>Opción múltiple</b><span>Eliges una respuesta</span></button>
-        <button id="m-open" aria-pressed="${S.mode==="open"}"><b>Abierto</b><span>Escribes con tus palabras</span></button>
+        <button id="m-mcq" aria-pressed="${S.mode==="mcq"}"><b>Opción múltiple</b><span>${MCQ.length} preguntas · eliges una respuesta</span></button>
+        <button id="m-open" aria-pressed="${S.mode==="open"}"><b>Abierto</b><span>${OPEN.length} preguntas · escribes con tus palabras</span></button>
       </div></div>
     <div class="stack" style="gap:8px"><h3>Temas</h3>
       <div class="row">${Object.entries(TOPICS).map(([k,n])=>`<button class="chip" data-topic="${k}" aria-pressed="${S.topics.includes(k)}">${n}</button>`).join("")}</div></div>
     <div class="stack" style="gap:8px"><h3><label for="nq">Número de preguntas</label></h3>
-      <div class="count">
-        <input type="range" id="nq" min="1" max="${max}" value="${S.n}" ${p.length?"":"disabled"}>
-        <output id="nqo" for="nq">${S.n}</output>
-        <div class="stepper"><button id="nqm" aria-label="Una pregunta menos">−</button><button id="nqp" aria-label="Una pregunta más">+</button></div>
-      </div>
-      <p class="muted small">${p.length?`Hay ${p.length} preguntas disponibles con estos temas.`:"Elige al menos un tema para empezar."}</p></div>
-    <div class="row"><button class="btn primary" id="start" ${p.length?"":"disabled"}>Empezar examen</button></div>
+      ${counter("nq",S.n,max,!p.length)}
+      <p class="muted small">${p.length?`${p.length} preguntas con estos temas · <b>${fresh}</b> que todavía no te han salido.`:"Elige al menos un tema para empezar."}</p></div>
+    <div class="row"><button class="btn primary" id="start" ${p.length?"":"disabled"}>Empezar examen</button>
+      ${S.used[S.mode].length?`<button class="btn" id="resetUsed">Reiniciar preguntas vistas</button>`:""}</div>
   </section>`;
   $("#m-mcq").onclick=()=>{S.mode="mcq";save();renderSetup();};
   $("#m-open").onclick=()=>{S.mode="open";save();renderSetup();};
   app.querySelectorAll("[data-topic]").forEach(b=>b.onclick=()=>{const k=b.dataset.topic;S.topics=S.topics.includes(k)?S.topics.filter(x=>x!==k):[...S.topics,k];save();renderSetup();});
-  const setN=v=>{S.n=Math.min(max,Math.max(1,v));$("#nq").value=S.n;$("#nqo").textContent=S.n;save();};
-  $("#nq").oninput=e=>setN(+e.target.value);
-  $("#nqm").onclick=()=>setN(S.n-1);
-  $("#nqp").onclick=()=>setN(S.n+1);
-  $("#start").onclick=()=>start(shuffle(p).slice(0,S.n));
+  wireCounter("nq",max,v=>{S.n=v;save();});
+  $("#start").onclick=()=>newExam(S.n);
+  const r=$("#resetUsed");if(r)r.onclick=()=>{S.used[S.mode]=[];save();renderSetup();};
 }
-function save(){store.set({tab:S.tab,mode:S.mode,n:S.n,topics:S.topics});}
+function counter(id,v,max,disabled){return `<div class="count">
+  <input type="range" id="${id}" min="1" max="${max}" value="${v}" ${disabled?"disabled":""}>
+  <output id="${id}o" for="${id}">${v}</output>
+  <div class="stepper"><button type="button" id="${id}m" aria-label="Una pregunta menos">−</button><button type="button" id="${id}p" aria-label="Una pregunta más">+</button></div></div>`;}
+function wireCounter(id,max,onChange){
+  const r=document.getElementById(id),o=document.getElementById(id+"o");
+  const set=v=>{v=Math.min(max,Math.max(1,v));r.value=v;o.textContent=v;onChange(v);};
+  r.oninput=e=>set(+e.target.value);
+  document.getElementById(id+"m").onclick=()=>set(+r.value-1);
+  document.getElementById(id+"p").onclick=()=>set(+r.value+1);
+}
+
+/* Elige preguntas que no han salido; si ya no alcanzan, empieza una vuelta nueva. */
+function newExam(n){
+  const fresh=shuffle(unseen());let items,note=null;
+  if(fresh.length>=n){items=fresh.slice(0,n);}
+  else{
+    const rest=shuffle(pool().filter(x=>!fresh.includes(x)));
+    items=fresh.concat(rest.slice(0,n-fresh.length));
+    S.used[S.mode]=[];
+    note=fresh.length?`Solo quedaban ${fresh.length} preguntas que no habías visto con estos temas; el resto son repaso de exámenes anteriores.`:"Ya viste todas las preguntas de estos temas, así que empezamos una vuelta nueva.";
+  }
+  S.used[S.mode]=[...new Set([...S.used[S.mode],...items.map(x=>x.id)])];
+  startWith(items,{mode:S.mode,note});
+}
+function startWith(items,{mode,note=null,retry=false}){
+  Q={mode,i:0,done:false,hints:0,note,retry,items:items.map(x=>({src:x,opts:x.o?shuffle(x.o.map((t,j)=>({t,ok:j===0}))):null,score:null,pick:null,text:"",revealed:false,hinted:false}))};
+  save();renderQ();backBar("examen");window.scrollTo({top:0});
+}
+const isMcq=it=>!!it.src.o;
 
 /* =================== EXAMEN =================== */
-function start(items){
-  Q={mode:S.mode,i:0,done:false,hints:0,items:items.map(x=>({src:x,opts:x.o?shuffle(x.o.map((t,j)=>({t,ok:j===0}))):null,score:null,pick:null,text:""}))};
-  renderQ();
-}
 function gel(){return `<div class="gel" aria-hidden="true">${Q.items.map((it,j)=>`<i class="${j===Q.i&&!Q.done?"now":it.score===1?"ok":it.score===0.5?"mid":it.score===0?"no":""}"></i>`).join("")}</div>`;}
 function renderQ(){
-  const it=Q.items[Q.i],x=it.src,answered=it.score!==null;
+  const it=Q.items[Q.i],x=it.src,answered=it.score!==null,mc=isMcq(it);
   const L="ABCD";
   app.innerHTML=`<section class="card stack">
+    ${Q.note&&Q.i===0?`<p class="note small">${esc(Q.note)}</p>`:""}
     <div class="qhead"><span class="tag">${TOPICS[x.t]}</span><span class="mono muted">Pregunta ${Q.i+1} de ${Q.items.length}</span></div>
     ${gel()}
     <p class="q">${esc(x.q)}</p>
-    ${Q.mode==="mcq"?`<div class="opts">${it.opts.map((o,j)=>`<button class="opt ${answered&&o.ok?"right":""} ${answered&&it.pick===j&&!o.ok?"wrong":""}" data-j="${j}" ${answered?"disabled":""}><span class="k">${L[j]}</span><span>${esc(o.t)}</span></button>`).join("")}</div>`
-    :`<label class="eyebrow" for="ans">Tu respuesta</label><textarea id="ans" placeholder="Escribe aquí lo que recuerdes, con tus palabras…" ${answered?"readonly":""}>${esc(it.text)}</textarea>`}
+    ${mc?`<div class="opts">${it.opts.map((o,j)=>`<button class="opt ${answered&&o.ok?"right":""} ${answered&&it.pick===j&&!o.ok?"wrong":""}" data-j="${j}" ${answered?"disabled":""}><span class="k">${L[j]}</span><span>${esc(o.t)}</span></button>`).join("")}</div>`
+    :`<label class="eyebrow" for="ans">Tu respuesta</label><textarea id="ans" placeholder="Escribe aquí lo que recuerdes, con tus palabras…" ${it.revealed?"readonly":""}>${esc(it.text)}</textarea>`}
     <div id="fbz">${answered||it.revealed?feedback(it):""}</div>
     <div class="actions">
-      <button class="btn hint" id="hintBtn">Ver pista</button>
+      <div class="row"><button class="btn hint" id="hintBtn">Ver pista</button>${!answered&&!it.revealed?lessonBtn(x,"Estudiar este tema"):""}</div>
       <div class="row">
-        ${Q.mode==="open"&&!it.revealed?`<button class="btn primary" id="check">Revisar respuesta</button>`:""}
+        ${!mc&&!it.revealed?`<button class="btn primary" id="check">Revisar respuesta</button>`:""}
         ${answered?`<button class="btn primary" id="next">${Q.i+1<Q.items.length?"Siguiente":"Ver resultado"}</button>`:""}
         <button class="btn" id="quit">Salir</button>
       </div>
     </div>
   </section>`;
   $("#hintBtn").onclick=()=>showHint(x.h,it);
-  $("#quit").onclick=()=>{Q=null;renderSetup();};
-  if(Q.mode==="mcq"&&!answered)app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const j=+b.dataset.j;it.pick=j;it.score=it.opts[j].ok?1:0;renderQ();});
-  if(Q.mode==="open"){
+  $("#quit").onclick=()=>confirmLeave(()=>{Q=null;save();renderSetup();backBar("examen");});
+  wireLessonBtns();
+  if(mc&&!answered)app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const j=+b.dataset.j;it.pick=j;it.score=it.opts[j].ok?1:0;save();renderQ();});
+  if(!mc){
     const ta=$("#ans");
-    if(!answered)ta.oninput=()=>it.text=ta.value;
+    if(!it.revealed)ta.oninput=()=>{it.text=ta.value;save();};
     const c=$("#check");
-    if(c)c.onclick=()=>{it.text=ta.value;it.revealed=true;renderQ();};
-    app.querySelectorAll("[data-self]").forEach(b=>b.onclick=()=>{it.score=+b.dataset.self;renderQ();});
+    if(c)c.onclick=()=>{it.text=ta.value;it.revealed=true;save();renderQ();};
+    app.querySelectorAll("[data-self]").forEach(b=>b.onclick=()=>{it.score=+b.dataset.self;save();renderQ();});
   }
-  const n=$("#next");if(n)n.onclick=()=>{if(Q.i+1<Q.items.length){Q.i++;renderQ();}else{Q.done=true;renderResult();}};
-  if(Q.mode==="open"&&!answered&&!it.revealed)$("#ans").focus({preventScroll:true});
+  const n=$("#next");if(n)n.onclick=()=>{if(Q.i+1<Q.items.length){Q.i++;save();renderQ();window.scrollTo({top:0});}else{Q.done=true;save();renderResult();backBar("examen");window.scrollTo({top:0});}};
 }
 function hits(it){const t=norm(it.text);return it.src.k.map(g=>g.some(w=>t.includes(norm(w))));}
 function suggest(it){const h=hits(it),r=h.filter(Boolean).length/h.length;return r>=0.7?1:r>=0.35?0.5:0;}
 function feedback(it){
   const x=it.src;
-  if(Q.mode==="mcq"){
+  if(isMcq(it)){
     const ok=it.score===1;
-    return `<div class="fb ${ok?"ok":"no"}" role="status"><h3>${ok?pick(PRAISE):pick(OOPS)}</h3><p>${esc(x.e)}</p></div>`;
+    return `<div class="fb ${ok?"ok":"no"}" role="status"><h3>${ok?pick(PRAISE):pick(OOPS)}</h3><p>${esc(x.e)}</p>
+      <div>${lessonBtn(x,ok?"Leer la explicación completa":"Ver explicación completa del tema")}</div></div>`;
   }
   const h=hits(it),sug=suggest(it);
   const labels=x.k.map(g=>g[0]);
@@ -500,22 +1053,50 @@ function feedback(it){
       <button data-self="0.5" class="${sug===0.5?"sug":""}">Más o menos</button>
       <button data-self="0" class="${sug===0?"sug":""}">Me faltó</button>
     </div>`:`<p><b>${it.score===1?pick(PRAISE):it.score===0.5?"¡Vas muy bien, mi amor! Solo te faltaron unos detalles.":pick(OOPS).replace(/:$/,".")+" Repasa la respuesta modelo y la próxima te sale."}</b></p>`}
+    <div>${lessonBtn(x)}</div>
   </div>`;
 }
 
-/* ---- pista ---- */
-let lastFocus=null;
-function showHint(text,it){
-  if(!it.hinted){it.hinted=true;Q.hints++;}
+/* =================== VENTANAS (pista y avisos) =================== */
+let lastFocus=null,modalClose=null;
+function openModal({title,body,kind="",buttons=[]}){
   lastFocus=document.activeElement;
-  $("#hintText").textContent=text;
-  $("#hintBox").hidden=false;
-  $("#hintClose").focus();
+  const box=$("#modalBox");
+  box.className="modal "+kind;
+  box.innerHTML=`<h3 id="modalTitle">${title}</h3><div class="mbody">${body}</div><div class="mbtns">${buttons.map((b,i)=>`<button class="btn ${b.cls||""}" data-mb="${i}">${b.label}</button>`).join("")}</div>`;
+  box.querySelectorAll("[data-mb]").forEach(el=>el.onclick=()=>buttons[+el.dataset.mb].fn());
+  $("#modal").hidden=false;
+  (box.querySelector(".btn.primary")||box.querySelector("button")).focus();
 }
-function closeHint(){$("#hintBox").hidden=true;if(lastFocus)lastFocus.focus();}
-$("#hintClose").onclick=closeHint;
-$("#hintBox").onclick=e=>{if(e.target.id==="hintBox")closeHint();};
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#hintBox").hidden)closeHint();});
+function closeModal(){$("#modal").hidden=true;if(lastFocus&&document.contains(lastFocus))lastFocus.focus();}
+$("#modal").onclick=e=>{if(e.target.id==="modal")closeModal();};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#modal").hidden)closeModal();});
+
+const BULB=`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>`;
+function showHint(text,it){
+  if(!it.hinted){it.hinted=true;Q.hints++;save();}
+  openModal({title:BULB+"Pista",kind:"hintm",body:`<p>${esc(text)}</p>`,buttons:[{label:"Entendido",cls:"primary",fn:closeModal}]});
+}
+function confirmLeave(onYes){
+  openModal({title:"¿Salir del examen?",body:`<p>Vas en la pregunta ${Q.i+1} de ${Q.items.length}. Si sales, este examen se borra.</p>`,
+    buttons:[{label:"Seguir con mi examen",cls:"primary",fn:closeModal},{label:"Sí, salir",fn:()=>{closeModal();onYes();}}]});
+}
+
+/* Aviso de examen nuevo: mismo número de preguntas o elegir otro */
+function askNewExam(){
+  if(!pool().length){Q=null;save();renderSetup();backBar("examen");return;}
+  const last=Q?Q.items.length:S.n,max=pool().length,fresh=unseen().length;
+  const n=Math.min(last,max);
+  openModal({title:"Se van a generar preguntas nuevas",
+    body:`<p>Tu examen nuevo tendrá preguntas distintas a las que ya te salieron (${fresh} sin ver). ¿Quieres continuar con el mismo número de preguntas que el anterior (<b>${n}</b>)?</p>`,
+    buttons:[{label:`Sí, ${n} preguntas nuevas`,cls:"primary",fn:()=>{closeModal();S.n=n;newExam(n);}},{label:"No, elegir otra cantidad",fn:()=>askCount(n,max,fresh)}]});
+}
+function askCount(n,max,fresh){
+  openModal({title:"¿Cuántas preguntas quieres?",
+    body:`<label class="eyebrow" for="nq2">Número de preguntas</label>${counter("nq2",n,max,false)}<p class="muted small">Hay ${fresh} preguntas que no te han salido con estos temas.</p>`,
+    buttons:[{label:"Generar examen",cls:"primary",fn:()=>{const v=+$("#nq2").value;closeModal();S.n=v;newExam(v);}},{label:"Cancelar",fn:closeModal}]});
+  wireCounter("nq2",max,()=>{});
+}
 
 /* =================== RESULTADO =================== */
 function renderResult(){
@@ -534,21 +1115,25 @@ function renderResult(){
     </svg>
     <h2>${title}</h2>
     <p>${msg}</p>
-    <p class="mono muted small">${fmt(pts)} de ${tot} puntos · ${Q.hints} pista${Q.hints===1?"":"s"} usada${Q.hints===1?"":"s"} · ${Q.mode==="mcq"?"opción múltiple":"abierto"}</p>
+    <p class="mono muted small">${fmt(pts)} de ${tot} puntos · ${Q.hints} pista${Q.hints===1?"":"s"} usada${Q.hints===1?"":"s"}</p>
     <div class="row" style="justify-content:center">
       ${wrong.length?`<button class="btn primary" id="retry">Repetir las que fallé (${wrong.length})</button>`:""}
       <button class="btn ${wrong.length?"":"primary"}" id="again">Nuevo examen</button>
+      <button class="btn" id="settings">Cambiar temas o tipo</button>
       <button class="btn" id="toLove">Un mensaje para ti</button>
     </div>
   </section>
   ${wrong.length?`<section class="stack"><h3>Para repasar</h3><div class="review">${wrong.map(it=>{const x=it.src;
-    const yours=Q.mode==="mcq"?(it.pick!==null?it.opts[it.pick].t:"—"):(it.text.trim()||"(sin respuesta)");
-    const right=Q.mode==="mcq"?x.o[0]:x.a;
+    const yours=isMcq(it)?(it.pick!==null?it.opts[it.pick].t:"—"):(it.text.trim()||"(sin respuesta)");
+    const right=isMcq(it)?x.o[0]:x.a;
     return `<div class="rv"><span class="tag" style="justify-self:start">${TOPICS[x.t]}</span><b>${esc(x.q)}</b>
-      <p class="y">Tu respuesta: ${esc(yours)}</p><p class="a"><b>Correcta:</b> ${esc(right)}</p>${x.e?`<p class="muted small">${esc(x.e)}</p>`:""}</div>`;}).join("")}</div></section>`:""}`;
+      <p class="y">Tu respuesta: ${esc(yours)}</p><p class="a"><b>Correcta:</b> ${esc(right)}</p>${x.e?`<p class="muted small">${esc(x.e)}</p>`:""}
+      <div>${lessonBtn(x)}</div></div>`;}).join("")}</div></section>`:""}`;
   requestAnimationFrame(()=>requestAnimationFrame(()=>{const r=$("#ringFg");if(r)r.style.strokeDashoffset=C*(1-pct/100);}));
-  const rt=$("#retry");if(rt)rt.onclick=()=>{Q.mode=S.mode;start(shuffle(wrong.map(it=>it.src)));};
-  $("#again").onclick=()=>{Q=null;renderSetup();};
+  wireLessonBtns();
+  const rt=$("#retry");if(rt)rt.onclick=()=>startWith(shuffle(wrong.map(it=>it.src)),{mode:Q.mode,retry:true});
+  $("#again").onclick=askNewExam;
+  $("#settings").onclick=()=>{Q=null;save();renderSetup();backBar("examen");};
   $("#toLove").onclick=()=>go("amor");
 }
 const fmt=n=>Number.isInteger(n)?n:n.toFixed(1);
@@ -639,5 +1224,5 @@ function renderAmor(){
 }
 
 /* =================== INICIO =================== */
-go(S.tab||"examen");
+go(["estudiar","examen","amor"].includes(S.tab)?S.tab:"examen");
 </script>
