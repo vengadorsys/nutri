@@ -1,0 +1,643 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bioquímica de mi amor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Figtree:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@500&display=swap">
+<style>
+/* Layout: una columna con tres pestañas (Repaso · Examen · Para ti); el progreso del examen se dibuja como un carril de gel donde cada pregunta es una banda. */
+:root{
+  --bg:#fbf6f8; --surface:#ffffff; --sunk:#f4e9ee; --fg:#2a1a24; --muted:#6f5866; --line:#ead9e2;
+  --accent:#b5215e; --accent-fg:#ffffff; --accent-soft:#fbe3ec;
+  --good:#1f7a4d; --good-soft:#def3e7; --bad:#b3261e; --bad-soft:#fbe2df;
+  --hint:#6b45b8; --hint-soft:#ece5fa;
+  --gel:#efe4ea; --shadow:0 10px 30px rgba(90,20,50,.10);
+  --f-display:"Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --f-body:"Figtree", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"DM Mono", ui-monospace, Menlo, monospace;
+  --r:16px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1a1217; --surface:#241a20; --sunk:#2e222a; --fg:#f6e9f0; --muted:#b89fae; --line:#3d2d37;
+  --accent:#ff7aa8; --accent-fg:#2a0b17; --accent-soft:#3f1d2c;
+  --good:#6fd39a; --good-soft:#13301f; --bad:#ff8a80; --bad-soft:#3d1715;
+  --hint:#c3a6ff; --hint-soft:#2b2140; --gel:#33252e; --shadow:0 10px 30px rgba(0,0,0,.35);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1a1217; --surface:#241a20; --sunk:#2e222a; --fg:#f6e9f0; --muted:#b89fae; --line:#3d2d37;
+  --accent:#ff7aa8; --accent-fg:#2a0b17; --accent-soft:#3f1d2c;
+  --good:#6fd39a; --good-soft:#13301f; --bad:#ff8a80; --bad-soft:#3d1715;
+  --hint:#c3a6ff; --hint-soft:#2b2140; --gel:#33252e; --shadow:0 10px 30px rgba(0,0,0,.35);
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.55;margin:0}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:20px 60px;display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.1;margin:0;text-wrap:balance}
+h1{font-size:clamp(2rem,7vw,2.9rem);font-weight:800;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--accent)}
+h2{font-size:1.5rem;font-weight:800}
+h3{font-size:1.15rem;font-weight:800}
+p{margin:0}
+.muted{color:var(--muted)}
+.eyebrow{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.stack{display:flex;flex-direction:column;gap:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.btn{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:10px 18px;font-weight:700}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.btn.hint{border-color:var(--hint);color:var(--hint);background:var(--hint-soft)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 13px;font-size:.9rem;font-weight:600}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+
+header.top{display:flex;flex-direction:column;gap:8px;padding-top:6px}
+header.top p{max-width:56ch}
+
+nav.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--sunk);padding:4px;border-radius:999px;position:sticky;top:env(safe-area-inset-top,0px);z-index:3}
+nav.tabs button{border:0;background:none;border-radius:999px;padding:9px 6px;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:6px}
+nav.tabs button[aria-selected="true"]{background:var(--surface);color:var(--accent);box-shadow:var(--shadow)}
+nav.tabs svg{width:16px;height:16px;flex:none}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+
+/* ---- repaso ---- */
+.topic{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.topic summary{list-style:none;cursor:pointer;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.topic summary::-webkit-details-marker{display:none}
+.topic summary h3{flex:1;min-width:0}
+.topic summary .n{font-family:var(--f-mono);font-size:.75rem;color:var(--muted)}
+.topic summary .car{transition:transform .2s;color:var(--accent)}
+.topic[open] summary .car{transform:rotate(90deg)}
+.topic .body{padding:0 18px 18px;display:grid;gap:12px}
+.fact{border-left:3px solid var(--accent-soft);padding-left:12px}
+.fact b{display:block;font-family:var(--f-display);font-size:1.02rem}
+.fact p{color:var(--muted);font-size:.95rem}
+.tbl{overflow-x:auto}
+.tbl table{border-collapse:collapse;width:100%;font-size:.9rem}
+.tbl th,.tbl td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl th{font-family:var(--f-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+
+/* ---- setup ---- */
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg button{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:12px;text-align:left;display:flex;flex-direction:column;gap:2px}
+.seg button b{font-family:var(--f-display);font-size:1.08rem}
+.seg button span{font-size:.85rem;color:var(--muted)}
+.seg button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.count{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.count input[type=range]{flex:1;min-width:160px;accent-color:var(--accent)}
+.count output{font-family:var(--f-mono);font-size:1.4rem;min-width:3ch;text-align:right}
+.stepper{display:flex;gap:6px}
+.stepper button{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);font-weight:800;font-size:1.1rem}
+
+/* ---- gel progress ---- */
+.gel{background:var(--gel);border-radius:10px;padding:8px;display:flex;gap:3px;align-items:center}
+.gel i{flex:1;height:10px;border-radius:3px;background:var(--line);transition:background .3s,transform .3s}
+.gel i.now{background:var(--accent);transform:scaleY(1.5)}
+.gel i.ok{background:var(--good)}
+.gel i.mid{background:var(--hint)}
+.gel i.no{background:var(--bad)}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-family:var(--f-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:3px 10px}
+
+.q{font-family:var(--f-display);font-size:clamp(1.2rem,4vw,1.45rem);font-weight:600;line-height:1.25}
+.opts{display:grid;gap:8px}
+.opt{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;text-align:left;display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start}
+.opt .k{font-family:var(--f-mono);width:28px;height:28px;border-radius:50%;background:var(--sunk);display:grid;place-items:center;font-size:.8rem}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--good);background:var(--good-soft)}
+.opt.right .k{background:var(--good);color:var(--surface)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.wrong .k{background:var(--bad);color:var(--surface)}
+textarea{width:100%;min-height:130px;border:1.5px solid var(--line);border-radius:14px;padding:12px;font:inherit;background:var(--surface);color:var(--fg);resize:vertical}
+textarea:focus{border-color:var(--accent);outline:none}
+
+.fb{border-radius:14px;padding:14px 16px;display:grid;gap:6px}
+.fb h3{font-size:1.2rem}
+.fb.ok{background:var(--good-soft)} .fb.ok h3{color:var(--good)}
+.fb.no{background:var(--bad-soft)} .fb.no h3{color:var(--bad)}
+.fb.open{background:var(--sunk)}
+.model{background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:10px 12px}
+.keys{display:flex;flex-wrap:wrap;gap:6px}
+.keys span{font-size:.8rem;border-radius:999px;padding:2px 10px;border:1px solid var(--line)}
+.keys span.hit{background:var(--good-soft);border-color:var(--good);color:var(--good)}
+.self{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.self button{border:1.5px solid var(--line);border-radius:12px;background:var(--surface);padding:9px 4px;font-weight:700;font-size:.9rem}
+.self button.sug{border-color:var(--accent)}
+.actions{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+
+/* ---- results ---- */
+.result{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;padding-block:28px}
+.ring{width:150px;height:150px}
+.ring circle{fill:none;stroke-width:12}
+.ring .bg{stroke:var(--sunk)}
+.ring .fg{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset 1.2s ease}
+.ring text{fill:var(--fg);font-family:var(--f-display);font-weight:800;font-size:30px}
+.result h2{font-size:clamp(1.8rem,6vw,2.4rem);color:var(--accent)}
+.result p{max-width:46ch}
+.review{display:grid;gap:10px}
+.rv{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface);display:grid;gap:4px}
+.rv .a{font-size:.92rem}
+.rv .a b{color:var(--good)}
+.rv .y{font-size:.92rem;color:var(--bad)}
+
+/* ---- modal pista ---- */
+.overlay{position:fixed;inset:0;background:rgba(30,10,20,.45);display:grid;place-items:center;padding:16px;z-index:20}
+.modal{background:var(--surface);border-radius:20px;max-width:420px;width:100%;padding:22px;display:grid;gap:12px;box-shadow:var(--shadow);border:2px solid var(--hint)}
+.modal h3{color:var(--hint);display:flex;gap:8px;align-items:center}
+@media (prefers-reduced-motion:no-preference){.modal{animation:pop .25s ease}}
+@keyframes pop{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+
+/* ---- para ti ---- */
+.gift{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding-block:34px}
+.envelope{width:150px;height:105px;position:relative}
+.envelope svg{width:100%;height:100%}
+.scene{display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center}
+.scene svg{width:100%;max-width:600px;height:auto}
+.bubble rect{fill:var(--surface);stroke:var(--accent);stroke-width:2.5}
+.bubble path{fill:var(--surface);stroke:var(--accent);stroke-width:2.5}
+.bubble text{fill:var(--fg);font-family:var(--f-display);font-weight:800;font-size:19px}
+.big-heart{fill:var(--accent);transform-origin:300px 155px}
+.love-text{font-family:var(--f-display);font-size:clamp(1.45rem,5vw,2rem);font-weight:800;line-height:1.2;max-width:24ch}
+.love-text em{font-style:normal;color:var(--accent)}
+.floaters{position:relative;width:100%;height:0}
+@media (prefers-reduced-motion:no-preference){
+  .big-heart{animation:beat 1.3s ease-in-out infinite}
+  .bob{animation:bob 2.4s ease-in-out infinite}
+  .bob.d{animation-delay:.6s}
+  .scene{animation:pop .5s ease}
+}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.1)}30%{transform:scale(.97)}45%{transform:scale(1.07)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+.small{font-size:.85rem}
+footer{text-align:center;color:var(--muted);font-size:.85rem}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">Bioquímica · purificación, detección y enzimas</div>
+    <h1>Hola, <em>mi amor</em>. Vamos a estudiar juntos.</h1>
+    <p class="muted">Repasa los temas de tus diapositivas, haz un examen de opción múltiple o abierto, pide pistas cuando las necesites y al final checa cómo te fue.</p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Secciones">
+    <button role="tab" id="tab-repaso" data-tab="repaso" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 5h11a3 3 0 0 1 3 3v11H7a3 3 0 0 1-3-3z"/><path d="M8 9h6M8 13h6"/></svg>Repaso</button>
+    <button role="tab" id="tab-examen" data-tab="examen" aria-selected="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 3h6v4H9z"/><path d="M6 5h12v16H6z"/><path d="m9 13 2 2 4-4"/></svg>Examen</button>
+    <button role="tab" id="tab-amor" data-tab="amor" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/></svg>Para ti</button>
+  </nav>
+
+  <main id="app"></main>
+
+  <footer>Hecho con mucho amor para la mejor estudiante.</footer>
+</div>
+
+<div class="overlay" id="hintBox" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="hintTitle">
+    <h3 id="hintTitle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>Pista</h3>
+    <p id="hintText"></p>
+    <button class="btn primary" id="hintClose">Entendido</button>
+  </div>
+</div>
+
+<script>
+/* =================== CONTENIDO =================== */
+const TOPICS = {
+  pur:"Purificación de proteínas",
+  det:"Detección e inmunología",
+  enz:"Enzimas y cofactores",
+  inh:"Cinética e inhibición"
+};
+
+/* Opción múltiple: la primera opción de "o" es la correcta (se barajan al mostrar). */
+const MCQ = [
+/* --- Purificación --- */
+{t:"pur",q:"La cromatografía líquida de alta eficiencia (HPLC) separa las proteínas principalmente por…",o:["Polaridad","Punto isoeléctrico","Coeficiente de sedimentación","Antigenicidad"],h:"Piensa en por qué existen la fase normal y la fase reversa.",e:"La HPLC separa por polaridad: la interacción depende de qué tan polar es la fase estacionaria frente a la móvil."},
+{t:"pur",q:"¿De qué tamaño son aproximadamente las partículas de la fase estacionaria en HPLC?",o:["~3 µm","~3 mm","~30 µm","~3 nm"],h:"Son muy finas: más sitios de interacción y mejor resolución.",e:"Partículas de ~3 µm dan más sitios de interacción y por eso mayor poder de resolución."},
+{t:"pur",q:"En HPLC de fase reversa…",o:["La fase estacionaria es no polar y la móvil es polar","La fase estacionaria es polar y la móvil no polar","Ambas fases son polares","La separación es por tamaño"],h:"“Reversa” es lo contrario de la fase normal, que tiene la estacionaria polar.",e:"Fase reversa: estacionaria no polar y móvil polar, así se retienen las moléculas no polares."},
+{t:"pur",q:"En HPLC de fase normal, ¿qué tipo de molécula queda retenida?",o:["Molécula polar","Molécula no polar","Molécula de mayor masa","Molécula con carga neta cero"],h:"Lo semejante atrae a lo semejante: la estacionaria es polar.",e:"Fase normal = estacionaria polar + móvil no polar, por lo que se retiene la molécula polar."},
+{t:"pur",q:"¿A qué longitud de onda se detectan las proteínas en el perfil de elución de HPLC?",o:["220 nm","260 nm","595 nm","450 nm"],h:"Es la absorbancia del enlace peptídico.",e:"A 220 nm absorbe el enlace peptídico; en ~10 min se obtienen picos agudos que representan proteínas."},
+{t:"pur",q:"¿Qué presión aproximada se aplica a la columna de HPLC?",o:["45 MPa","4.5 kPa","450 MPa","Ninguna, fluye por gravedad"],h:"Es muy alta y la columna mide solo 2-5 mm de diámetro.",e:"Se aplican ~45 MPa en una columna de 2-5 mm para lograr buen flujo, alta resolución y separación rápida."},
+{t:"pur",q:"En una HPLC por filtración en gel con tiroglobulina, catalasa, albúmina, ovoalbúmina y ribonucleasa, ¿cuál sale primero?",o:["Tiroglobulina (669 kDa)","Ribonucleasa (13.4 kDa)","Ovoalbúmina (43 kDa)","Albúmina sérica bovina (67 kDa)"],h:"En filtración en gel las moléculas pequeñas se meten en los poros y se retrasan.",e:"En filtración en gel salen primero las proteínas grandes: la tiroglobulina (669 kDa) es el pico 1."},
+{t:"pur",q:"¿Cómo sabes que un proceso de purificación es eficaz?",o:["La actividad específica aumenta y el número de proteínas diferentes disminuye en cada paso","La proteína total aumenta en cada paso","La actividad total aumenta en cada paso","El volumen aumenta en cada paso"],h:"Son dos comprobaciones: una de actividad y otra de cuántas proteínas distintas quedan.",e:"Si la purificación funciona, la actividad específica ↑ y la cantidad de proteínas diferentes ↓ en cada paso."},
+{t:"pur",q:"La electroforesis en gel de poliacrilamida con SDS (SDS-PAGE) separa por…",o:["Tamaño y carga (con carga uniforme dada por el SDS)","Polaridad","Punto isoeléctrico","Afinidad a un anticuerpo"],h:"El gel funciona como un tamiz molecular.",e:"SDS-PAGE separa por tamaño y carga; el SDS da carga negativa proporcional a la masa, así que al final manda el tamaño."},
+{t:"pur",q:"En SDS-PAGE, ¿hacia dónde migran los complejos SDS-proteína?",o:["Hacia el ánodo (polo positivo)","Hacia el cátodo (polo negativo)","Se quedan en el pozo","Hacia el punto donde pH = pI"],h:"El SDS es un detergente aniónico.",e:"Los complejos tienen carga negativa y migran del electrodo negativo al positivo (ánodo), de arriba hacia abajo."},
+{t:"pur",q:"En SDS-PAGE, las moléculas pequeñas…",o:["Se mueven más rápido a través del gel","Se mueven más lento","No entran al gel","Salen primero del pozo pero se detienen"],h:"Imagina caminar por una malla: ¿quién pasa más fácil?",e:"Las moléculas pequeñas atraviesan más rápido la malla; las grandes se mueven lento."},
+{t:"pur",q:"¿Cuál es la función del TEMED en la polimerización del gel?",o:["Catalizador que acelera la descomposición del APS para producir radicales libres de sulfato","Entrecruzar las cadenas de acrilamida","Teñir las proteínas","Reducir los puentes disulfuro"],h:"Trabaja junto con el persulfato de amonio (APS).",e:"El TEMED cataliza la descomposición del APS y genera radicales libres de sulfato que atacan a los monómeros de acrilamida."},
+{t:"pur",q:"¿Qué forma la malla 3D del gel de poliacrilamida?",o:["La polimerización de acrilamida y el entrecruzamiento con bisacrilamida","La unión de SDS a las proteínas","El agua y el β-mercaptoetanol","La agarosa y los polianfolitos"],h:"Uno polimeriza y el otro entrecruza.",e:"Acrilamida polimeriza y la bisacrilamida (metileno) entrecruza las cadenas, formando la malla 3D."},
+{t:"pur",q:"En condiciones desnaturalizantes, ¿cuántos aniones de SDS se unen aproximadamente a la cadena principal?",o:["1 anión por cada 2 aminoácidos","1 anión por cada aminoácido","1 anión por proteína","1 anión por cada 20 aminoácidos"],h:"Es mucho SDS: la carga que aporta supera a la carga nativa.",e:"Se une ~1 anión de SDS por cada 2 aa, por eso la carga negativa es proporcional a la masa."},
+{t:"pur",q:"¿Qué se agrega para lograr condiciones reductoras en PAGE?",o:["β-mercaptoetanol (BME) o ditiotreitol (DTT)","SDS y calor","Persulfato de amonio","Azul de Coomassie"],h:"Hay que romper enlaces S–S.",e:"BME o DTT reducen los enlaces disulfuro, separando subunidades unidas covalentemente."},
+{t:"pur",q:"A diferencia de la filtración en gel, en la PAGE…",o:["Todas las moléculas, sin importar su tamaño, se mueven a través del tamiz por el campo eléctrico","Las moléculas grandes salen primero","Las proteínas no se desnaturalizan nunca","Se separa por polaridad"],h:"¿Qué empuja a las proteínas en la electroforesis?",e:"Por el campo eléctrico, en PAGE todas las moléculas atraviesan el tamiz; en filtración en gel las grandes rodean los poros."},
+{t:"pur",q:"¿Con qué se tiñen comúnmente los geles de poliacrilamida?",o:["Nitrato de plata o azul de Coomassie","Hematoxilina y eosina","Yodo y cristal violeta","GFP"],h:"Uno es plateado y el otro es azul.",e:"Se visualizan con nitrato de plata o azul de Coomassie; también puede usarse autorradiografía (¹²⁵I en Tyr)."},
+{t:"pur",q:"Una proteína trimérica con subunidades de 20, 60 y 110 kDa se corre en SDS-PAGE desnaturalizante y reductora. ¿Cuántas bandas esperas?",o:["3 bandas","1 banda","2 bandas","6 bandas"],h:"En esas condiciones todas las subunidades quedan separadas.",e:"Con SDS + agente reductor cada subunidad distinta migra sola: 3 bandas (20, 60 y 110 kDa)."},
+{t:"pur",q:"Hemoglobina (homotetrámero, 64,500 Da) en SDS-PAGE: ¿qué ves con y sin BME?",o:["1 banda de ~16,125 Da en ambos casos","1 banda de 64,500 Da sin BME y 4 con BME","2 bandas en ambos casos","4 bandas de 16 kDa con BME"],h:"Homo = subunidades iguales; el SDS ya rompe uniones no covalentes.",e:"El SDS separa las 4 subunidades idénticas (unidas no covalentemente): 1 sola banda de ~16 kDa, con o sin BME."},
+{t:"pur",q:"Un anticuerpo (α2β2, 150 kDa; α = 25 kDa, β = 50 kDa) unido por disulfuros en SDS-PAGE: ¿qué ves sin BME y con BME?",o:["Sin BME: 1 banda de 150 kDa; con BME: 2 bandas (50 y 25 kDa)","Sin BME: 2 bandas; con BME: 1 banda","1 banda de 150 kDa en ambos casos","Sin BME: 4 bandas; con BME: 2 bandas"],h:"Las cadenas del anticuerpo están unidas por puentes disulfuro.",e:"Sin reductor los disulfuros mantienen el tetrámero (150 kDa). El BME los rompe: banda de cadena pesada (50 kDa) y ligera (25 kDa)."},
+{t:"pur",q:"El enfoque isoeléctrico separa las proteínas por…",o:["Su punto isoeléctrico (pI)","Su masa","Su coeficiente de sedimentación","Su polaridad"],h:"El nombre de la técnica lo dice.",e:"Separa por pI, que depende del porcentaje de aminoácidos ácidos y básicos."},
+{t:"pur",q:"El punto isoeléctrico (pI) es…",o:["El pH en el que la carga neta de la proteína es cero","El pH óptimo de una enzima","El pH donde la proteína se desnaturaliza","La concentración de SDS necesaria"],h:"En ese pH la proteína deja de moverse en el campo eléctrico.",e:"pI = pH con carga neta cero; ahí no hay movilidad electroforética."},
+{t:"pur",q:"Una proteína está en una zona donde el pH es menor que su pI. ¿Qué carga neta tiene?",o:["Positiva","Negativa","Cero","Depende del SDS"],h:"pH bajo = muchos protones disponibles.",e:"Si pH < pI la proteína está protonada: carga neta +. Si pH > pI, carga neta −."},
+{t:"pur",q:"¿Cuál de estas es una proteína básica según su pI?",o:["Citocromo c (pI = 10.6)","Albúmina sérica (pI = 4.8)","Ambas son ácidas","Ninguna tiene pI"],h:"Un pI alto indica más aminoácidos básicos.",e:"Citocromo c tiene pI 10.6 (básico); la albúmina sérica, 4.8 (ácida)."},
+{t:"pur",q:"¿Qué se usa para formar el gradiente de pH en el enfoque isoeléctrico?",o:["Polianfolitos (polímeros pequeños multicargados)","SDS","Sacarosa al 5-20%","β-mercaptoetanol"],h:"Son polímeros con muchas cargas y distintos pI.",e:"Una mezcla de polianfolitos con distintos pI en poliacrilamida o agarosa forma el gradiente de pH."},
+{t:"pur",q:"En la electroforesis bidimensional, la primera y segunda dimensión separan por…",o:["1ª: punto isoeléctrico; 2ª: tamaño y carga (SDS-PAGE)","1ª: tamaño; 2ª: polaridad","1ª: masa; 2ª: densidad","1ª: SDS-PAGE; 2ª: HPLC"],h:"Combina el isoelectroenfoque con SDS-PAGE.",e:"Primero enfoque isoeléctrico (horizontal, por pI) y luego SDS-PAGE (vertical, por tamaño): patrón de puntos."},
+{t:"pur",q:"¿Con qué técnica se identifican los puntos de un gel 2D?",o:["Espectrometría de masas","ELISA","Autorradiografía","Ultracentrifugación"],h:"Mide masa/carga de los péptidos.",e:"Los puntos se identifican por espectrometría de masas."},
+{t:"pur",q:"En ultracentrifugación, un valor S (Svedberg) menor indica que la molécula…",o:["Se mueve más lento en el campo centrífugo","Se mueve más rápido","Es más densa","Tiene mayor masa"],h:"S cuantifica la velocidad de sedimentación.",e:"El coeficiente de sedimentación mide la velocidad: S menor = sedimenta más lento."},
+{t:"pur",q:"¿Cómo sedimentan las partículas alargadas comparadas con las esféricas de igual masa?",o:["Más lento, porque tienen más fricción viscosa","Más rápido","Igual","No sedimentan"],h:"Piensa en el coeficiente de fricción (f).",e:"La forma alargada aumenta la fricción viscosa, así que sedimentan más lento que las esféricas."},
+{t:"pur",q:"En la centrifugación zonal, ¿para qué sirve el gradiente de sacarosa (5% arriba, 20% al fondo)?",o:["Evita el movimiento por calor (convección) y permite separar por coeficiente de sedimentación","Desnaturaliza las proteínas","Da carga negativa a las proteínas","Forma un gradiente de pH"],h:"Sin gradiente, las corrientes de calor mezclarían las zonas.",e:"El gradiente de densidad estabiliza la muestra (evita movimiento por calor) y las proteínas se separan por su S."},
+{t:"pur",q:"La actividad específica se calcula como…",o:["Actividad total / proteína total","Proteína total / actividad total","Actividad de la fracción / actividad inicial × 100","Concentración × volumen"],h:"Es “cuánta actividad hay por cada mg de proteína”.",e:"Actividad específica = actividad total ÷ proteína total."},
+{t:"pur",q:"El nivel de purificación (aumento de pureza) se obtiene al dividir…",o:["Actividad específica de la fracción / actividad específica del extracto inicial","Actividad total de la fracción / actividad total inicial","Proteína total / volumen","Rendimiento / 100"],h:"Compara actividades específicas, no actividades totales.",e:"Nivel de purificación = act. específica de cada fracción ÷ act. específica del extracto inicial."},
+{t:"pur",q:"El rendimiento de un paso de purificación es…",o:["El % de actividad que se conserva respecto al extracto inicial (100%)","El aumento de la actividad específica","La cantidad de proteína total","El número de bandas en el gel"],h:"Se expresa en porcentaje y siempre parte del 100%.",e:"Rendimiento = actividad retenida en cada fracción como % del extracto inicial."},
+/* --- Detección --- */
+{t:"det",q:"¿Qué células producen los anticuerpos?",o:["Linfocitos B","Linfocitos T","Eritrocitos","Plaquetas"],h:"Su letra es la segunda del abecedario.",e:"Los anticuerpos son proteínas en forma de Y producidas por linfocitos B."},
+{t:"det",q:"Un antígeno es…",o:["Una molécula ajena al organismo que induce una respuesta inmunológica","Una proteína en forma de Y que neutraliza patógenos","Una enzima que genera color","Un tipo de linfocito"],h:"Es lo que el anticuerpo reconoce.",e:"Antígeno: molécula ajena (proteína, carbohidrato, ácido nucleico o lípido) que induce respuesta inmune."},
+{t:"det",q:"¿Qué enzimas se unen típicamente al anticuerpo secundario en un ELISA?",o:["HRP (peroxidasa de rábano) y ALP (fosfatasa alcalina)","Tripsina y quimotripsina","Hexocinasa y aldolasa","DNA polimerasa y ligasa"],h:"Una viene del rábano.",e:"El anticuerpo 2º va unido a HRP o ALP, que generan un producto detectable (color)."},
+{t:"det",q:"En el ELISA competitivo, la intensidad de la señal es…",o:["Inversamente proporcional a la cantidad de antígeno/anticuerpo","Directamente proporcional","Siempre constante","Independiente de la muestra"],h:"Más muestra = menos molécula marcada logra unirse.",e:"En el competitivo, más antígeno en la muestra desplaza a la molécula marcada: menos señal."},
+{t:"det",q:"¿En qué modalidades de ELISA la señal es directamente proporcional a la cantidad de antígeno/anticuerpo?",o:["Directo, indirecto y sándwich","Solo competitivo","Competitivo y sándwich","Ninguna"],h:"Es todas menos una.",e:"En ELISA directo, indirecto y sándwich, a más antígeno más señal."},
+{t:"det",q:"¿Para qué es útil especialmente el ELISA competitivo?",o:["Para determinar cantidades bajas de antígenos/anticuerpos","Para separar proteínas por tamaño","Para medir el pI","Para teñir geles"],h:"Tiene que ver con la sensibilidad.",e:"El ELISA competitivo es útil para detectar cantidades bajas de antígenos o anticuerpos."},
+{t:"det",q:"En la detección colorimétrica, ¿con qué se detiene la reacción?",o:["Solución de H₂SO₄","Agua destilada","SDS","β-mercaptoetanol"],h:"Es un ácido fuerte.",e:"Se detiene con H₂SO₄ al alcanzar la señal deseada y se cuantifica en el lector de placas."},
+{t:"det",q:"En la detección quimioluminiscente, la señal de luz puede capturarse con…",o:["Un dispositivo de carga acoplada (CCD) o película radiográfica","Un lector de pH","Una balanza analítica","Un ultracentrífuga"],h:"Es un chip semiconductor de silicio que convierte carga → voltaje → número.",e:"AP o HRP producen luz como subproducto; se captura con una CCD o una película radiográfica."},
+{t:"det",q:"Comparada con la quimioluminiscente, la detección colorimétrica tiene…",o:["Sensibilidad media","Sensibilidad mucho mayor","Riesgo radiactivo","Necesidad de luz UV"],h:"La quimioluminiscente es la más sensible de las dos.",e:"La colorimétrica tiene sensibilidad media comparada con la quimioluminiscente."},
+{t:"det",q:"¿Qué color de fluorescencia emiten GFP y mCherry, respectivamente?",o:["Verde y roja","Roja y verde","Azul y amarilla","Ambas verde"],h:"G de green; cherry = cereza.",e:"GFP: fluorescencia verde. mCherry: roja. La luciferina puede dar azul, amarilla o roja."},
+{t:"det",q:"¿Qué isótopos se usan en la detección radiactiva?",o:["¹²⁵I y ³²P","¹⁴C y ³H","⁶⁰Co y ¹³⁷Cs","¹⁸F y ⁹⁹ᵐTc"],h:"Uno es un halógeno y el otro está en los fosfatos.",e:"Se usan ¹²⁵I y ³²P; es riesgosa, los anticuerpos marcados duran poco y requiere área restringida."},
+{t:"det",q:"En el Western blot capilar, ¿para qué se incuba el gel 15 min en buffer SSC 10X?",o:["Para eliminar el exceso de SDS no unido","Para teñir las proteínas","Para polimerizar el gel","Para bloquear la membrana"],h:"Algo sobra del SDS-PAGE.",e:"El SSC 10X elimina el exceso de SDS no unido antes de transferir."},
+{t:"det",q:"¿Qué membrana se usa en el Western blot capilar descrito en clase?",o:["Nitrocelulosa","Diálisis de celulosa","Papel filtro","Poliacrilamida"],h:"Se hidrata con buffer SSC.",e:"Se usa membrana de nitrocelulosa hidratada con SSC."},
+{t:"det",q:"¿Por qué se cubren los bordes del gel con Parafilm en el Western blot capilar?",o:["Para forzar que el flujo de buffer pase a través del gel","Para que no se seque la membrana","Para teñir los bordes","Para aplicar corriente eléctrica"],h:"El buffer debe pasar por donde están las proteínas.",e:"El Parafilm obliga al flujo de SSC a atravesar el gel y arrastrar las proteínas hacia la membrana."},
+{t:"det",q:"¿Cuánto tiempo se deja transferir por capilaridad en el Western blot?",o:["16 horas","15 minutos","2 horas","3 días"],h:"Es toda una noche.",e:"Se deja transferir ~16 h; la sal favorece la fijación hidrofóbica y electrostática en la membrana."},
+/* --- Enzimas --- */
+{t:"enz",q:"El anabolismo se caracteriza por…",o:["Biosíntesis de macromoléculas: requiere monómeros y energía","Ruptura de macromoléculas: libera energía","Producir monómeros","No requerir enzimas"],h:"Ana- = construir.",e:"Anabolismo: biosíntesis, requiere monómeros y energía. Catabolismo: ruptura, produce monómeros y libera energía."},
+{t:"enz",q:"¿Cómo aceleran las enzimas una reacción?",o:["Disminuyen la energía de activación sin afectar el equilibrio","Aumentan la energía de activación","Cambian el equilibrio de la reacción","Se consumen en la reacción"],h:"Bajan la “barrera” de energía.",e:"Las enzimas reducen la energía de activación (aceleran 10⁸–10²⁰ veces) y no modifican el equilibrio."},
+{t:"enz",q:"Un cofactor enzimático es…",o:["Un componente no proteico requerido para la actividad enzimática","La parte proteica de una holoenzima","Un inhibidor competitivo","El producto de la reacción"],h:"Se clasifica en iones metálicos, coenzimas y grupos prostéticos.",e:"Cofactor: componente no proteico necesario para la actividad; incluye iones metálicos, coenzimas y grupos prostéticos."},
+{t:"enz",q:"Las coenzimas…",o:["Se unen de forma débil y reversible y la mayoría derivan de vitaminas","Se unen covalentemente y de forma permanente","Siempre son iones metálicos","Son la parte proteica de la enzima"],h:"Entran y salen del sitio activo transportando grupos.",e:"Coenzimas: transportadores transitorios de grupos funcionales, unión no covalente; muchas derivan de vitaminas (NAD⁺, NADP⁺, CoA)."},
+{t:"enz",q:"¿Cuál es un ejemplo de coenzima?",o:["NAD⁺","Zn²⁺","Grupo hemo","Apoenzima"],h:"Viene de la niacina (vitamina B3).",e:"NAD⁺, NADP⁺ y la coenzima A son coenzimas; el Zn²⁺ es un ion metálico y el hemo un grupo prostético."},
+{t:"enz",q:"Un grupo prostético se une a la apoenzima…",o:["De forma permanente (covalente o con muy alta afinidad)","De forma laxa y reversible","Solo cuando hay inhibidor","Nunca se une"],h:"El hemo de la catalasa no se suelta.",e:"El grupo prostético se une permanentemente para formar la holoenzima, ej. hemo en citocromos, catalasas y peroxidasas."},
+{t:"enz",q:"La holoenzima es…",o:["La enzima completa y activa: apoenzima + cofactor(es)","La forma inactiva sin cofactor","Solo la parte proteica","Un tipo de inhibidor"],h:"Holo = todo.",e:"Holoenzima = apoenzima (parte proteica) + iones/coenzima/grupo prostético; es catalíticamente activa."},
+{t:"enz",q:"En la superóxido dismutasa (SOD) de Cu y Zn, ¿qué hace el Cu²⁺?",o:["Participa en el ciclo redox para dismutar el superóxido en O₂ y H₂O₂","Guía al sustrato y orienta la geometría","Se une al ADN","Neutraliza los fosfatos del ATP"],h:"El cobre cambia de estado de oxidación.",e:"Cu²⁺ hace el ciclo redox; Zn²⁺ guía al sustrato y orienta la geometría del sitio activo."},
+{t:"enz",q:"En la hexocinasa dependiente de ATP, ¿qué papel tiene el Mg²⁺?",o:["Se coordina con los fosfatos del ATP y neutraliza sus cargas negativas","Forma un dedo de zinc","Es el grupo prostético hemo","Reduce los disulfuros"],h:"Los fosfatos tienen cargas negativas que estorban.",e:"El Mg²⁺ se coordina con los fosfatos del ATP y Asp del sitio activo, permitiendo que se acerque el –OH de la glucosa."},
+{t:"enz",q:"En el motivo dedo de zinc (TFIIIA), el Zn²⁺ se coordina con…",o:["Cys₂His₂ en forma tetraédrica","Asp y Glu","El grupo hemo","Cuatro moléculas de agua"],h:"Dos cisteínas y dos histidinas.",e:"Zn²⁺ se coordina tetraédricamente con 2 Cys y 2 His; el motivo se une al ADN."},
+{t:"enz",q:"En el número EC 2.7.1.1, ¿qué indica el primer número (2)?",o:["La clase: transferasa","La subclase: fosfotransferasa","El aceptor: grupo OH","El sustrato: D-glucosa"],h:"Va de lo general a lo particular.",e:"EC 2 = transferasa; 7 = fosfotransferasa; 1 = aceptor OH; 1 = D-glucosa como aceptor."},
+{t:"enz",q:"¿En cuántas clases principales divide a las enzimas el sistema de clasificación que vieron en clase?",o:["6","4","10","3"],h:"Oxidorreductasas, transferasas, hidrolasas, liasas, isomerasas y…",e:"Son 6 clases (oxidorreductasas, transferasas, hidrolasas, liasas, isomerasas y ligasas), cada una con subclases."},
+{t:"enz",q:"Según la nomenclatura común, ¿qué hace la celulasa?",o:["Degrada celulosa","Sintetiza celulosa","Fosforila celulosa","Oxida glucosa"],h:"Sustrato + “-asa”.",e:"Nombre común = sustrato + reacción + terminación -asa: la celulasa degrada celulosa."},
+{t:"enz",q:"El sitio activo de una enzima…",o:["Es una hendidura 3D formada por aminoácidos de diferentes partes de la secuencia","Ocupa la mayor parte del volumen de la enzima","Está formado por aminoácidos consecutivos","Siempre está lleno de agua"],h:"Es pequeño y tridimensional.",e:"Es una hendidura 3D con aa de distintas partes de la cadena; ocupa una pequeña parte del volumen y suele excluir el agua."},
+{t:"enz",q:"¿Qué tipo de uniones mantienen al sustrato en el sitio activo?",o:["Múltiples uniones débiles no covalentes (iónicas, hidrofóbicas, van der Waals, puentes de H)","Enlaces covalentes permanentes","Puentes disulfuro","Enlaces peptídicos"],h:"Deben ser reversibles para que el producto se libere.",e:"Sustrato y enzima se unen por múltiples uniones débiles y reversibles."},
+{t:"enz",q:"El modelo de ajuste inducido propone que…",o:["La enzima es flexible y su sitio activo cambia de forma al unirse el sustrato","El sitio activo es rígido como una cerradura","El sustrato se une de forma covalente","La enzima no tiene sitio activo"],h:"Opuesto al modelo de llave y cerradura de Emil Fischer.",e:"Ajuste inducido: enzimas flexibles cuyo sitio activo se modifica al unir el sustrato."},
+{t:"enz",q:"La aldolasa A y la aldolasa B son marcadores de daño…",o:["Muscular (A) y hepático (B)","Hepático (A) y muscular (B)","Renal y cardiaco","Pancreático y pulmonar"],h:"La A va con el músculo que se mueve; la B con el órgano que procesa casi todo.",e:"Aldolasa A: daño muscular. Aldolasa B: daño hepático. Participa en la glucólisis (fructosa difosfato aldolasa)."},
+{t:"enz",q:"Verdadero o falso: “Una enzima se consume durante la reacción y modifica el equilibrio.”",o:["Falso","Verdadero"],h:"Los catalizadores se recuperan al final.",e:"Falso: la enzima no se consume y no cambia el equilibrio; solo acelera llegar a él."},
+{t:"enz",q:"Verdadero o falso: “Todos los cofactores enzimáticos son moléculas orgánicas derivadas de vitaminas.”",o:["Falso","Verdadero"],h:"Piensa en el Mg²⁺ o el Zn²⁺.",e:"Falso: los iones metálicos también son cofactores y no son orgánicos."},
+{t:"enz",q:"Verdadero o falso: “El sitio activo es la región 3D donde se une el sustrato y ocurre la catálisis, formada por aminoácidos de diferentes partes de la cadena.”",o:["Verdadero","Falso"],h:"Recuerda la definición de la diapositiva del sitio activo.",e:"Verdadero: es exactamente la definición de sitio activo."},
+/* --- Cinética e inhibición --- */
+{t:"inh",q:"La gráfica de Lineweaver-Burk representa…",o:["1/V₀ contra 1/[S]","V₀ contra [S]","log V₀ contra [S]","Km contra Vmax"],h:"Es la gráfica “doblemente recíproca”.",e:"Lineweaver-Burk grafica 1/V₀ vs 1/[S] y produce una línea recta."},
+{t:"inh",q:"En la gráfica de Lineweaver-Burk, la pendiente es igual a…",o:["Km/Vmax","Vmax/Km","1/Vmax","−1/Km"],h:"y = mx + b, con x = 1/[S].",e:"Pendiente = Km/Vmax; la ordenada al origen es 1/Vmax y el corte en el eje x es −1/Km."},
+{t:"inh",q:"¿Dónde corta la recta de Lineweaver-Burk al eje 1/V₀?",o:["En 1/Vmax","En Km","En −1/Km","En Vmax/2"],h:"Es la ordenada al origen (b).",e:"La intersección con el eje 1/V₀ es 1/Vmax."},
+{t:"inh",q:"¿Cuál es la principal ventaja de la gráfica de Lineweaver-Burk?",o:["Determinar con más precisión la Vmax y los mecanismos de inhibición","Medir el pI","Separar proteínas","Ver la forma sigmoidea de las enzimas alostéricas"],h:"En la gráfica V₀ vs [S] la Vmax solo se aproxima.",e:"Permite determinar con precisión Vmax y Km e identificar el tipo de inhibición."},
+{t:"inh",q:"Un inhibidor competitivo…",o:["Se parece al sustrato, se une al sitio activo y no cambia la Vmax","Se une solo al complejo ES","Disminuye la Vmax y no se supera con más sustrato","Se une covalentemente"],h:"Se supera aumentando [S].",e:"El competitivo compite por el sitio activo: aumenta la Km aparente, la Vmax no cambia y se supera con exceso de S."},
+{t:"inh",q:"¿Cuál de estos es un inhibidor competitivo?",o:["Metotrexato (de la dihidrofolato reductasa)","Penicilina","Nevirapina","Epristerida"],h:"Es un análogo estructural del dihidrofolato.",e:"Metotrexato, malonato (succinato deshidrogenasa) y captopril (ECA) son inhibidores competitivos."},
+{t:"inh",q:"El malonato inhibe competitivamente a…",o:["La succinato deshidrogenasa (ciclo de Krebs)","La ciclooxigenasa","La transcriptasa reversa","La transpeptidasa"],h:"Se parece al succinato.",e:"El malonato es análogo del succinato e inhibe a la succinato deshidrogenasa."},
+{t:"inh",q:"El captopril, usado como antihipertensivo, inhibe a…",o:["La enzima convertidora de angiotensina (ECA)","La 5-alfa-reductasa","La ornitina descarboxilasa","La hexocinasa"],h:"Tiene que ver con la angiotensina.",e:"El captopril es inhibidor competitivo de la ECA."},
+{t:"inh",q:"En la inhibición acompetitiva…",o:["El inhibidor se une solo al complejo enzima-sustrato","El inhibidor se une al sitio activo libre","Se supera añadiendo más sustrato","El inhibidor es covalente"],h:"Depende del sustrato: sin ES no hay sitio para el I.",e:"Acompetitiva: el I se une solo al complejo ES (forma ESI inactivo); no se supera con más S."},
+{t:"inh",q:"La epristerida, usada en el crecimiento benigno de próstata, es un inhibidor…",o:["Acompetitivo de la 5-alfa-reductasa","Competitivo de la ECA","Irreversible de la ciclooxigenasa","No competitivo de la transcriptasa reversa"],h:"La 5-α-reductasa convierte testosterona en dihidrotestosterona.",e:"La epristerida es inhibidor acompetitivo de la esteroide 5-α-reductasa."},
+{t:"inh",q:"En la inhibición no competitiva (mixta)…",o:["El I se une a la E libre o al complejo ES en un sitio distinto del activo","El I compite con el S por el sitio activo","El I solo se une al complejo ES","Se supera aumentando [S]"],h:"I y S tienen sitios diferentes.",e:"No competitiva: I y S se unen en sitios distintos; el I disminuye la enzima funcional y no se supera con más S."},
+{t:"inh",q:"Nevirapina y efavirenz son inhibidores…",o:["No competitivos de la transcriptasa reversa del VIH","Competitivos de la ECA","Irreversibles de la transpeptidasa","Suicidas de la ODC"],h:"Son antirretrovirales.",e:"Nevirapina y efavirenz son inhibidores no competitivos de la transcriptasa reversa del VIH."},
+{t:"inh",q:"Un inhibidor competitivo, ¿qué efecto tiene sobre V₀ y Vmax?",o:["Disminuye V₀ pero no afecta la Vmax","Disminuye V₀ y Vmax","Aumenta la Vmax","No cambia nada"],h:"Con suficiente sustrato se recupera la velocidad máxima.",e:"Competitivo: ↓V₀, Vmax igual. No competitivo: ↓V₀ y ↓Vmax."},
+{t:"inh",q:"Las enzimas alostéricas cooperativas muestran una gráfica V₀ vs [S]…",o:["Sigmoidea","Hiperbólica","Lineal","Constante"],h:"No obedecen la cinética de Michaelis-Menten.",e:"Tienen varias subunidades y la unión de S facilita la unión a otros sitios: curva sigmoidea (ej. fosfofructocinasa)."},
+{t:"inh",q:"¿Cuál es un ejemplo de enzima alostérica cooperativa?",o:["Fosfofructocinasa","Lisozima","Quimotripsina","Ribonucleasa"],h:"Es clave en la glucólisis.",e:"La fosfofructocinasa es el ejemplo clásico de enzima alostérica cooperativa."},
+{t:"inh",q:"La penicilina es un inhibidor irreversible de…",o:["La transpeptidasa, impidiendo la síntesis de pared celular bacteriana","La ciclooxigenasa","La ECA","La dihidrofolato reductasa"],h:"Actúa sobre la pared de las bacterias.",e:"La penicilina modifica covalentemente la transpeptidasa; la aspirina hace lo mismo con la ciclooxigenasa."},
+{t:"inh",q:"El di-isopropilfluorofosfato (DIFP) inhibe a la quimotripsina modificando…",o:["La Ser195 del sitio activo","La Cys del sitio activo","El grupo hemo","El Zn²⁺"],h:"Es una serina proteasa.",e:"El DIFP modifica covalentemente la Ser195, clave en el sitio activo de la quimotripsina."},
+{t:"inh",q:"Los inactivadores suicidas…",o:["Son poco reactivos hasta unirse al sitio activo, donde se convierten en un compuesto que se une irreversiblemente","Se unen al complejo ES de forma reversible","Compiten con el sustrato de forma reversible","Aumentan la actividad enzimática"],h:"También se llaman “inactivadores basados en mecanismos”.",e:"Inician la reacción normal pero se vuelven reactivos y se unen irreversiblemente; son fármacos de precisión con pocos efectos secundarios."},
+{t:"inh",q:"La difluorometilornitina (DFMO) se usa contra la enfermedad del sueño porque inhibe a…",o:["La ornitina descarboxilasa (ODC) de Trypanosoma brucei","La transpeptidasa","La transcriptasa reversa","La ciclooxigenasa"],h:"Es el primer paso de la síntesis de poliaminas.",e:"DFMO es un inactivador suicida de la ODC; la Cys del sitio activo forma un complejo covalente irreversible con el I-PLP."},
+{t:"inh",q:"¿Qué coenzima participa en el mecanismo de la ornitina descarboxilasa inhibida por DFMO?",o:["Piridoxal fosfato (PLP)","NAD⁺","Coenzima A","FAD"],h:"Deriva de la vitamina B6.",e:"La ODC usa PLP; los 2 F del DFMO desvían los electrones y se forma un complejo covalente irreversible."}
+];
+
+/* Preguntas abiertas: k = grupos de palabras clave (basta un sinónimo de cada grupo). */
+const OPEN = [
+{t:"pur",q:"Explica el fundamento de la electroforesis en gel de poliacrilamida (SDS-PAGE).",h:"Habla del SDS, la carga, el campo eléctrico y el gel como tamiz.",a:"Las proteínas se desnaturalizan con SDS (y calor), que les da carga negativa proporcional a su masa. Al aplicar un campo eléctrico migran del electrodo negativo al positivo a través de un gel poroso (tamiz molecular) de poliacrilamida: las pequeñas avanzan más rápido y las grandes más lento, así se separan por tamaño.",k:[["sds"],["carga","negativ"],["campo electrico","electric","anodo","positivo"],["tamiz","poro","malla"],["tamano","masa","pequen"]]},
+{t:"pur",q:"¿Cuántas bandas esperas al separar una proteína trimérica con subunidades de 20, 60 y 110 kDa en condiciones desnaturalizantes y reductoras? ¿Por qué?",h:"El SDS rompe uniones no covalentes y el reductor rompe disulfuros.",a:"3 bandas (20, 60 y 110 kDa), porque el SDS desnaturaliza y el agente reductor (BME o DTT) rompe los puentes disulfuro, de modo que cada subunidad migra por separado según su tamaño.",k:[["3","tres"],["sds","desnaturaliz"],["reduct","disulfuro","bme","mercaptoetanol","dtt"],["subunidad","separad"]]},
+{t:"pur",q:"¿Cuál es la diferencia entre HPLC de fase normal y de fase reversa?",h:"Fíjate en cuál fase es polar en cada caso.",a:"Fase normal: fase estacionaria polar y móvil no polar, retiene moléculas polares. Fase reversa: fase estacionaria no polar y móvil polar, retiene moléculas no polares.",k:[["normal"],["revers"],["polar"],["no polar","apolar"],["estacionaria"],["movil"]]},
+{t:"pur",q:"¿Qué es el punto isoeléctrico y cómo se separan las proteínas en el isoelectroenfoque?",h:"Gradiente de pH + voltaje.",a:"El pI es el pH en el que la carga neta de la proteína es cero. En un gradiente de pH formado por polianfolitos, al aplicar voltaje cada proteína migra hasta la posición donde pH = pI y ahí se detiene (con carga + donde pH < pI y − donde pH > pI).",k:[["carga neta","carga"],["cero"],["gradiente"],["ph"],["polianfolito","voltaje","migra"]]},
+{t:"pur",q:"Describe la electroforesis bidimensional y para qué sirve.",h:"Dos técnicas combinadas, una por dimensión.",a:"Combina el enfoque isoeléctrico (1ª dimensión, separa por pI en horizontal) con SDS-PAGE (2ª dimensión, separa por tamaño en vertical), dando un patrón de puntos de muy alta resolución. Sirve para analizar el proteoma (ej. >1,000 proteínas de E. coli), comparar estados fisiológicos y los puntos se identifican por espectrometría de masas.",k:[["isoelectric","isoelectroenfoque","pi"],["sds"],["tamano","masa"],["punto","patron"],["proteoma","espectrometria","resolucion"]]},
+{t:"pur",q:"¿De qué depende la velocidad de sedimentación en la ultracentrifugación?",h:"Son cuatro factores de la ecuación.",a:"De la masa (más masa, sedimenta más rápido), la forma (las alargadas tienen más fricción y sedimentan más lento), la densidad de la partícula (más densa, más rápido) y la densidad del medio (se hunde si es más densa que el medio, flota si es menos densa).",k:[["masa"],["forma","friccion"],["densidad"],["medio"]]},
+{t:"pur",q:"¿Qué parámetros se miden para evaluar un esquema de purificación?",h:"Son cinco: dos totales, uno que es división, un porcentaje y uno de pureza.",a:"Proteína total, actividad total, actividad específica (actividad total / proteína total), rendimiento (% de actividad respecto al extracto inicial) y nivel de purificación (actividad específica de la fracción / actividad específica inicial). Además se corre SDS-PAGE en cada paso.",k:[["proteina total"],["actividad total"],["actividad especifica"],["rendimiento"],["purificacion","pureza"]]},
+{t:"det",q:"Explica en qué consiste el ELISA.",h:"Antígeno, anticuerpo primario, anticuerpo secundario con enzima, color.",a:"Es un ensayo inmunoadsorbente ligado a enzimas: un antígeno inmovilizado en pozos de microplaca es reconocido por un anticuerpo primario, y este por un anticuerpo secundario unido a una enzima (HRP o ALP) que genera un producto de color. El color se cuantifica espectrofotométricamente y es una medida de la concentración de antígeno. Se usa en diagnóstico.",k:[["antigeno"],["anticuerpo"],["enzima","hrp","alp","peroxidasa","fosfatasa"],["color","espectrofotometr"],["placa","pozo","diagnostico"]]},
+{t:"det",q:"Menciona los tipos de ELISA y cómo se relaciona la señal con la cantidad de antígeno.",h:"Hay tres de un lado y uno del otro.",a:"Directo, indirecto y sándwich: la señal es directamente proporcional a la cantidad de antígeno/anticuerpo. Competitivo: la señal es inversamente proporcional, porque una molécula acoplada a enzima compite por la unión; es útil para cantidades bajas.",k:[["directo"],["indirecto"],["sandwich"],["competitivo"],["inversa"],["proporcional"]]},
+{t:"det",q:"Describe los pasos del Western blot capilar.",h:"SSC, membrana, pila de papeles, peso y tiempo.",a:"1) Incubar el gel de SDS-PAGE en SSC 10X 15 min para quitar el SDS no unido. 2) Hidratar la membrana de nitrocelulosa en SSC. 3) Armar en bandeja: esponja, 3 papeles filtro, gel, membrana, 3 papeles filtro. 4) Cubrir bordes con Parafilm y poner papel absorbente y un peso de 300-500 g. 5) Transferir por capilaridad 16 h.",k:[["ssc"],["nitrocelulosa","membrana"],["papel"],["parafilm","peso"],["capilaridad","16"]]},
+{t:"enz",q:"¿Cuál es la diferencia entre coenzima y grupo prostético?",h:"Piensa en qué tan fuerte y permanente es la unión.",a:"La coenzima es una molécula orgánica pequeña (muchas derivan de vitaminas) que se une de forma débil y reversible y entra y sale del sitio activo transportando grupos (ej. NAD⁺, CoA). El grupo prostético se une de forma permanente (covalente o con muy alta afinidad) a la apoenzima (ej. hemo).",k:[["coenzima"],["reversible","debil","transitori"],["permanente","covalente"],["vitamina","nad","coa"],["hemo","apoenzima"]]},
+{t:"enz",q:"Define holoenzima y apoenzima.",h:"Una es el todo y la otra solo la parte proteica.",a:"Apoenzima: parte proteica de la enzima, inactiva por sí sola. Holoenzima: enzima completa (apoenzima unida a iones metálicos, coenzima y/o grupo prostético), catalíticamente activa.",k:[["proteic"],["complet"],["activ"],["cofactor","coenzima","prostetico","ion"]]},
+{t:"enz",q:"Explica el número EC 2.7.1.1 de la hexocinasa.",h:"Cada número es más específico que el anterior.",a:"2 = clase transferasa; 7 = subclase fosfotransferasa; 1 = fosfotransferasa con un grupo OH como aceptor; 1 = D-glucosa como aceptor del grupo fosforilo.",k:[["transferasa"],["fosfotransferasa"],["oh","hidroxilo"],["glucosa"]]},
+{t:"enz",q:"Compara el modelo de llave-cerradura con el de ajuste inducido.",h:"Uno es rígido y el otro flexible.",a:"Llave-cerradura (Emil Fischer): el sitio activo tiene una forma rígida complementaria al sustrato. Ajuste inducido: la enzima es flexible y la forma del sitio activo se modifica al unirse el sustrato.",k:[["fischer","rigid","complementari"],["flexible"],["sitio activo"],["modific","cambi"]]},
+{t:"inh",q:"¿Cuál es la utilidad de la gráfica de Lineweaver-Burk?",h:"Línea recta, pendiente, interceptos.",a:"Transforma la ecuación de Michaelis-Menten en una línea recta (1/V₀ vs 1/[S]) con pendiente Km/Vmax, intercepto 1/Vmax en el eje y y −1/Km en el eje x. Permite determinar con más precisión Vmax y Km e identificar el mecanismo de inhibición.",k:[["recta","lineal"],["1/v","reciproc","inverso"],["vmax"],["km"],["inhibicion","mecanismo"]]},
+{t:"inh",q:"¿En qué consiste la inhibición enzimática reversible e irreversible?",h:"La diferencia está en qué tan rápido se separa el complejo E-I.",a:"Reversible: el complejo enzima-inhibidor se disocia rápido (inhibición temporal). Irreversible: el inhibidor se disocia extremadamente lento o queda unido de forma permanente (covalente), eliminando un grupo catalítico; ej. penicilina y aspirina.",k:[["reversible"],["disoci","temporal"],["irreversible"],["permanente","covalente"],["penicilina","aspirina","ejemplo"]]},
+{t:"inh",q:"¿Qué tipos de inhibición reversible revisaron y cómo se diferencian?",h:"Son tres: ¿dónde se une el inhibidor en cada uno?",a:"Competitiva: el I se parece al S y se une al sitio activo; se supera con más S, Vmax no cambia. Acompetitiva: el I se une solo al complejo ES; no se supera con más S. No competitiva (mixta): el I se une a la E libre o al ES en otro sitio; disminuye Vmax y no se supera con más S.",k:[["competitiva"],["acompetitiva"],["no competitiva","mixta"],["sitio activo"],["complejo es","enzima-sustrato","es"]]},
+{t:"inh",q:"¿En qué consiste la inhibición competitiva? Da un ejemplo.",h:"El inhibidor y el sustrato se pelean por el mismo lugar.",a:"El inhibidor se parece al sustrato y se une al sitio activo, evitando la unión del S (E se une a S o a I, no a ambos). Se supera aumentando [S]; la Vmax no cambia y la Km aparente aumenta. Ejemplos: malonato, metotrexato, captopril.",k:[["parece","analogo","semejan"],["sitio activo"],["supera","aumentar","exceso"],["vmax"],["malonato","metotrexato","captopril"]]},
+{t:"inh",q:"¿Qué son los inactivadores suicidas y cuál es su aplicación?",h:"Recuerda el “caballo de Troya bioquímico”.",a:"Son compuestos poco reactivos hasta unirse al sitio activo; inician la reacción normal pero se convierten en un compuesto reactivo que se une irreversiblemente a la enzima. Se usan como fármacos de precisión con pocos efectos secundarios, ej. DFMO que inhibe la ornitina descarboxilasa de Trypanosoma brucei (enfermedad del sueño).",k:[["poco reactiv"],["sitio activo"],["irreversibl"],["farmaco","medicamento","precision"],["dfmo","ornitina","trypanosoma","sueno"]]}
+];
+
+/* =================== UTILIDADES =================== */
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const store={get(){try{return JSON.parse(localStorage.getItem("bioq-amor")||"{}")}catch(e){return{}}},set(v){try{localStorage.setItem("bioq-amor",JSON.stringify(v))}catch(e){}}};
+
+const PRAISE=["¡Exacto, mi amor!","¡Muy bien, preciosa!","¡Eso es! Qué inteligente eres.","¡Perfecto, mi amor!","¡Bravo! Te la sabes."];
+const OOPS=["Casi, mi amor. Mira:","No pasa nada, así se aprende:","Esta se te fue, pero ya la vas a recordar:","Tranquila, mi amor, aquí está:"];
+
+let S=Object.assign({tab:"examen",mode:"mcq",n:10,topics:Object.keys(TOPICS)},store.get());
+let Q=null; /* estado del examen en curso */
+
+/* =================== PESTAÑAS =================== */
+document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>go(b.dataset.tab));
+function go(tab){
+  S.tab=tab; store.set({tab:S.tab,mode:S.mode,n:S.n,topics:S.topics});
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===tab));
+  if(tab==="repaso")renderRepaso();
+  else if(tab==="amor")renderAmor();
+  else if(Q&&!Q.done)renderQ();
+  else if(Q&&Q.done)renderResult();
+  else renderSetup();
+  window.scrollTo({top:0});
+}
+
+/* =================== REPASO =================== */
+const NOTES={
+pur:[["HPLC","Separa por polaridad. Partículas ~3 µm, columna de 2-5 mm, ~45 MPa. Detección a 220 nm (enlace peptídico). Fase normal: estacionaria polar → retiene polares. Fase reversa: estacionaria no polar → retiene no polares."],
+ ["¿La purificación funcionó?","La actividad específica ↑ y el número de proteínas distintas ↓ en cada paso."],
+ ["SDS-PAGE","Separa por tamaño (el SDS da carga − proporcional a la masa, ~1 SDS cada 2 aa). Migra al ánodo (+). Pequeñas = más rápido. Gel: acrilamida + bisacrilamida; APS genera radicales y TEMED los acelera. Reductor: BME o DTT rompen disulfuros. Tinción: plata o Coomassie; autorradiografía con ¹²⁵I. Resolución: 10 aa."],
+ ["Isoelectroenfoque","Separa por pI (pH con carga neta 0). Gradiente de pH con polianfolitos. pH < pI → carga +; pH > pI → carga −. Resolución 0.01 de pH. Citocromo c pI 10.6 (básico); albúmina 4.8 (ácida)."],
+ ["Electroforesis 2D","1ª dimensión: pI (horizontal). 2ª: SDS-PAGE (vertical). Patrón de puntos (>1,000 proteínas de E. coli). Puntos se identifican por espectrometría de masas."],
+ ["Ultracentrifugación","20,000-150,000 rpm. S (Svedberg) menor = más lento. Depende de masa, forma (alargadas más lento), densidad de la partícula y del medio. Zonal: gradiente de sacarosa 5% → 20%, separa por S (resolución S = 2)."]],
+det:[["Inmunología básica","Anticuerpo: proteína en Y hecha por linfocitos B. Antígeno: molécula ajena que induce respuesta inmune."],
+ ["ELISA","Antígeno inmovilizado + anticuerpo 1º + anticuerpo 2º con enzima (HRP o ALP) → color medido por espectrofotometría. Directo, indirecto y sándwich: señal directamente proporcional. Competitivo: inversamente proporcional; útil para cantidades bajas."],
+ ["Tipos de detección","Colorimétrica: precipitado de color, se detiene con H₂SO₄, sensibilidad media. Quimioluminiscente: produce luz, se capta con CCD o película. Fluorescente: GFP verde, mCherry roja, luz UV. Radiactiva: ¹²⁵I y ³²P, riesgosa."],
+ ["Western blot capilar","Gel en SSC 10X 15 min (quita SDS) → membrana de nitrocelulosa → esponja, 3 papeles, gel, membrana, 3 papeles → Parafilm en bordes, papel absorbente y peso 300-500 g → capilaridad 16 h."]],
+enz:[["Enzimas","Catalizadores (proteínas y ARN) que bajan la energía de activación (10⁸-10²⁰ veces), no cambian el equilibrio, son muy específicas y dependen de su conformación nativa, temperatura y pH."],
+ ["Cofactores","Iones metálicos (Zn²⁺, Mg²⁺, Fe, Cu…), coenzimas (orgánicas, unión débil y reversible, de vitaminas: NAD⁺, NADP⁺, CoA) y grupos prostéticos (unión permanente, ej. hemo)."],
+ ["Holoenzima y apoenzima","Apoenzima = parte proteica. Holoenzima = apoenzima + cofactor(es), activa."],
+ ["Ejemplos con metales","SOD: Cu²⁺ hace el ciclo redox, Zn²⁺ orienta. Hexocinasa: Mg²⁺ neutraliza fosfatos del ATP. Dedo de zinc: Zn²⁺ con Cys₂His₂."],
+ ["Nomenclatura","6 clases. EC 2.7.1.1 = transferasa · fosfotransferasa · aceptor OH · D-glucosa. Nombre común: sustrato + “-asa” (celulasa, ribonucleasa)."],
+ ["Sitio activo","Hendidura 3D con aa de distintas partes de la secuencia, pequeña parte del volumen, sin agua. Uniones débiles múltiples. Llave-cerradura (Fischer) vs ajuste inducido (flexible)."]],
+inh:[["Lineweaver-Burk","1/V₀ vs 1/[S] da una recta. Pendiente = Km/Vmax. Corte en y = 1/Vmax. Corte en x = −1/Km. Mide Vmax con precisión y distingue inhibiciones."],
+ ["Reversible vs irreversible","Reversible: E-I se disocia rápido. Irreversible: disociación lentísima o covalente (penicilina → transpeptidasa; aspirina → ciclooxigenasa; DIFP → Ser195 de quimotripsina)."],
+ ["Inactivadores suicidas","Poco reactivos hasta llegar al sitio activo; se vuelven reactivos y se unen irreversiblemente. DFMO inhibe la ODC (con PLP) de T. brucei."]]
+};
+const INHTABLE=[["Competitiva","Sitio activo (se parece al S)","Sí","Igual","Malonato, metotrexato, captopril"],
+["Acompetitiva","Solo al complejo ES","No","Disminuye","Epristerida (5-α-reductasa)"],
+["No competitiva","E libre o ES, sitio distinto","No","Disminuye","Nevirapina, efavirenz"]];
+
+function renderRepaso(){
+  app.innerHTML=`<div class="stack">
+  <p class="muted">Toca cada tema para abrir el resumen. Cuando te sientas lista, ve a <b>Examen</b>.</p>
+  ${Object.entries(TOPICS).map(([k,name],i)=>`
+  <details class="topic"${i===0?" open":""}>
+    <summary><h3>${name}</h3><span class="n">${MCQ.filter(x=>x.t===k).length+OPEN.filter(x=>x.t===k).length} preguntas</span><span class="car" aria-hidden="true">▸</span></summary>
+    <div class="body">
+      ${NOTES[k].map(f=>`<div class="fact"><b>${esc(f[0])}</b><p>${esc(f[1])}</p></div>`).join("")}
+      ${k==="inh"?`<div class="tbl"><table><thead><tr><th>Tipo</th><th>Se une a</th><th>¿Se supera con más S?</th><th>Vmax</th><th>Ejemplo</th></tr></thead><tbody>${INHTABLE.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`:""}
+      <button class="btn" data-practice="${k}">Practicar solo este tema</button>
+    </div>
+  </details>`).join("")}
+  </div>`;
+  app.querySelectorAll("[data-practice]").forEach(b=>b.onclick=()=>{S.topics=[b.dataset.practice];Q=null;go("examen");});
+}
+
+/* =================== CONFIGURAR EXAMEN =================== */
+function pool(){const src=S.mode==="mcq"?MCQ:OPEN;return src.filter(x=>S.topics.includes(x.t));}
+function renderSetup(){
+  const p=pool();const max=Math.max(1,p.length);
+  S.n=Math.min(Math.max(1,S.n),max);
+  app.innerHTML=`<section class="card stack">
+    <div class="eyebrow">Arma tu examen</div>
+    <div class="stack" style="gap:8px"><h3>Tipo de examen</h3>
+      <div class="seg">
+        <button id="m-mcq" aria-pressed="${S.mode==="mcq"}"><b>Opción múltiple</b><span>Eliges una respuesta</span></button>
+        <button id="m-open" aria-pressed="${S.mode==="open"}"><b>Abierto</b><span>Escribes con tus palabras</span></button>
+      </div></div>
+    <div class="stack" style="gap:8px"><h3>Temas</h3>
+      <div class="row">${Object.entries(TOPICS).map(([k,n])=>`<button class="chip" data-topic="${k}" aria-pressed="${S.topics.includes(k)}">${n}</button>`).join("")}</div></div>
+    <div class="stack" style="gap:8px"><h3><label for="nq">Número de preguntas</label></h3>
+      <div class="count">
+        <input type="range" id="nq" min="1" max="${max}" value="${S.n}" ${p.length?"":"disabled"}>
+        <output id="nqo" for="nq">${S.n}</output>
+        <div class="stepper"><button id="nqm" aria-label="Una pregunta menos">−</button><button id="nqp" aria-label="Una pregunta más">+</button></div>
+      </div>
+      <p class="muted small">${p.length?`Hay ${p.length} preguntas disponibles con estos temas.`:"Elige al menos un tema para empezar."}</p></div>
+    <div class="row"><button class="btn primary" id="start" ${p.length?"":"disabled"}>Empezar examen</button></div>
+  </section>`;
+  $("#m-mcq").onclick=()=>{S.mode="mcq";save();renderSetup();};
+  $("#m-open").onclick=()=>{S.mode="open";save();renderSetup();};
+  app.querySelectorAll("[data-topic]").forEach(b=>b.onclick=()=>{const k=b.dataset.topic;S.topics=S.topics.includes(k)?S.topics.filter(x=>x!==k):[...S.topics,k];save();renderSetup();});
+  const setN=v=>{S.n=Math.min(max,Math.max(1,v));$("#nq").value=S.n;$("#nqo").textContent=S.n;save();};
+  $("#nq").oninput=e=>setN(+e.target.value);
+  $("#nqm").onclick=()=>setN(S.n-1);
+  $("#nqp").onclick=()=>setN(S.n+1);
+  $("#start").onclick=()=>start(shuffle(p).slice(0,S.n));
+}
+function save(){store.set({tab:S.tab,mode:S.mode,n:S.n,topics:S.topics});}
+
+/* =================== EXAMEN =================== */
+function start(items){
+  Q={mode:S.mode,i:0,done:false,hints:0,items:items.map(x=>({src:x,opts:x.o?shuffle(x.o.map((t,j)=>({t,ok:j===0}))):null,score:null,pick:null,text:""}))};
+  renderQ();
+}
+function gel(){return `<div class="gel" aria-hidden="true">${Q.items.map((it,j)=>`<i class="${j===Q.i&&!Q.done?"now":it.score===1?"ok":it.score===0.5?"mid":it.score===0?"no":""}"></i>`).join("")}</div>`;}
+function renderQ(){
+  const it=Q.items[Q.i],x=it.src,answered=it.score!==null;
+  const L="ABCD";
+  app.innerHTML=`<section class="card stack">
+    <div class="qhead"><span class="tag">${TOPICS[x.t]}</span><span class="mono muted">Pregunta ${Q.i+1} de ${Q.items.length}</span></div>
+    ${gel()}
+    <p class="q">${esc(x.q)}</p>
+    ${Q.mode==="mcq"?`<div class="opts">${it.opts.map((o,j)=>`<button class="opt ${answered&&o.ok?"right":""} ${answered&&it.pick===j&&!o.ok?"wrong":""}" data-j="${j}" ${answered?"disabled":""}><span class="k">${L[j]}</span><span>${esc(o.t)}</span></button>`).join("")}</div>`
+    :`<label class="eyebrow" for="ans">Tu respuesta</label><textarea id="ans" placeholder="Escribe aquí lo que recuerdes, con tus palabras…" ${answered?"readonly":""}>${esc(it.text)}</textarea>`}
+    <div id="fbz">${answered||it.revealed?feedback(it):""}</div>
+    <div class="actions">
+      <button class="btn hint" id="hintBtn">Ver pista</button>
+      <div class="row">
+        ${Q.mode==="open"&&!it.revealed?`<button class="btn primary" id="check">Revisar respuesta</button>`:""}
+        ${answered?`<button class="btn primary" id="next">${Q.i+1<Q.items.length?"Siguiente":"Ver resultado"}</button>`:""}
+        <button class="btn" id="quit">Salir</button>
+      </div>
+    </div>
+  </section>`;
+  $("#hintBtn").onclick=()=>showHint(x.h,it);
+  $("#quit").onclick=()=>{Q=null;renderSetup();};
+  if(Q.mode==="mcq"&&!answered)app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const j=+b.dataset.j;it.pick=j;it.score=it.opts[j].ok?1:0;renderQ();});
+  if(Q.mode==="open"){
+    const ta=$("#ans");
+    if(!answered)ta.oninput=()=>it.text=ta.value;
+    const c=$("#check");
+    if(c)c.onclick=()=>{it.text=ta.value;it.revealed=true;renderQ();};
+    app.querySelectorAll("[data-self]").forEach(b=>b.onclick=()=>{it.score=+b.dataset.self;renderQ();});
+  }
+  const n=$("#next");if(n)n.onclick=()=>{if(Q.i+1<Q.items.length){Q.i++;renderQ();}else{Q.done=true;renderResult();}};
+  if(Q.mode==="open"&&!answered&&!it.revealed)$("#ans").focus({preventScroll:true});
+}
+function hits(it){const t=norm(it.text);return it.src.k.map(g=>g.some(w=>t.includes(norm(w))));}
+function suggest(it){const h=hits(it),r=h.filter(Boolean).length/h.length;return r>=0.7?1:r>=0.35?0.5:0;}
+function feedback(it){
+  const x=it.src;
+  if(Q.mode==="mcq"){
+    const ok=it.score===1;
+    return `<div class="fb ${ok?"ok":"no"}" role="status"><h3>${ok?pick(PRAISE):pick(OOPS)}</h3><p>${esc(x.e)}</p></div>`;
+  }
+  const h=hits(it),sug=suggest(it);
+  const labels=x.k.map(g=>g[0]);
+  return `<div class="fb open" role="status">
+    <h3>Respuesta modelo</h3>
+    <div class="model">${esc(x.a)}</div>
+    <div class="eyebrow">Ideas clave que mencionaste</div>
+    <div class="keys">${labels.map((l,j)=>`<span class="${h[j]?"hit":""}">${esc(l)}</span>`).join("")}</div>
+    ${it.score===null?`<p class="small muted">Compara tu respuesta y califícate con honestidad. Te marqué una sugerencia.</p>
+    <div class="self">
+      <button data-self="1" class="${sug===1?"sug":""}">La tuve bien</button>
+      <button data-self="0.5" class="${sug===0.5?"sug":""}">Más o menos</button>
+      <button data-self="0" class="${sug===0?"sug":""}">Me faltó</button>
+    </div>`:`<p><b>${it.score===1?pick(PRAISE):it.score===0.5?"¡Vas muy bien, mi amor! Solo te faltaron unos detalles.":pick(OOPS).replace(/:$/,".")+" Repasa la respuesta modelo y la próxima te sale."}</b></p>`}
+  </div>`;
+}
+
+/* ---- pista ---- */
+let lastFocus=null;
+function showHint(text,it){
+  if(!it.hinted){it.hinted=true;Q.hints++;}
+  lastFocus=document.activeElement;
+  $("#hintText").textContent=text;
+  $("#hintBox").hidden=false;
+  $("#hintClose").focus();
+}
+function closeHint(){$("#hintBox").hidden=true;if(lastFocus)lastFocus.focus();}
+$("#hintClose").onclick=closeHint;
+$("#hintBox").onclick=e=>{if(e.target.id==="hintBox")closeHint();};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#hintBox").hidden)closeHint();});
+
+/* =================== RESULTADO =================== */
+function renderResult(){
+  const tot=Q.items.length,pts=Q.items.reduce((a,b)=>a+(b.score||0),0),pct=Math.round(pts/tot*100);
+  let title,msg;
+  if(pct>=85){title="¡Eres la mejor, mi amor!";msg="Lo hiciste increíble. Estoy súper orgulloso de ti, sabía que te lo ibas a saber todo.";}
+  else if(pct>=60){title="¡Sigue así, mi amor!";msg="Vas muy bien. Un repasito más a lo que fallaste y lo dominas por completo.";}
+  else{title="¡Tú puedes, mi amor!";msg="Esto es solo práctica y para eso estamos. Repasa con calma, vuelve a intentarlo y verás cómo sube. Yo creo en ti.";}
+  const C=2*Math.PI*62;
+  const wrong=Q.items.filter(it=>it.score!==1);
+  app.innerHTML=`<section class="card result">
+    <svg class="ring" viewBox="0 0 150 150" role="img" aria-label="${pct}% de aciertos">
+      <circle class="bg" cx="75" cy="75" r="62"/>
+      <circle class="fg" id="ringFg" cx="75" cy="75" r="62" stroke-dasharray="${C}" stroke-dashoffset="${C}" transform="rotate(-90 75 75)"/>
+      <text x="75" y="86" text-anchor="middle">${pct}%</text>
+    </svg>
+    <h2>${title}</h2>
+    <p>${msg}</p>
+    <p class="mono muted small">${fmt(pts)} de ${tot} puntos · ${Q.hints} pista${Q.hints===1?"":"s"} usada${Q.hints===1?"":"s"} · ${Q.mode==="mcq"?"opción múltiple":"abierto"}</p>
+    <div class="row" style="justify-content:center">
+      ${wrong.length?`<button class="btn primary" id="retry">Repetir las que fallé (${wrong.length})</button>`:""}
+      <button class="btn ${wrong.length?"":"primary"}" id="again">Nuevo examen</button>
+      <button class="btn" id="toLove">Un mensaje para ti</button>
+    </div>
+  </section>
+  ${wrong.length?`<section class="stack"><h3>Para repasar</h3><div class="review">${wrong.map(it=>{const x=it.src;
+    const yours=Q.mode==="mcq"?(it.pick!==null?it.opts[it.pick].t:"—"):(it.text.trim()||"(sin respuesta)");
+    const right=Q.mode==="mcq"?x.o[0]:x.a;
+    return `<div class="rv"><span class="tag" style="justify-self:start">${TOPICS[x.t]}</span><b>${esc(x.q)}</b>
+      <p class="y">Tu respuesta: ${esc(yours)}</p><p class="a"><b>Correcta:</b> ${esc(right)}</p>${x.e?`<p class="muted small">${esc(x.e)}</p>`:""}</div>`;}).join("")}</div></section>`:""}`;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{const r=$("#ringFg");if(r)r.style.strokeDashoffset=C*(1-pct/100);}));
+  const rt=$("#retry");if(rt)rt.onclick=()=>{Q.mode=S.mode;start(shuffle(wrong.map(it=>it.src)));};
+  $("#again").onclick=()=>{Q=null;renderSetup();};
+  $("#toLove").onclick=()=>go("amor");
+}
+const fmt=n=>Number.isInteger(n)?n:n.toFixed(1);
+
+/* =================== PARA TI =================== */
+let opened=false;
+function renderAmor(){
+  if(!opened){
+    app.innerHTML=`<section class="card gift">
+      <div class="envelope"><svg viewBox="0 0 150 105" aria-hidden="true">
+        <rect x="3" y="3" width="144" height="99" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="3"/>
+        <path d="M5 8 L75 60 L145 8" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M75 70c0 0-14-8.5-14-18a7.5 7.5 0 0 1 14-3.8A7.5 7.5 0 0 1 89 52c0 9.5-14 18-14 18z" fill="var(--accent)"/>
+      </svg></div>
+      <h2>Tengo algo para ti</h2>
+      <p class="muted">Ábrelo cuando necesites un poquito de ánimo.</p>
+      <button class="btn primary" id="open">Abrir</button>
+    </section>`;
+    $("#open").onclick=()=>{opened=true;renderAmor();};
+    return;
+  }
+  app.innerHTML=`<section class="card scene">
+    <svg viewBox="0 0 600 400" role="img" aria-label="Un corazón latiendo entre un osito y un hámster que te dicen que nunca te rindas">
+      <!-- corazón -->
+      <path class="big-heart" d="M300,250 C300,250 175,175 175,112 C175,74 203,48 237,48 C266,48 290,66 300,88 C310,66 334,48 363,48 C397,48 425,74 425,112 C425,175 300,250 300,250 Z"/>
+      <path d="M245 90 q-22 6 -26 30" fill="none" stroke="var(--surface)" stroke-width="7" stroke-linecap="round" opacity=".55"/>
+
+      <!-- osito -->
+      <g class="bob">
+        <ellipse cx="110" cy="345" rx="52" ry="44" fill="#a86b45"/>
+        <ellipse cx="110" cy="352" rx="30" ry="28" fill="#e7c3a1"/>
+        <circle cx="72" cy="232" r="17" fill="#a86b45"/><circle cx="72" cy="232" r="8" fill="#e7a3a8"/>
+        <circle cx="148" cy="232" r="17" fill="#a86b45"/><circle cx="148" cy="232" r="8" fill="#e7a3a8"/>
+        <circle cx="110" cy="270" r="46" fill="#b97a50"/>
+        <ellipse cx="110" cy="287" rx="22" ry="17" fill="#ecd0b3"/>
+        <ellipse cx="110" cy="280" rx="8" ry="6" fill="#3a2418"/>
+        <path d="M103 292 q7 7 14 0" fill="none" stroke="#3a2418" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="93" cy="262" r="5" fill="#2a1a12"/><circle cx="127" cy="262" r="5" fill="#2a1a12"/>
+        <circle cx="94.5" cy="260.5" r="1.6" fill="#fff"/><circle cx="128.5" cy="260.5" r="1.6" fill="#fff"/>
+        <ellipse cx="82" cy="282" rx="7" ry="4.5" fill="#f28fa5" opacity=".75"/><ellipse cx="138" cy="282" rx="7" ry="4.5" fill="#f28fa5" opacity=".75"/>
+        <!-- brazos sosteniendo corazón -->
+        <ellipse cx="74" cy="330" rx="13" ry="20" fill="#a86b45" transform="rotate(30 74 330)"/>
+        <ellipse cx="146" cy="330" rx="13" ry="20" fill="#a86b45" transform="rotate(-30 146 330)"/>
+        <path d="M110 352c0 0-16-9.5-16-20a8.4 8.4 0 0 1 16-4.2A8.4 8.4 0 0 1 126 332c0 10.5-16 20-16 20z" fill="var(--accent)"/>
+      </g>
+
+      <!-- hámster -->
+      <g class="bob d">
+        <ellipse cx="490" cy="330" rx="66" ry="58" fill="#e9a756"/>
+        <ellipse cx="490" cy="350" rx="40" ry="34" fill="#fbecd6"/>
+        <circle cx="452" cy="280" r="13" fill="#e9a756"/><circle cx="452" cy="280" r="7" fill="#f4b6b9"/>
+        <circle cx="528" cy="280" r="13" fill="#e9a756"/><circle cx="528" cy="280" r="7" fill="#f4b6b9"/>
+        <ellipse cx="462" cy="320" rx="16" ry="12" fill="#fbecd6"/><ellipse cx="518" cy="320" rx="16" ry="12" fill="#fbecd6"/>
+        <circle cx="470" cy="305" r="5.5" fill="#2a1a12"/><circle cx="510" cy="305" r="5.5" fill="#2a1a12"/>
+        <circle cx="471.8" cy="303.3" r="1.7" fill="#fff"/><circle cx="511.8" cy="303.3" r="1.7" fill="#fff"/>
+        <ellipse cx="490" cy="316" rx="5" ry="3.6" fill="#e9707f"/>
+        <path d="M484 322 q6 5 12 0" fill="none" stroke="#7a4a22" stroke-width="2" stroke-linecap="round"/>
+        <ellipse cx="458" cy="322" rx="7" ry="4.5" fill="#f28fa5" opacity=".7"/><ellipse cx="522" cy="322" rx="7" ry="4.5" fill="#f28fa5" opacity=".7"/>
+        <path d="M466 312 l-18 -3 M466 316 l-18 2 M514 312 l18 -3 M514 316 l18 2" stroke="#7a4a22" stroke-width="1.4" stroke-linecap="round"/>
+        <!-- patitas con semilla-corazón -->
+        <path d="M490 362c0 0-13-7.8-13-16.3a6.9 6.9 0 0 1 13-3.4A6.9 6.9 0 0 1 503 345.7c0 8.5-13 16.3-13 16.3z" fill="var(--accent)"/>
+        <ellipse cx="474" cy="352" rx="8" ry="6" fill="#f4b6b9"/><ellipse cx="506" cy="352" rx="8" ry="6" fill="#f4b6b9"/>
+      </g>
+
+      <!-- globos de diálogo -->
+      <g class="bubble">
+        <rect x="18" y="128" width="170" height="54" rx="18"/>
+        <path d="M92 181 l12 20 l10 -20 z"/>
+        <rect x="95" y="176" width="22" height="8" fill="var(--surface)" stroke="none"/>
+        <text x="103" y="162" text-anchor="middle">¡Nunca te rindas!</text>
+      </g>
+      <g class="bubble">
+        <rect x="402" y="178" width="180" height="54" rx="18"/>
+        <path d="M478 231 l10 22 l14 -22 z"/>
+        <rect x="480" y="226" width="20" height="8" fill="var(--surface)" stroke="none"/>
+        <text x="492" y="212" text-anchor="middle">¡Eres la mejor!</text>
+      </g>
+    </svg>
+    <p class="love-text">Nunca te rindas, <em>mi amor</em>. Eres la mejor en lo que haces y en todo lo que te propones.</p>
+    <p class="muted">El osito, el hámster y yo creemos en ti. Siempre.</p>
+    <div class="row" style="justify-content:center">
+      <button class="btn primary" id="toExam">Volver a estudiar</button>
+      <button class="btn" id="close">Cerrar sobre</button>
+    </div>
+  </section>`;
+  $("#toExam").onclick=()=>go("examen");
+  $("#close").onclick=()=>{opened=false;renderAmor();};
+}
+
+/* =================== INICIO =================== */
+go(S.tab||"examen");
+</script>
