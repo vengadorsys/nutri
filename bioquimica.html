@@ -208,7 +208,7 @@ footer{text-align:center;color:var(--muted);font-size:.85rem}
 
 <div class="wrap">
   <header class="top">
-    <div class="eyebrow">Bioquímica · purificación, detección y enzimas</div>
+    <div class="eyebrow">Bioquímica · proteínas, enzimas y su regulación</div>
     <h1>Hola, <em>mi amor</em>. Vamos a estudiar juntos.</h1>
     <p class="muted">Estudia cada tema con calma, haz exámenes de opción múltiple o abiertos, pide pistas cuando las necesites y, si una pregunta se te complica, salta a su explicación completa sin perder tu avance.</p>
   </header>
@@ -840,6 +840,345 @@ key:"SDS + calor desnaturaliza (1 SDS cada 2 aa, carga −) · BME/DTT rompe dis
 </ul>
 <p>Diseñar fármacos a partir del mecanismo de reacción y la estructura 3D de la enzima mejora el método de prueba y error.</p>`,key:"Inertes hasta llegar al sitio activo · se unen irreversiblemente · DFMO inhibe la ODC de T. brucei."}
 ];
+/* =================== TEMAS NUEVOS: catálisis/cinética y regulación covalente =================== */
+/* orden de estudio: catálisis antes que inhibición */
+const _inh=TOPICS.inh;delete TOPICS.inh;
+TOPICS.cat="Catálisis y cinética";
+TOPICS.inh=_inh;
+TOPICS.reg="Regulación covalente";
+
+MCQ.push(
+/* --- Catálisis y cinética --- */
+{t:"cat",s:"mecanismo",q:"¿Qué dos factores contribuyen al mecanismo catalítico de una enzima?",o:["La energía de enlace para formar el complejo ES y los grupos funcionales catalíticos","La temperatura y el color de la enzima","El pI y la masa molecular","El SDS y el campo eléctrico"],h:"Uno tiene que ver con la unión y el otro con quién rompe y forma enlaces.",e:"Contribuyen la energía de enlace para formar el complejo ES y los grupos funcionales catalíticos, que facilitan la ruptura y formación de enlaces."},
+{t:"cat",s:"mecanismo",q:"¿Cuáles son los tres mecanismos de catálisis enzimática vistos en clase?",o:["Ácido-base general, covalente y por iones metálicos","Competitiva, acompetitiva y no competitiva","Directa, indirecta y sándwich","Oxidación, reducción e hidrólisis"],h:"Uno usa H⁺, otro forma un enlace temporal y otro usa metales.",e:"Los tres mecanismos son: catálisis ácido-base general, catálisis covalente y catálisis por iones metálicos."},
+{t:"cat",s:"acidobase",q:"¿Cuál es la reacción más común en las células?",o:["La transferencia de H⁺","La transferencia de electrones al oxígeno","La ruptura de puentes disulfuro","La unión de SDS"],h:"Es la base de la catálisis ácido-base.",e:"La transferencia de protones (H⁺) es la reacción más común en las células."},
+{t:"cat",s:"acidobase",q:"¿Qué problema causan los intermediarios cargados e inestables en muchas reacciones?",o:["Se descomponen de regreso en sus especies reactivas y evitan que se formen productos","Aceleran demasiado la reacción","Desnaturalizan a la enzima","Se unen al ADN"],h:"Si se deshacen antes de avanzar, no hay producto.",e:"Los intermediarios cargados e inestables tienden a regresar a reactivos; la transferencia de H⁺ los estabiliza para que formen productos."},
+{t:"cat",s:"acidobase",q:"La catálisis ácido-base específica utiliza…",o:["Solo los iones H⁺ (H₃O⁺) y OH⁻ del agua","Ácidos y bases débiles distintos del agua","Iones metálicos","Un enlace covalente temporal"],h:"“Específica” = solo los iones del agua.",e:"La catálisis ácido-base específica usa únicamente H⁺ (H₃O⁺) y OH⁻ del agua; no hay catálisis adicional por otros donadores/aceptores."},
+{t:"cat",s:"acidobase",q:"La catálisis ácido-base general se caracteriza por…",o:["Transferencia de H⁺ por ácidos y bases débiles distintos del agua","Usar solo los iones del agua","Formar un enlace covalente E-S","Requerir siempre un ion metálico"],h:"“General” = otros donadores y aceptores además del agua.",e:"En la catálisis ácido-base general los H⁺ los transfieren ácidos y bases débiles distintos del agua, como las cadenas laterales de los aminoácidos."},
+{t:"cat",s:"acidobase",q:"¿Por qué la catálisis ácido-base general es crucial dentro del sitio activo?",o:["Porque el sitio activo carece de agua, que no está disponible como donador/aceptor de H⁺","Porque el sitio activo está lleno de agua","Porque el sitio activo tiene carga cero","Porque ahí se une el SDS"],h:"Recuerda cómo es el microambiente del sitio activo.",e:"El sitio activo casi no tiene agua, así que las cadenas laterales de los aa hacen de donadores y aceptores de H⁺."},
+{t:"cat",s:"acidobase",q:"¿Cuánto puede aumentar la velocidad la catálisis ácido-base general?",o:["De 10² a 10⁵ veces","De 2 a 5 veces","10²⁰ veces siempre","No la aumenta"],h:"Son potencias de 10 pequeñas comparadas con 10²⁰.",e:"Los grupos de los aa ubicados con precisión permiten transferencias de H⁺ que aumentan la velocidad 10²-10⁵ veces."},
+{t:"cat",s:"acidobase",q:"¿Qué moléculas complementan al agua como donadores de H⁺ en la catálisis ácido-base general?",o:["Ácidos orgánicos débiles como láctico, acético, cítrico o málico","Ácidos fuertes como H₂SO₄","Detergentes como el SDS","Iones metálicos como Zn²⁺"],h:"Son ácidos que se encuentran en el metabolismo.",e:"Ácidos orgánicos débiles (láctico, acético, úrico, cítrico, málico) donan H⁺; bases débiles como los grupos amino de aa y nucleótidos los aceptan."},
+{t:"cat",s:"acidobase",q:"En la ruptura de un enlace amida, ¿qué evita la quimotripsina con la catálisis ácido-base?",o:["La generación de carga desfavorable","La unión del sustrato","La formación de producto","El cambio de pH"],h:"Las cargas que se forman en el intermediario son el problema.",e:"La quimotripsina evita que se genere carga desfavorable durante la ruptura del enlace amida."},
+{t:"cat",s:"covalente",q:"¿En qué consiste la catálisis covalente?",o:["Se forma un enlace covalente temporal entre la enzima y el sustrato","El sustrato se une para siempre a la enzima","Un metal cambia de estado de oxidación","Se transfieren H⁺ desde el agua"],h:"El enlace se forma y luego se rompe.",e:"En la catálisis covalente se forma un enlace covalente temporal E-S; el intermediario reactivo luego se escinde."},
+{t:"cat",s:"covalente",q:"¿Cuáles son grupos nucleofílicos típicos de las enzimas en la catálisis covalente?",o:["–OH de Ser, –SH de Cys y –NH de Lys","–COOH de Asp y Glu únicamente","Los anillos aromáticos de Phe","El grupo hemo"],h:"Son tres aminoácidos: uno con alcohol, uno con azufre y uno con amino.",e:"Atacan al sustrato el –OH de Ser, el –SH de Cys y el –NH de Lys, además de grupos de cofactores."},
+{t:"cat",s:"covalente",q:"¿Cuándo ocurre la catálisis covalente?",o:["Cuando la ruta nueva tiene menor energía de activación que la ruta no catalizada","Cuando la ruta nueva tiene mayor energía de activación","Cuando no hay enzima","Cuando el sustrato es un metal"],h:"La enzima abre un camino más fácil.",e:"Hay catálisis si la ruta con el intermediario covalente tiene menor energía de activación que la no catalizada."},
+{t:"cat",s:"covalente",q:"¿De qué vitamina deriva la coenzima A?",o:["Ácido pantoténico (vitamina B5)","Niacina (vitamina B3)","Riboflavina (vitamina B2)","Vitamina C"],h:"Es la B5.",e:"La coenzima A deriva del ácido pantoténico (vitamina B5) y participa en la catálisis covalente."},
+{t:"cat",s:"covalente",q:"¿Qué enzima tiene la famosa tríada catalítica usada como ejemplo de catálisis covalente?",o:["La quimotripsina (proteasa de serina)","La hexocinasa","La lisozima","La fosforilasa de glucógeno"],h:"Es una proteasa pancreática.",e:"La quimotripsina, una proteasa de serina, tiene una tríada catalítica cuya Ser forma el intermediario covalente."},
+{t:"cat",s:"covalente",q:"Bajo la acción enzimática, el ataque nucleofílico y la disociación del nucleófilo son…",o:["Mucho más rápidos","Mucho más lentos","Iguales que sin enzima","Imposibles"],h:"Para eso sirve la enzima.",e:"Con la enzima, el ataque nucleofílico y la liberación del nucleófilo ocurren mucho más rápido."},
+{t:"cat",s:"metcat",q:"En la catálisis por iones metálicos, ¿con qué aminoácidos se coordina el metal en el sitio activo?",o:["His, Cys o Asp","Gly, Ala o Val","Phe, Trp o Tyr","Pro y Leu"],h:"Uno tiene imidazol, otro azufre y otro carboxilo.",e:"Los metales se unen al sitio activo por coordinación con His, Cys o Asp."},
+{t:"cat",s:"metcat",q:"¿Qué porcentaje de las enzimas requiere uno o más iones metálicos?",o:["~30%","~3%","~90%","100%"],h:"Casi un tercio.",e:"Alrededor del 30% de las enzimas necesitan uno o más iones metálicos para su actividad."},
+{t:"cat",s:"metcat",q:"¿Cuál NO es una función de un ion metálico en la catálisis?",o:["Desnaturalizar a la enzima","Orientar al sustrato","Estabilizar cargas negativas de intermediarios","Generar nucleófilos desprotonando agua"],h:"Tres de estas sí estaban en la diapositiva.",e:"El metal orienta al S, estabiliza cargas −, participa en reacciones redox y genera nucleófilos; no desnaturaliza a la enzima."},
+{t:"cat",s:"metcat",q:"¿Cómo median los iones metálicos las reacciones de óxido-reducción?",o:["Por cambios reversibles en su estado de oxidación","Rompiendo puentes disulfuro","Uniéndose al ADN","Formando enlaces peptídicos"],h:"Fe²⁺ ⇄ Fe³⁺, Cu⁺ ⇄ Cu²⁺.",e:"Los cambios reversibles en el estado de oxidación del ion metálico median las reacciones redox."},
+{t:"cat",s:"metcat",q:"¿Qué ion estabiliza la estructura de la quimotripsina pancreática?",o:["Ca²⁺","Zn²⁺","Fe³⁺","Cu²⁺"],h:"Es el mismo ion de los huesos.",e:"La estructura de la quimotripsina pancreática se estabiliza con iones Ca²⁺."},
+{t:"cat",s:"metcat",q:"¿Qué estrategias catalíticas combina la quimotripsina?",o:["Catálisis covalente, ácido-base general y estabilización del estado de transición","Solo catálisis por iones metálicos","Solo catálisis ácido-base específica","Inhibición competitiva y alostérica"],h:"La mayoría de las enzimas combinan varias.",e:"La quimotripsina combina catálisis covalente, ácido-base general y estabilización del estado de transición."},
+{t:"cat",s:"cinetica",q:"¿Qué estudia la cinética enzimática?",o:["La velocidad de las reacciones catalizadas por enzimas y los factores que la modifican","La estructura 3D de las enzimas","La secuencia de aminoácidos","La clasificación EC"],h:"Cinética = velocidad.",e:"La cinética enzimática estudia la velocidad de las reacciones catalizadas por enzimas y qué la modifica."},
+{t:"cat",s:"cinetica",q:"¿Cuál es el enfoque moderno para determinar el mecanismo de acción de una enzima?",o:["Determinación de la estructura 3D y mutagénesis sitio dirigida","Medir solo la velocidad de reacción","Teñir con Coomassie","Medir el pI"],h:"El enfoque antiguo es la cinética.",e:"Moderno: estructura 3D y mutagénesis sitio dirigida. Antiguo: medir la velocidad y cómo cambia con los parámetros (cinética)."},
+{t:"cat",s:"cinetica",q:"En la analogía del auto deportivo, ¿a qué corresponde la velocidad cuando se pisa a fondo el acelerador?",o:["A la Vmax","A la Km","Al pI","A la energía de activación"],h:"Es la velocidad máxima.",e:"Pisar a fondo el acelerador equivale a la Vmax; qué tan rápido acelera de 0 a 320 km/h se relaciona con cómo la alcanza."},
+{t:"cat",s:"cinetica",q:"¿Para qué es fundamental conocer la cinética enzimática?",o:["Desarrollo de medicamentos, diagnóstico, producción de alimentos y biotecnología","Solo para teñir geles","Solo para clasificar enzimas","No tiene aplicaciones"],h:"Tiene muchas aplicaciones prácticas.",e:"Es fundamental para el desarrollo de medicamentos, el diagnóstico de enfermedades, la producción de alimentos y procesos biotecnológicos."},
+{t:"cat",s:"cinetica",q:"¿Qué dos pasos analiza cuantitativamente la cinética enzimática?",o:["La unión E + S → ES y la transformación ES → E + P","La desnaturalización y la renaturalización","La transcripción y la traducción","La fosforilación y la desfosforilación"],h:"Unirse y transformar.",e:"Analiza cómo se une la enzima al sustrato (E + S → ES) y qué tan rápido lo transforma (ES → E + P)."},
+{t:"cat",s:"v0",q:"¿Qué es la velocidad inicial (V₀)?",o:["La cantidad de producto formado por unidad de tiempo al comienzo de la reacción","La velocidad cuando se acabó el sustrato","La velocidad máxima","La concentración de enzima"],h:"Se mide justo después de mezclar E y S.",e:"V₀ = producto formado por unidad de tiempo al inicio de la reacción."},
+{t:"cat",s:"v0",q:"¿Por qué se mide la velocidad inicial y no en cualquier momento?",o:["Evita la reacción inversa, la [S] se mantiene constante y la enzima sigue estable","Porque es la más lenta","Porque al inicio no hay enzima","Porque así se mide el pI"],h:"Al inicio casi no hay producto y casi no se ha gastado sustrato.",e:"Al inicio no hay reacción inversa apreciable, la [S] es prácticamente constante y la enzima está estable."},
+{t:"cat",s:"v0",q:"En el experimento típico de cinética, ¿qué se mantiene igual en todos los tubos?",o:["La concentración de enzima","La concentración de sustrato","El tiempo de reacción a 1 hora","El color"],h:"Lo que se varía es el sustrato.",e:"Todos los tubos tienen la misma [enzima] y distinta [sustrato] (0, 0.2, 0.4, 0.6, 0.8 y 1 M)."},
+{t:"cat",s:"v0",q:"Si la reacción sigue mucho tiempo, ¿qué pasa con la velocidad?",o:["Se reduce a 0 conforme se agota el sustrato","Aumenta sin límite","Se mantiene igual para siempre","Se vuelve negativa"],h:"Sin sustrato no hay nada que transformar.",e:"La velocidad baja hasta 0 a medida que se agota el sustrato; por eso se mide V₀."},
+{t:"cat",s:"vmaxkm",q:"En la gráfica V₀ vs [S], ¿qué significa la meseta?",o:["Que la enzima está saturada: todas sus moléculas están ocupadas","Que la enzima se desnaturalizó","Que no hay sustrato","Que hay un inhibidor irreversible"],h:"Ya no hay enzimas libres.",e:"En la meseta la enzima está saturada; el sustrato adicional debe esperar a que se libere una enzima."},
+{t:"cat",s:"vmaxkm",q:"Cuando la enzima está saturada, la velocidad de reacción está limitada por…",o:["La concentración de enzima","La concentración de sustrato","El pH únicamente","El color del medio"],h:"Agregar más sustrato ya no ayuda.",e:"En saturación la velocidad depende de cuánta enzima hay: está limitada por la [E]."},
+{t:"cat",s:"vmaxkm",q:"¿Qué es la Km (constante de Michaelis)?",o:["La [S] a la que la velocidad es la mitad de la Vmax","La velocidad máxima","La [E] a la que la enzima se satura","La pendiente de la curva hiperbólica"],h:"Tiene unidades de concentración.",e:"Km = concentración de sustrato a la que V₀ = Vmax/2."},
+{t:"cat",s:"vmaxkm",q:"Una enzima con Km baja tiene…",o:["Alta afinidad por su sustrato","Baja afinidad por su sustrato","Vmax igual a cero","Ninguna afinidad"],h:"Necesita poco sustrato para llegar a media velocidad.",e:"Km baja → alta afinidad: con poco sustrato ya alcanza la mitad de la Vmax. Km alta → baja afinidad."},
+{t:"cat",s:"vmaxkm",q:"La Vmax es…",o:["La velocidad inicial límite a la que la enzima está completamente saturada; característica de cada enzima a una [E] dada","La [S] a la mitad de la velocidad","Siempre igual para todas las enzimas","La velocidad sin enzima"],h:"Es el valor de y donde la gráfica se aplana.",e:"Vmax es la velocidad inicial límite con la enzima saturada; es característica de cada enzima a una [E] particular."},
+{t:"cat",s:"mm",q:"¿Qué forma tiene la curva V₀ vs [S] para la mayoría de las enzimas de un solo sustrato?",o:["Hipérbola rectangular","Sigmoidea","Línea recta","Campana"],h:"La sigmoidea es de las alostéricas.",e:"La curva de Michaelis-Menten es una hipérbola rectangular."},
+{t:"cat",s:"mm",q:"¿En qué año se propuso la ecuación de Michaelis-Menten?",o:["1913","1980","1850","2001"],h:"A principios del siglo XX.",e:"Leonor Michaelis y Maud Menten la propusieron en 1913."},
+{t:"cat",s:"mm",q:"¿Cuál es la hipótesis de la ecuación de Michaelis-Menten?",o:["El paso limitante es la descomposición del complejo ES en E y P","El paso limitante es la unión E + S","La enzima se consume","No hay complejo ES"],h:"El paso lento es el segundo.",e:"Supone que el paso limitante de la velocidad es la descomposición de ES en E + P."},
+{t:"cat",s:"mm",q:"¿Qué términos de la ecuación de Michaelis-Menten se determinan experimentalmente?",o:["[S], V₀, Vmax y Km","Solo el pI","Solo la masa de la enzima","Ninguno"],h:"Son los cuatro que aparecen en la ecuación.",e:"[S], V₀, Vmax y Km se determinan experimentalmente."},
+/* --- Regulación por modificación covalente --- */
+{t:"reg",s:"modcov",q:"¿Cómo se modulan las enzimas reguladoras en la regulación covalente?",o:["Por modificación covalente de sus aminoácidos","Por cambios en su secuencia de ADN","Por unión de SDS","Por desnaturalización con calor"],h:"Se les agrega o quita un grupo químico.",e:"Las enzimas reguladoras se controlan por modificación covalente de sus aminoácidos."},
+{t:"reg",s:"modcov",q:"¿Qué proteínas pequeñas se unen covalentemente a otras proteínas para modificarlas?",o:["Ubiquitina y SUMO","Insulina y glucagón","Albúmina y globulina","Actina y miosina"],h:"Una de ellas es la etiqueta de degradación.",e:"Además de grupos químicos, las proteínas pueden modificarse con proteínas pequeñas: ubiquitina y SUMO."},
+{t:"reg",s:"modcov",q:"¿Qué efecto tiene introducir una carga en una proteína por modificación covalente?",o:["Altera las propiedades locales y causa un cambio de conformación","Hace que se asocie a la membrana","La degrada de inmediato","No tiene efecto"],h:"Las cargas atraen o repelen a otros grupos.",e:"Una carga nueva altera propiedades locales y provoca un cambio de conformación."},
+{t:"reg",s:"modcov",q:"¿Qué efecto tiene agregar un grupo hidrofóbico (por ejemplo miristoilo o palmitoilo)?",o:["Causa la asociación de la proteína con la membrana","La hace más soluble en agua","La envía al núcleo siempre","La activa como cinasa"],h:"Lo hidrofóbico busca lípidos.",e:"Un grupo hidrofóbico hace que la proteína se asocie a la membrana."},
+{t:"reg",s:"modcov",q:"¿Cuál de estos NO es un grupo químico común en las modificaciones covalentes?",o:["Dodecil sulfato","Fosforilo","Metilo","Acetilo"],h:"Ese es un detergente de electroforesis.",e:"Grupos comunes: fosforilo, metilo, acetilo, hidroxilo, adenililo, uridililo, amida, carboxilo, miristoilo, palmitoilo, prenilo, sulfato y ADP-ribosa."},
+{t:"reg",s:"metilacion",q:"¿Cuál es el donador del grupo metilo en la metilación?",o:["S-adenosilmetionina (SAM)","Acetil-CoA","NAD⁺","ATP"],h:"Se sintetiza a partir de la metionina.",e:"La S-adenosilmetionina (SAM) dona el grupo metilo."},
+{t:"reg",s:"metilacion",q:"¿Qué permite la activación por metilación de la enzima quimiotáctica bacteriana CheR?",o:["Que la bacteria nade hacia un atrayente (azúcar) o lejos de repelentes","Que la bacteria forme esporas","Que la bacteria fije nitrógeno","Que la bacteria se divida"],h:"Quimiotaxis = moverse según sustancias químicas.",e:"La metilación de CheR permite la quimiotaxis: nadar hacia atrayentes o alejarse de repelentes."},
+{t:"reg",s:"metilacion",q:"¿Para qué metilan su ADN las bacterias con enzimas de restricción tipo III?",o:["Para protegerlo del corte; las enzimas cortan el ADN viral no metilado","Para destruir su propio ADN","Para transcribirlo más rápido","Para exportarlo"],h:"Es un sistema de defensa contra virus.",e:"La metilación protege el ADN bacteriano; el ADN viral sin metilar sí es cortado."},
+{t:"reg",s:"acetilacion",q:"¿Cuál es el donador del grupo acetilo?",o:["Acetil-CoA","SAM","NAD⁺","ATP"],h:"Lleva la coenzima A.",e:"El acetil-CoA dona el grupo acetilo."},
+{t:"reg",s:"acetilacion",q:"¿Qué porcentaje aproximado de las proteínas solubles eucariotas se acetila en su extremo amino?",o:["~80%","~8%","~33%","~100%"],h:"La gran mayoría.",e:"Cerca del 80% de las proteínas solubles eucariotas, incluidas enzimas, tienen acetilado el extremo amino."},
+{t:"reg",s:"acetilacion",q:"¿Qué efecto tiene la acetilación de histonas?",o:["Abre la cromatina para que se transcriban los genes","Compacta la cromatina","Degrada las histonas","Detiene la replicación"],h:"Se relaciona con la expresión de genes.",e:"Acetilar histonas abre la cromatina en las regiones donde están los genes que se van a transcribir."},
+{t:"reg",s:"acetilacion",q:"¿Qué promueve la acetilación de proteínas anti-apoptóticas?",o:["La apoptosis dependiente de p53","La división celular sin control","La fijación de nitrógeno","La coagulación"],h:"Si se bloquea lo anti-apoptótico…",e:"Acetilar proteínas anti-apoptóticas promueve la apoptosis dependiente de p53."},
+{t:"reg",s:"adpr",q:"¿De dónde deriva la ADP-ribosa que se agrega en la ADP-ribosilación?",o:["Del NAD (dinucleótido de nicotinamida y adenina)","Del ATP","De la SAM","Del acetil-CoA"],h:"Es una coenzima que contiene adenosina.",e:"La ADP-ribosa proviene del NAD."},
+{t:"reg",s:"adpr",q:"¿Cómo actúa la toxina diftérica?",o:["ADP-ribosila e inactiva al EF-2, deteniendo la síntesis de proteínas","Activa la proteína Gs","Metila el ADN","Degrada la fibrina"],h:"EF-2 es un factor de elongación de la traducción.",e:"La toxina de la difteria inactiva al EF-2 por ADP-ribosilación y detiene la síntesis de proteínas."},
+{t:"reg",s:"adpr",q:"¿Cómo actúa la toxina del cólera?",o:["Activa la subunidad de la proteína Gs → exceso de cAMP → secreción masiva de iones y agua","Inactiva el EF-2","Inhibe la transpeptidasa","Fosforila la fosforilasa"],h:"Por eso causa diarrea intensa.",e:"La toxina colérica ADP-ribosila y activa Gs, lo que eleva el cAMP y provoca la salida masiva de iones y agua."},
+{t:"reg",s:"adpr",q:"¿Qué consecuencia tiene la ADP-ribosilación de la dinitrogenasa reductasa bacteriana?",o:["Se inhibe y se evita la fijación de N₂","Se activa la fijación de N₂","Se produce glucosa","Se degrada el ADN"],h:"Es un ejemplo de inhibición.",e:"La ADP-ribosilación inhibe a la dinitrogenasa reductasa y evita la fijación de N₂."},
+{t:"reg",s:"fosforilacion",q:"¿Cuál es el tipo de modificación covalente más importante?",o:["La fosforilación (~33% de las proteínas eucariotas)","La metilación","La sumoilación","La ADP-ribosilación"],h:"Afecta a un tercio de las proteínas.",e:"La fosforilación es la más importante: alrededor de un tercio de las proteínas eucariotas se fosforilan."},
+{t:"reg",s:"fosforilacion",q:"¿Qué enzimas agregan y quitan los grupos fosforilo?",o:["Las cinasas los agregan y las fosfatasas los remueven","Las fosfatasas los agregan y las cinasas los remueven","Las proteasas los agregan y las ligasas los quitan","Las metilasas en ambos casos"],h:"Fosfatasa suena a “quitar fosfato”.",e:"Las proteínas cinasas transfieren grupos fosforilo y las proteínas fosfatasas los remueven."},
+{t:"reg",s:"fosforilacion",q:"¿De dónde proviene el grupo fosforilo y a qué aminoácidos se transfiere?",o:["Del ATP; a Ser, Thr, Tyr e His","Del NAD; a Lys","De la SAM; a Cys","Del acetil-CoA; a Gly"],h:"Tres aa tienen –OH y uno tiene imidazol.",e:"El fosforilo viene del ATP y se transfiere a Ser, Thr, Tyr e His."},
+{t:"reg",s:"fosforilacion",q:"¿Cómo afecta un grupo fosforilo a la estructura de la proteína?",o:["Sus dos cargas negativas repelen aa negativos vecinos (Asp, Glu) y sus O forman puentes de H","Le quita todas sus cargas","Rompe enlaces peptídicos","No tiene efecto"],h:"Piensa en cargas y puentes de hidrógeno.",e:"El fosforilo aporta 2 cargas − que repelen a Asp o Glu, y sus O forman puentes de H (con amidas o el guanidinio de Arg); así cambia la conformación."},
+{t:"reg",s:"fosforilacion",q:"¿Qué ejemplo de vía de transducción de señales regulada por fosforilación se vio en clase?",o:["La vía de la BMP-2 para la formación de hueso","La vía de la coagulación","La glucólisis","El ciclo de Krebs"],h:"Diferenciación de células de hueso.",e:"La fosforilación activa enzimas de la vía de la BMP-2, que lleva a la formación de hueso."},
+{t:"reg",s:"ubisumo",q:"¿Qué es la ubiquitina y a qué aminoácido se une?",o:["Una proteína de 76 aa que se une a Lys","Un lípido que se une a Cys","Un azúcar que se une a Ser","Un ion que se une a His"],h:"Es una proteína pequeña.",e:"La ubiquitina es una proteína de 76 aa que se une a lisinas de proteínas eucariotas."},
+{t:"reg",s:"ubisumo",q:"¿Cuál es la función de la ubiquitinación?",o:["Regular la actividad enzimática y marcar proteínas para su degradación proteolítica","Compactar la cromatina","Fijar nitrógeno","Donar metilos"],h:"Es conocida como “el beso de la muerte”.",e:"La ubiquitinación regula la actividad (ej. activa cinasas y TFs) y etiqueta proteínas para degradación proteolítica."},
+{t:"reg",s:"ubisumo",q:"¿Qué es SUMO?",o:["Small Ubiquitin-like Modifier, proteína de 90-100 aa que modifica proteínas nucleares","Un tipo de cinasa","Un donador de acetilo","Un zimógeno"],h:"Se parece a la ubiquitina.",e:"SUMO es una proteína parecida a la ubiquitina, de 90-100 aa, que se une a proteínas nucleares eucariotas."},
+{t:"reg",s:"ubisumo",q:"¿Qué efecto tiene la sumoilación de factores de transcripción?",o:["Inhibe la transcripción","Activa la transcripción siempre","Los degrada","Los manda a la membrana"],h:"Es un efecto represor.",e:"Los factores de transcripción sumoilados inhiben la transcripción."},
+{t:"reg",s:"ubisumo",q:"¿Qué ocurre cuando se sumoila la histona H1?",o:["Compacta la cromatina","Abre la cromatina","Se degrada","Se fosforila"],h:"Lo contrario de la acetilación de histonas.",e:"La histona H1 sumoilada compacta la cromatina."},
+{t:"reg",s:"ubisumo",q:"¿Qué permite la sumoilación de proteínas en la reparación del ADN?",o:["La formación de complejos de reparación del ADN","La degradación del ADN","La metilación del ADN viral","La fijación de nitrógeno"],h:"Ayuda a que se junten proteínas.",e:"La sumoilación permite formar complejos de reparación del ADN."},
+{t:"reg",s:"glucogeno",q:"¿Qué produce la fosforilasa de glucógeno?",o:["Glucosa 1-fosfato","Glucosa 6-fosfato directamente","ATP directamente","Glucógeno"],h:"Rompe el glucógeno con fosfato.",e:"La fosforilasa de glucógeno produce glucosa 1-fosfato (sin hidrolizar ATP)."},
+{t:"reg",s:"glucogeno",q:"¿Para qué se usa la glucosa 1-fosfato en el músculo y en el hígado?",o:["Músculo: síntesis de ATP; hígado: liberación de glucosa a la sangre","Músculo: glucosa a la sangre; hígado: ATP","En ambos solo para almacenar","En ambos para formar proteínas"],h:"El hígado cuida la glucemia de todo el cuerpo.",e:"En el músculo sirve para producir ATP; en el hígado para liberar glucosa a la sangre."},
+{t:"reg",s:"glucogeno",q:"¿Cuál es la diferencia entre fosforilasa a y fosforilasa b?",o:["a: Ser fosforilada en cada subunidad, forma activa; b: desfosforilada, forma inactiva","a: inactiva; b: activa","a: tiene ubiquitina; b: tiene SUMO","No hay diferencia"],h:"La “a” es la activa.",e:"Fosforilasa a = Ser fosforilada en cada subunidad, activa. Fosforilasa b = desfosforilada, inactiva."},
+{t:"reg",s:"glucogeno",q:"Además de la fosforilación, ¿qué molécula regula alostéricamente a la fosforilasa de glucógeno?",o:["AMP","SAM","Acetil-CoA","Fibrinógeno"],h:"Señala que la célula tiene poca energía.",e:"La fosforilasa se regula por fosforilación y también alostéricamente por AMP."},
+{t:"reg",s:"glucogeno",q:"¿Qué fosforilan las cinasas basófilas?",o:["Un aa que tiene vecinos básicos (Lys, Arg, His)","Un aa cercano a Pro","Solo histidinas","El ADN"],h:"Basófila = le gustan los básicos.",e:"Las cinasas basófilas fosforilan aa con vecinos básicos; otras prefieren aa cerca de Pro o cerca de aa ya fosforilados."},
+{t:"reg",s:"glucogeno",q:"¿Qué significa que la fosforilación sea jerárquica?",o:["Un aa se fosforila solo si su vecino ya fue fosforilado","Todas las cinasas actúan al mismo tiempo","La fosforilación es irreversible","Solo se fosforila un aa por proteína"],h:"Hay un orden obligado.",e:"En la fosforilación jerárquica un aa solo se fosforila después de que su vecino se fosforiló."},
+{t:"reg",s:"glucogeno",q:"La sintasa de glucógeno no es sustrato de la cinasa 3 hasta que…",o:["Ha sido fosforilada por la cinasa de caseína II","Se le une AMP","Se ubiquitina","Se corta por proteólisis"],h:"Es el ejemplo de fosforilación jerárquica.",e:"La cinasa de caseína II fosforila primero, y solo entonces la cinasa 3 puede fosforilar a la sintasa de glucógeno."},
+{t:"reg",s:"glucogeno",q:"¿Qué efecto tiene la fosforilación sobre la sintasa de glucógeno?",o:["La inactiva","La activa","La degrada","No tiene efecto"],h:"Es lo contrario de lo que pasa con la fosforilasa.",e:"La sintasa de glucógeno se inactiva por fosforilación de Ser; distintas combinaciones la inhiben más o menos (modulación fina)."},
+{t:"reg",s:"glucogeno",q:"¿En cuántas regiones están separados los sitios de fosforilación de la sintasa de glucógeno?",o:["5","2","10","1"],h:"Una mano.",e:"La sintasa de glucógeno tiene sitios de fosforilación separados en 5 regiones."},
+{t:"reg",s:"zimogenos",q:"¿Qué es un zimógeno?",o:["Un precursor inactivo de una enzima que se activa por corte proteolítico","Una enzima fosforilada","Una coenzima","Un inhibidor competitivo"],h:"Ej. quimotripsinógeno.",e:"Un zimógeno es el precursor inactivo de una enzima; un corte proteolítico lo activa."},
+{t:"reg",s:"zimogenos",q:"¿Qué ocurre cuando se corta el quimotripsinógeno o el tripsinógeno?",o:["Hay cambios conformacionales que exponen el sitio activo","Se inactivan para siempre","Se fosforilan","Se unen a la membrana"],h:"El corte “destapa” algo.",e:"El corte provoca cambios de conformación que exponen el sitio activo: la enzima queda activa."},
+{t:"reg",s:"zimogenos",q:"La activación de zimógenos por proteólisis es…",o:["Irreversible","Reversible en segundos","Igual que la fosforilación","Temporal"],h:"Un corte no se puede “pegar” de nuevo.",e:"Es irreversible; para apagarlas se usan proteínas inhibidoras que se unen fuerte al sitio activo, como el inhibidor de tripsina pancreática."},
+{t:"reg",s:"zimogenos",q:"¿Cómo se apaga una enzima activada por proteólisis, como la tripsina?",o:["Con proteínas inhibidoras que se unen fuertemente al sitio activo","Desfosforilándola","Volviendo a unir el péptido cortado","Con más sustrato"],h:"Ejemplo: inhibidor de tripsina pancreática.",e:"Como el corte es irreversible, se usan inhibidores proteicos como el inhibidor de tripsina pancreática."},
+{t:"reg",s:"zimogenos",q:"¿Qué son las proproteínas?",o:["Precursores de proteínas (enzimas, hormonas, receptores, estructurales) que se activan por proteólisis","Proteínas ya degradadas","Proteínas con SUMO","Proteínas de membrana solamente"],h:"El prefijo pro- indica precursor.",e:"Las proproteínas son precursores activados por proteólisis: enzimas, hormonas, receptores y proteínas estructurales."},
+{t:"reg",s:"coagulacion",q:"¿De qué está formado un coágulo sanguíneo?",o:["De plaquetas agregadas depositadas sobre redes de fibrina","Solo de eritrocitos","De colágeno y queratina","De glucógeno"],h:"La red es de fibrina.",e:"El coágulo es un agregado de plaquetas sobre redes de fibrina."},
+{t:"reg",s:"coagulacion",q:"¿Cómo se forma la fibrina?",o:["A partir del fibrinógeno (α₂β₂γ₂) al eliminar péptidos de las subunidades α y β","Por fosforilación de la albúmina","Por sumoilación de la histona H1","A partir de glucosa"],h:"Se cortan pequeños péptidos.",e:"Al quitar péptidos de las subunidades α y β del fibrinógeno se forma fibrina, que forma complejos y redes."},
+{t:"reg",s:"coagulacion",q:"¿Qué dos tipos de regulación combina la cascada de coagulación?",o:["Fosforilación (reversible) y proteólisis (irreversible)","Metilación y acetilación","Solo inhibición competitiva","Sumoilación y ubiquitinación"],h:"Una se puede revertir y la otra no.",e:"La formación del coágulo activa una cascada con fosforilación (reversible) y proteólisis (irreversible)."},
+{t:"reg",s:"coagulacion",q:"¿Qué tipo de enzimas son la mayoría de las proteasas de la cascada de coagulación?",o:["Proteasas de serina","Cinasas de tirosina","Metilasas","Fosfatasas"],h:"Como la quimotripsina.",e:"En la cascada (en azul en el esquema) la mayoría son proteasas de serina."},
+{t:"reg",s:"coagulacion",q:"¿Qué causa la hemofilia A?",o:["Deficiencia del factor VIII; está ligada al cromosoma X","Deficiencia del factor IX","Exceso de fibrina","Falta de plaquetas por infección"],h:"A = factor VIII; B = factor IX.",e:"La hemofilia A se debe a deficiencia del factor VIII y está ligada al cromosoma X."},
+{t:"reg",s:"coagulacion",q:"¿Qué deficiencia causa la hemofilia B?",o:["Factor IX","Factor VIII","Fibrinógeno","Vitamina C"],h:"La otra hemofilia ligada al X.",e:"La hemofilia B se debe a deficiencia del factor IX y también está ligada al cromosoma X."},
+{t:"reg",s:"coagulacion",q:"En la realeza europea, ¿quién fue portadora de la hemofilia?",o:["La reina Victoria","El príncipe Leopoldo","La princesa Alicia fue hemofílica","Ninguno"],h:"Ella la transmitió a sus hijos.",e:"La reina Victoria era portadora; su hijo Leopoldo fue hemofílico y sus hijas Alicia y Beatriz, portadoras."}
+);
+
+OPEN.push(
+{t:"cat",s:"mecanismo",q:"¿Cuántos y cuáles son los tipos de mecanismos de catálisis enzimática vistos en clase?",h:"Son tres.",a:"Tres: 1) catálisis ácido-base general (transferencia de H⁺), 2) catálisis covalente (enlace covalente temporal E-S) y 3) catálisis por iones metálicos (metales unidos a la enzima que orientan, estabilizan cargas o participan en redox).",k:[["3","tres"],["acido-base","acido base"],["covalente"],["metal"]]},
+{t:"cat",s:"acidobase",q:"¿En qué consiste la catálisis ácido-base general?",h:"¿Quién transfiere los H⁺ si en el sitio activo no hay agua?",a:"Es la transferencia de H⁺ por ácidos y bases débiles distintos del agua (cadenas laterales de aminoácidos). Estabiliza intermediarios cargados e inestables para que se descompongan en productos. Es crucial porque el sitio activo carece de agua, y aumenta la velocidad 10²-10⁵ veces.",k:[["h+","proton"],["debil"],["agua"],["intermediario","estabiliz"],["aminoacido","cadena lateral","aa"]]},
+{t:"cat",s:"acidobase",q:"¿Cuál es la diferencia entre la catálisis ácido-base específica y la general?",h:"Una solo usa el agua.",a:"La específica usa solo los iones H⁺ (H₃O⁺) y OH⁻ del agua, sin catálisis adicional por otros donadores. La general usa ácidos y bases débiles distintos del agua, que aceleran la reacción cuando el intermediario se descompone más rápido de lo que el agua le transfiere H⁺.",k:[["especifica"],["agua"],["oh","h3o"],["general"],["debil"]]},
+{t:"cat",s:"covalente",q:"Explica la catálisis covalente y da ejemplos de grupos nucleofílicos.",h:"Enlace temporal y aa con grupos nucleofílicos.",a:"Se forma un enlace covalente temporal entre la enzima y el sustrato: un grupo nucleofílico de la enzima ataca al sustrato y forma un intermediario reactivo que luego se escinde. La ruta nueva tiene menor energía de activación. Nucleófilos: –OH de Ser, –SH de Cys, –NH de Lys y grupos de cofactores (ej. coenzima A).",k:[["covalente"],["temporal"],["nucleofil"],["ser","cys","lys"],["energia de activacion","intermediario"]]},
+{t:"cat",s:"metcat",q:"¿Cómo participan los iones metálicos en la catálisis?",h:"Coordinación y cuatro funciones.",a:"Metales como Zn²⁺, Mg²⁺, Fe²⁺/³⁺ o Cu²⁺ se unen al sitio activo por coordinación con His, Cys o Asp. Orientan al sustrato, estabilizan cargas negativas de intermediarios, participan en reacciones redox por cambios reversibles de su estado de oxidación y generan nucleófilos (desprotonando agua). ~30% de las enzimas los requieren.",k:[["his","cys","asp","coordin"],["orient"],["carga"],["redox","oxidacion"],["nucleofil","30"]]},
+{t:"cat",s:"cinetica",q:"¿Qué es la cinética enzimática y por qué es importante?",h:"Velocidad + aplicaciones.",a:"Estudia la velocidad de las reacciones catalizadas por enzimas y los factores que la modifican: cómo se une la E al S (E + S → ES) y qué tan rápido lo transforma (ES → E + P). Es importante para el desarrollo de medicamentos, el diagnóstico de enfermedades, la producción de alimentos y procesos biotecnológicos.",k:[["velocidad"],["factor"],["medicamento","farmaco"],["diagnostico"],["alimento","biotecnolog"]]},
+{t:"cat",s:"vmaxkm",q:"¿Qué es la Km de una enzima y qué información nos brinda?",h:"Concentración y afinidad.",a:"La Km (constante de Michaelis) es la concentración de sustrato a la que la velocidad es la mitad de la Vmax. Mide la afinidad de la enzima por su sustrato: Km baja = alta afinidad; Km alta = baja afinidad.",k:[["concentracion","[s]","sustrato"],["mitad","vmax/2"],["afinidad"],["baja","alta"]]},
+{t:"cat",s:"vmaxkm",q:"¿Qué sucede cuando una enzima se satura y cómo se refleja en la gráfica V₀ vs [S]?",h:"La curva se aplana.",a:"Todas las moléculas de enzima están ocupadas procesando sustrato; el S adicional tiene que esperar y la velocidad queda limitada por la [E]. En la gráfica se ve como una meseta: la curva se aplana en la Vmax.",k:[["ocupad","todas"],["meseta","aplana","plana"],["vmax"],["limitad","[e]","concentracion de enzima"]]},
+{t:"cat",s:"v0",q:"¿Cómo se determina experimentalmente la velocidad de reacción en función de la [S]?",h:"Tubos, V₀ y pares (x, y).",a:"Se preparan tubos con la misma [enzima] y distintas [sustrato]. En cada uno se mide la velocidad inicial V₀ (producto por tiempo al comienzo, para evitar la reacción inversa y mantener la [S] constante). Cada [S] con su V₀ se grafica como un par (x, y) y los puntos se unen con una curva.",k:[["tubo"],["misma","enzima"],["inicial","v0"],["grafic","par","curva"]]},
+{t:"reg",s:"modcov",q:"¿Cuál es la función de las modificaciones covalentes post-traduccionales?",h:"Regulan y son reversibles.",a:"Modulan y controlan la actividad de enzimas reguladoras y procesos bioquímicos modificando covalentemente sus aminoácidos. Son reversibles: introducir una carga cambia la conformación y un grupo hidrofóbico causa asociación con la membrana.",k:[["regul","control","modul"],["aminoacido","aa"],["reversible"],["conformacion","carga"],["membrana","hidrofob"]]},
+{t:"reg",s:"modcov",q:"¿Qué tipos de modificaciones covalentes son las más comunes?",h:"Hay seis que se vieron en detalle.",a:"Metilación (donador SAM), acetilación (acetil-CoA), ADP-ribosilación (NAD), fosforilación (la más importante, desde ATP), ubiquitinación y sumoilación. También hay grupos como hidroxilo, adenililo, uridililo, miristoilo, palmitoilo, prenilo y sulfato.",k:[["metil"],["acetil"],["adp-ribos","adp ribos"],["fosforil"],["ubiquitin"],["sumo"]]},
+{t:"reg",s:"ubisumo",q:"¿En qué consiste la ubiquitinación y cuál es su función?",h:"Proteína de 76 aa en lisinas.",a:"Es la unión de ubiquitina, una proteína de 76 aminoácidos, a residuos de Lys de proteínas eucariotas. Regula la actividad enzimática (por ejemplo, activa cinasas y factores de transcripción) y funciona como etiqueta para la degradación proteolítica.",k:[["ubiquitina"],["76"],["lys","lisina"],["degradacion","proteolis"],["regul","activ"]]},
+{t:"reg",s:"fosforilacion",q:"¿En qué consiste la fosforilación y cuál es su función?",h:"Cinasas, fosfatasas, ATP y aminoácidos.",a:"Es la adición de un grupo fosforilo (del ATP) a Ser, Thr, Tyr o His por proteínas cinasas; las fosfatasas lo remueven. Es la modificación más importante (~1/3 de las proteínas eucariotas) y regula activando o reprimiendo enzimas: sus cargas negativas y puentes de H cambian la conformación, la unión del sustrato y la catálisis.",k:[["fosforilo","fosfato"],["atp"],["cinasa"],["fosfatasa"],["ser","thr","tyr"],["activ","repres","regul"]]},
+{t:"reg",s:"zimogenos",q:"¿En qué consiste la proteólisis como mecanismo de regulación? ¿Es temporal?",h:"Zimógenos y cortes.",a:"Es la activación de precursores inactivos (zimógenos o proproteínas) mediante un corte proteolítico que provoca cambios conformacionales y expone el sitio activo, como en el quimotripsinógeno y el tripsinógeno. No es temporal: es irreversible; para apagar la enzima se usan inhibidores que se unen fuerte al sitio activo.",k:[["zimogeno","precursor","proproteina"],["corte"],["sitio activo","conformacion"],["irreversible","no es temporal","permanente"],["inhibidor"]]},
+{t:"reg",s:"coagulacion",q:"¿Qué causa la hemofilia tipo A?",h:"Un factor de coagulación y un cromosoma.",a:"Mutaciones en el gen del factor VIII de la coagulación: hay deficiencia del factor VIII, lo que causa sangrados. Está ligada al cromosoma X (ej. la reina Victoria fue portadora y su hijo Leopoldo hemofílico).",k:[["factor viii","factor 8","viii"],["cromosoma x","ligada al x","chr x"],["mutacion","deficiencia"],["sangrado","coagulacion"]]},
+{t:"reg",s:"glucogeno",q:"Explica cómo se regula la fosforilasa de glucógeno.",h:"a vs b, Ser y AMP.",a:"La fosforilasa de glucógeno produce glucosa 1-fosfato (ATP en músculo, glucosa en sangre en hígado). La fosforilación de una Ser en cada subunidad da la fosforilasa a (activa); al desfosforilarse queda la fosforilasa b (inactiva). Además se regula alostéricamente por AMP.",k:[["glucosa 1-fosfato","glucosa"],["fosforilasa a"],["fosforilasa b"],["ser"],["amp","alosteric"]]},
+{t:"reg",s:"adpr",q:"¿Qué es la ADP-ribosilación? Da ejemplos de toxinas que la usan.",h:"Viene del NAD.",a:"Es la adición de ADP-ribosa, que deriva del NAD. La toxina diftérica inactiva al EF-2 y detiene la síntesis de proteínas; la toxina colérica activa la proteína Gs, eleva el cAMP y provoca secreción masiva de iones y agua. También inhibe la dinitrogenasa reductasa bacteriana.",k:[["adp-ribosa","adp ribosa"],["nad"],["difteria","ef-2","ef2"],["colera","gs","camp"]]},
+{t:"reg",s:"glucogeno",q:"¿Qué es la fosforilación jerárquica? Explica el ejemplo de la sintasa de glucógeno.",h:"Una cinasa prepara el terreno para otra.",a:"Es cuando un aminoácido solo puede fosforilarse si su vecino ya fue fosforilado. La sintasa de glucógeno se inactiva por fosforilación de Ser y no es sustrato de la cinasa 3 hasta que la cinasa de caseína II la fosforila primero. Distintas combinaciones de fosforilaciones la inhiben más o menos (modulación fina).",k:[["vecino"],["sintasa"],["caseina"],["cinasa 3","gsk"],["inactiva","inhib"]]}
+);
+
+LESSONS.push(
+{id:"mecanismo",t:"cat",title:"Factores del mecanismo catalítico",body:`
+<p>Una enzima acelera una reacción gracias a dos factores:</p>
+<ul>
+<li><b>Energía de enlace</b> que se libera al formar el complejo ES.</li>
+<li><b>Grupos funcionales catalíticos</b> del sitio activo, que facilitan la ruptura y formación de enlaces.</li>
+</ul>
+<p>Esos grupos actúan por tres mecanismos distintos:</p>
+<ol>
+<li><b>Catálisis ácido-base general</b>: transferencia de H⁺.</li>
+<li><b>Catálisis covalente</b>: enlace covalente temporal entre E y S.</li>
+<li><b>Catálisis por iones metálicos</b>.</li>
+</ol>
+<p>La mayoría de las enzimas combinan varias estrategias. La quimotripsina usa catálisis covalente, ácido-base general y estabilización del estado de transición.</p>`,
+key:"Energía de unión ES + grupos catalíticos · tres mecanismos: ácido-base, covalente e iones metálicos."},
+{id:"acidobase",t:"cat",title:"Catálisis ácido-base",body:`
+<p>La <b>transferencia de H⁺</b> es la reacción más común en las células. Muchas reacciones forman <b>intermediarios cargados e inestables</b> que tienden a regresar a reactivos y evitan que se formen productos. Si se les transfiere un H⁺, se convierten en una especie que se descompone más fácil en productos.</p>
+<p>Ejemplo: al romper un enlace amida, la quimotripsina evita que se genere carga desfavorable.</p>
+<h4>Catálisis ácido-base específica</h4>
+<ul>
+<li>Usa solo los iones <b>H⁺ (H₃O⁺) y OH⁻ del agua</b>.</li>
+<li>Funciona cuando el agua transfiere H⁺ al intermediario más rápido de lo que este se descompone.</li>
+<li>No hay catálisis adicional por otros donadores o aceptores.</li>
+</ul>
+<h4>Catálisis ácido-base general</h4>
+<ul>
+<li>Los H⁺ los transfieren <b>ácidos y bases débiles distintos del agua</b>.</li>
+<li>Acelera la reacción cuando el intermediario se descompone más rápido de lo que el agua le transfiere H⁺.</li>
+<li>Donadores: ácidos orgánicos débiles (láctico, acético, úrico, cítrico, málico). Aceptores: bases débiles, como los grupos amino de aa y nucleótidos.</li>
+</ul>
+<h4>¿Por qué importa en las enzimas?</h4>
+<p>El <b>sitio activo carece de agua</b>, así que el agua no sirve como donador o aceptor. Los grupos de las cadenas laterales de varios aa hacen ese papel y están colocados con precisión; así aumentan la velocidad de <b>10² a 10⁵ veces</b>.</p>`,
+key:"Transferencia de H⁺ · específica = solo agua · general = ácidos/bases débiles (cadenas laterales) · 10²-10⁵ veces."},
+{id:"covalente",t:"cat",title:"Catálisis covalente",body:`
+<ul>
+<li>Se forma un <b>enlace covalente temporal</b> entre la enzima y el sustrato. Por ejemplo, en la hidrólisis de un enlace A–B, un grupo nucleofílico de la enzima (X:) se une primero a A y luego se libera.</li>
+<li>Hay catálisis cuando esa ruta nueva tiene <b>menor energía de activación</b> que la ruta no catalizada.</li>
+<li>El ataque nucleofílico y la disociación del nucleófilo son mucho más rápidos con la enzima.</li>
+<li>Nucleófilos de la enzima: <b>–OH de Ser, –SH de Cys, –NH de Lys</b>, y también grupos de cofactores. Forman un intermediario covalente reactivo que luego se escinde.</li>
+<li>El enlace E-S puede activar al sustrato para que reaccione con un cofactor, como la <b>coenzima A</b> (deriva del ácido pantoténico, vitamina B5).</li>
+</ul>
+<p>Ejemplo clásico: la <b>tríada catalítica de la quimotripsina</b>, una proteasa de serina.</p>`,
+key:"Enlace E-S temporal · nucleófilos Ser, Cys, Lys · menor energía de activación · tríada de la quimotripsina."},
+{id:"metcat",t:"cat",title:"Catálisis por iones metálicos",body:`
+<ul>
+<li>Participan metales como <b>Zn²⁺, Mg²⁺, Fe²⁺, Fe³⁺ y Cu²⁺</b>, unidos a la enzima o captados de la solución junto con el sustrato.</li>
+<li>Se unen al sitio activo por coordinación con <b>His, Cys o Asp</b>.</li>
+<li>Sus interacciones iónicas con el sustrato sirven para:
+  <ul><li>orientar al S para la reacción,</li><li>estabilizar cargas negativas de intermediarios,</li><li>participar en reacciones redox,</li><li>generar nucleófilos, por ejemplo desprotonando agua.</li></ul></li>
+<li>Los <b>cambios reversibles en el estado de oxidación</b> del metal median las reacciones de óxido-reducción.</li>
+<li>Alrededor del <b>30%</b> de las enzimas requieren uno o más iones metálicos.</li>
+</ul>
+<p>La estructura de la quimotripsina pancreática se estabiliza con iones <b>Ca²⁺</b>.</p>`,
+key:"Metales coordinados con His, Cys o Asp · orientan, estabilizan cargas, redox, generan nucleófilos · 30% de las enzimas."},
+{id:"cinetica",t:"cat",title:"Cinética enzimática",body:`
+<p>Estudia la <b>velocidad de las reacciones catalizadas por enzimas</b> y los factores que la modifican. Analiza cuantitativamente cómo se une la enzima a su sustrato (<b>E + S → ES</b>) y con qué rapidez lo transforma en producto (<b>ES → E + P</b>).</p>
+<p>Es fundamental para el desarrollo de medicamentos, el diagnóstico de enfermedades, la producción de alimentos y muchos procesos biotecnológicos.</p>
+<h4>Dos enfoques para estudiar el mecanismo</h4>
+<ul>
+<li><b>Moderno:</b> determinar la estructura 3D y hacer mutagénesis sitio dirigida.</li>
+<li><b>Antiguo:</b> medir la velocidad de reacción y cómo cambia al variar parámetros experimentales. Eso es la cinética enzimática.</li>
+</ul>
+<h4>Analogía del auto deportivo</h4>
+<ul>
+<li>La velocidad con el acelerador a fondo es la <b>Vmax</b>.</li>
+<li>Qué tan rápido acelera de 0 a 320 km/h dice cómo alcanza esa velocidad.</li>
+<li>Todo junto describe el rendimiento del vehículo, o sea, de la enzima.</li>
+</ul>`,
+key:"Velocidad de reacciones enzimáticas · E + S → ES → E + P · útil en fármacos, diagnóstico, alimentos y biotecnología."},
+{id:"v0",t:"cat",title:"Cómo se mide la velocidad: V₀",body:`
+<p>Los experimentos de cinética se presentan en una gráfica de <b>velocidad de reacción contra [sustrato]</b>.</p>
+<ul>
+<li><b>Experimento:</b> una serie de tubos con la <b>misma [enzima]</b> y distintas [sustrato] (0, 0.2, 0.4, 0.6, 0.8 y 1 M).</li>
+<li>Se mide la <b>velocidad inicial (V₀)</b>: producto formado por unidad de tiempo justo después de mezclar E y S.</li>
+<li>Se usa V₀ porque al inicio no hay reacción inversa apreciable, la [S] es prácticamente constante y la enzima está estable. Con el tiempo la velocidad cae a 0 conforme se agota el S.</li>
+<li>Cada [S] con su V₀ se grafica como un par (x, y) y los puntos se unen con una curva.</li>
+</ul>
+<p>En la mayoría de las enzimas, V₀ <b>aumenta rápido</b> a [S] bajas y luego se <b>estabiliza en una meseta</b> a [S] altas.</p>`,
+key:"Misma [E], distintas [S] · se mide V₀ al inicio · curva que sube rápido y llega a una meseta."},
+{id:"vmaxkm",t:"cat",title:"Vmax, Km y afinidad",body:`
+<ul>
+<li><b>Meseta:</b> la enzima está <b>saturada</b>, todas sus moléculas están ocupadas procesando S. Cualquier S adicional tiene que esperar, así que la velocidad queda <b>limitada por la [E]</b>.</li>
+<li><b>Vmax:</b> la velocidad inicial límite a la que la enzima está completamente saturada (el valor de y donde la gráfica se aplana). Es característica de cada enzima a una [E] particular.</li>
+<li><b>Km (constante de Michaelis):</b> la [S] a la que la velocidad es <b>la mitad de la Vmax</b>. Indica qué tan rápido sube la velocidad con la [S].</li>
+</ul>
+<h4>Km y afinidad</h4>
+<p>La Km mide la <b>afinidad</b> de la enzima por su sustrato:</p>
+<ul>
+<li><b>Km baja → alta afinidad:</b> con poco sustrato ya llega a la mitad de la Vmax.</li>
+<li><b>Km alta → baja afinidad:</b> necesita mucho sustrato.</li>
+</ul>`,
+key:"Meseta = saturación · Vmax = velocidad límite · Km = [S] a Vmax/2 · Km baja = alta afinidad."},
+{id:"mm",t:"cat",title:"Ecuación de Michaelis-Menten",body:`
+<p>Para la mayoría de las enzimas de un solo sustrato, la curva V₀ vs [S] es una <b>hipérbola rectangular</b>.</p>
+<p class="formula">V₀ = Vmax · [S] / (Km + [S])</p>
+<ul>
+<li>Leonor Michaelis y Maud Menten la propusieron en <b>1913</b>.</li>
+<li>Su hipótesis: el <b>paso limitante</b> de la velocidad es la descomposición del complejo ES en E y P.</li>
+<li>[S], V₀, Vmax y Km se determinan experimentalmente.</li>
+<li>Si [S] = Km, entonces V₀ = Vmax/2. Esa es la definición de Km.</li>
+</ul>
+<p>Para obtener Vmax y Km con más precisión, la ecuación se transforma en la gráfica doblemente recíproca de Lineweaver-Burk (tema de Cinética e inhibición).</p>`,
+key:"Hipérbola rectangular · 1913 · paso limitante ES → E + P · V₀ = Vmax[S]/(Km + [S])."},
+{id:"modcov",t:"reg",title:"Modificación covalente de enzimas",body:`
+<p>Las <b>enzimas reguladoras</b> se modulan, y con ellas los procesos bioquímicos, por <b>modificación covalente de sus aminoácidos</b>.</p>
+<ol>
+<li><b>Grupos químicos comunes:</b> fosforilo, metilo, acetilo, hidroxilo, adenililo, uridililo, amida, carboxilo, miristoilo, palmitoilo, prenilo, sulfato y ADP-ribosa.</li>
+<li><b>Proteínas pequeñas:</b> ubiquitina y SUMO.</li>
+</ol>
+<p>La modificación covalente es <b>reversible</b> y actúa así:</p>
+<ul>
+<li><b>Introducir una carga</b> altera las propiedades locales y cambia la conformación.</li>
+<li><b>Introducir un grupo hidrofóbico</b> hace que la proteína se asocie con la membrana.</li>
+</ul>
+<h4>Modificaciones post-traduccionales vistas</h4>
+<div class="tbl"><table><thead><tr><th>Modificación</th><th>Qué se agrega</th><th>Donador</th></tr></thead><tbody>
+<tr><td>Metilación</td><td>Metilo</td><td>SAM</td></tr>
+<tr><td>Acetilación</td><td>Acetilo</td><td>Acetil-CoA</td></tr>
+<tr><td>ADP-ribosilación</td><td>ADP-ribosa</td><td>NAD</td></tr>
+<tr><td>Fosforilación</td><td>Fosforilo</td><td>ATP</td></tr>
+<tr><td>Ubiquitinación</td><td>Ubiquitina (76 aa)</td><td>a Lys</td></tr>
+<tr><td>Sumoilación</td><td>SUMO (90-100 aa)</td><td>proteínas nucleares</td></tr>
+</tbody></table></div>`,
+key:"Grupos químicos o proteínas pequeñas · reversibles · carga cambia la conformación · grupo hidrofóbico lleva a la membrana."},
+{id:"metilacion",t:"reg",title:"Metilación",body:`
+<p>El donador del grupo metilo es la <b>S-adenosilmetionina (SAM)</b>, que se sintetiza a partir de la metionina.</p>
+<ul>
+<li><b>Enzima quimiotáctica bacteriana CheR:</b> su metilación permite que la bacteria nade hacia un atrayente químico (azúcar) o se aleje de repelentes.</li>
+<li><b>Enzimas de restricción tipo III:</b> metilan el ADN bacteriano para protegerlo del corte, y cortan el ADN viral que no está metilado.</li>
+</ul>`,key:"Donador SAM · quimiotaxis (CheR) · protección del ADN bacteriano frente a virus."},
+{id:"acetilacion",t:"reg",title:"Acetilación",body:`
+<p>El donador del grupo acetilo es el <b>acetil-CoA</b>. Cerca del <b>80%</b> de las proteínas solubles eucariotas, incluidas enzimas, tienen acetilado su extremo amino.</p>
+<ul>
+<li><b>Acetilación de proteínas anti-apoptóticas:</b> promueve la apoptosis dependiente de p53.</li>
+<li><b>Acetilación de histonas:</b> abre la cromatina en las regiones de los genes que se van a transcribir.</li>
+</ul>`,key:"Donador acetil-CoA · ~80% de proteínas solubles · histonas acetiladas = cromatina abierta."},
+{id:"adpr",t:"reg",title:"ADP-ribosilación",body:`
+<p>Se agrega una <b>ADP-ribosa</b> que deriva del <b>NAD</b> (dinucleótido de nicotinamida y adenina), una coenzima que contiene adenosina.</p>
+<ul>
+<li><b>Dinitrogenasa reductasa bacteriana:</b> queda inhibida y se evita la fijación de N₂.</li>
+<li><b>Toxina de la difteria:</b> inactiva al factor de elongación <b>EF-2</b> y detiene la síntesis de proteínas.</li>
+<li><b>Toxina del cólera:</b> activa la subunidad de la proteína <b>Gs</b>, lo que causa exceso de cAMP y secreción masiva de iones y agua.</li>
+</ul>`,key:"ADP-ribosa del NAD · difteria inactiva EF-2 · cólera activa Gs → cAMP ↑."},
+{id:"fosforilacion",t:"reg",title:"Fosforilación",body:`
+<p>Se agrega un <b>grupo fosforilo</b> a uno o varios aminoácidos. Es el tipo de modificación <b>más importante</b>: cerca de un tercio (33.3%) de las proteínas eucariotas se fosforilan. Su función reguladora puede ser de <b>activación o de represión</b>.</p>
+<ul>
+<li><b>Proteínas cinasas:</b> transfieren grupos fosforilo a los aminoácidos.</li>
+<li><b>Proteínas fosfatasas:</b> los remueven.</li>
+<li>El fosforilo viene del <b>ATP</b> y se transfiere a <b>Ser, Thr, Tyr e His</b>.</li>
+</ul>
+<h4>¿Cómo cambia a la proteína?</h4>
+<ul>
+<li>Sus oxígenos forman <b>puentes de H</b> con grupos de la proteína, como las amidas de la cadena principal al inicio de una hélice o el guanidinio de Arg.</li>
+<li>Sus <b>dos cargas negativas</b> repelen a aminoácidos vecinos con carga negativa (Asp o Glu).</li>
+<li>Si ocurre en una región crítica para la estructura, cambia la conformación, la unión del sustrato y la catálisis.</li>
+</ul>
+<p>Ejemplo: la fosforilación activa enzimas de vías de transducción de señales, como la <b>vía de la BMP-2</b> para la formación de hueso.</p>`,
+key:"La más importante (1/3 de proteínas) · cinasas ponen, fosfatasas quitan · del ATP a Ser, Thr, Tyr, His."},
+{id:"ubisumo",t:"reg",title:"Ubiquitinación y sumoilación",body:`
+<h4>Ubiquitinación</h4>
+<ul>
+<li>Se agrega <b>ubiquitina</b>, una proteína de <b>76 aa</b>, a residuos de <b>Lys</b> de proteínas eucariotas.</li>
+<li>Regula la actividad enzimática (por ejemplo, activa proteínas cinasas y factores de transcripción).</li>
+<li>Es la <b>etiqueta de degradación proteolítica</b>.</li>
+</ul>
+<h4>Sumoilación</h4>
+<ul>
+<li>Se agrega <b>SUMO</b> (Small Ubiquitin-like Modifier), proteína de <b>90-100 aa</b>, a varias proteínas nucleares eucariotas.</li>
+<li>Los factores de transcripción sumoilados <b>inhiben la transcripción</b>.</li>
+<li>La histona H1 sumoilada <b>compacta la cromatina</b>.</li>
+<li>Permite formar <b>complejos de reparación del ADN</b>.</li>
+</ul>`,key:"Ubiquitina (76 aa, en Lys) = regulación y degradación · SUMO (90-100 aa) = inhibe transcripción, compacta cromatina, reparación."},
+{id:"glucogeno",t:"reg",title:"Fosforilasa y sintasa de glucógeno",body:`
+<h4>Fosforilasa de glucógeno</h4>
+<p>Produce <b>glucosa 1-fosfato</b> sin hidrolizar ATP. En el <b>músculo</b> se usa para sintetizar ATP; en el <b>hígado</b>, para liberar glucosa a la sangre.</p>
+<ul>
+<li><b>Fosforilasa a:</b> una Ser fosforilada en cada subunidad, forma <b>activa</b>.</li>
+<li><b>Fosforilasa b:</b> Ser desfosforilada, forma <b>inactiva</b>.</li>
+<li>También se regula de forma alostérica por <b>AMP</b>.</li>
+</ul>
+<h4>Fosforilación múltiple</h4>
+<p>Las cinasas reconocen <b>secuencias consenso</b> con Ser, Thr o Tyr:</p>
+<ul>
+<li><b>Cinasas basófilas:</b> fosforilan un aa con vecinos básicos (Lys, Arg, His).</li>
+<li>Otras prefieren un aa cerca de <b>Pro</b>.</li>
+<li>Otras fosforilan un aa cercano a otros aa ya fosforilados.</li>
+</ul>
+<p>El plegamiento 3D también determina si una cinasa puede alcanzar un aminoácido.</p>
+<h4>Sintasa de glucógeno</h4>
+<ul>
+<li>Se <b>inactiva por fosforilación</b> de Ser. Sus sitios están separados en <b>5 regiones</b>, reconocidas por varias cinasas.</li>
+<li>La fosforilación puede ser <b>jerárquica</b>: un aa solo se fosforila si su vecino ya se fosforiló. La sintasa no es sustrato de la cinasa 3 hasta que la <b>cinasa de caseína II</b> la fosforila primero.</li>
+<li>Algunas combinaciones de fosforilaciones la inhiben más que otras, lo que da una modulación fina.</li>
+</ul>`,
+key:"Fosforilasa a = fosforilada y activa; b = inactiva; AMP alostérico · sintasa se inactiva al fosforilarse · fosforilación jerárquica."},
+{id:"zimogenos",t:"reg",title:"Rotura proteolítica: zimógenos",body:`
+<ul>
+<li><b>Proproteínas:</b> precursores que se activan por proteólisis. Pueden ser enzimas, hormonas, receptores o proteínas estructurales.</li>
+<li><b>Zimógeno:</b> precursor <b>inactivo</b> de una enzima, como los precursores de las proteasas del páncreas y del estómago. Un corte los vuelve enzimas activas.</li>
+<li>En el <b>quimotripsinógeno</b> y el <b>tripsinógeno</b>, el corte provoca cambios conformacionales que <b>exponen el sitio activo</b>.</li>
+<li>La activación es <b>irreversible</b>. Para apagarlas se usan proteínas inhibidoras que se unen fuertemente al sitio activo, como el <b>inhibidor de tripsina pancreática</b>.</li>
+</ul>`,key:"Zimógeno = precursor inactivo · el corte expone el sitio activo · irreversible · se apaga con inhibidores proteicos."},
+{id:"coagulacion",t:"reg",title:"Coagulación y hemofilia",body:`
+<ul>
+<li>Un <b>coágulo</b> es un agregado de plaquetas depositadas sobre redes de <b>fibrina</b>.</li>
+<li>La fibrina deriva del <b>fibrinógeno (α₂β₂γ₂)</b>: al eliminar péptidos de las subunidades α y β se forman complejos y redes.</li>
+<li>La formación del coágulo activa una <b>cascada de señalización</b> que combina <b>fosforilación (reversible)</b> y <b>proteólisis (irreversible)</b>. La mayoría de sus proteasas son <b>proteasas de serina</b>.</li>
+<li>Hay cascadas reguladoras parecidas en la diferenciación celular, la detección de la luz y la apoptosis.</li>
+</ul>
+<h4>Hemofilia</h4>
+<p>Se debe a mutaciones en genes de proteínas de la coagulación y causa sangrados.</p>
+<ul>
+<li><b>Hemofilia A:</b> ligada al cromosoma X; deficiencia del <b>factor VIII</b>.</li>
+<li><b>Hemofilia B:</b> ligada al cromosoma X; deficiencia del <b>factor IX</b>.</li>
+</ul>
+<p>En la realeza europea, la <b>reina Victoria</b> fue portadora. Su hijo, el príncipe Leopoldo, fue hemofílico y murió a los 31 años por una caída. Sus hijas Alicia y Beatriz fueron portadoras y pasaron el gen a otras familias reales.</p>`,
+key:"Fibrina del fibrinógeno · cascada con fosforilación y proteólisis · hemofilia A = factor VIII, B = factor IX, ambas ligadas al X."}
+);
 const LESSON=Object.fromEntries(LESSONS.map(l=>[l.id,l]));
 
 /* =================== UTILIDADES =================== */
@@ -861,6 +1200,9 @@ const OOPS=["Casi, mi amor. Mira:","No pasa nada, así se aprende:","Esta se te 
 
 let S=Object.assign({tab:"examen",mode:"mcq",n:10,topics:Object.keys(TOPICS),used:{mcq:[],open:[]},studyTopic:"pur"},store.get().S||{});
 if(!S.used)S.used={mcq:[],open:[]};
+/* temas agregados después: se activan para quien ya usaba la página */
+if(!S.known)S.known=["pur","det","enz","inh"];
+Object.keys(TOPICS).forEach(k=>{if(!S.known.includes(k)){S.known.push(k);if(!S.topics.includes(k))S.topics.push(k);}});
 let Q=loadQ(); /* examen en curso (se guarda para no perder el progreso) */
 
 function save(){store.set({S,Q:Q?packQ(Q):null});}
